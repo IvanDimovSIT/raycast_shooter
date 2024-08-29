@@ -5,7 +5,7 @@ pub enum Operation {
     Left,
     Right,
     Forward,
-    Back
+    Back,
 }
 
 pub fn get_input(_screen_size: (f32, f32)) -> Vec<Operation> {
@@ -23,6 +23,6 @@ pub fn get_input(_screen_size: (f32, f32)) -> Vec<Operation> {
     if is_key_down(macroquad::input::KeyCode::S) || is_key_down(macroquad::input::KeyCode::Down) {
         input.push(Operation::Back);
     }
-    
+
     input
 }

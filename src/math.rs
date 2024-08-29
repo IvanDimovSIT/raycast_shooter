@@ -1,5 +1,3 @@
-use std::f32::EPSILON;
-
 use macroquad::math::{vec2, Vec2};
 
 pub fn rotate_point(point: Vec2, origin: Vec2, thetha: f32) -> Vec2 {
@@ -10,7 +8,7 @@ pub fn rotate_point(point: Vec2, origin: Vec2, thetha: f32) -> Vec2 {
     vec2(x_rot, y_rot) + origin
 }
 
-pub fn find_intersection(a_start: Vec2, a_end: Vec2, b_start: Vec2, b_end: Vec2,) -> Option<Vec2> {
+pub fn find_intersection(a_start: Vec2, a_end: Vec2, b_start: Vec2, b_end: Vec2) -> Option<Vec2> {
     let b_dir = b_end - b_start;
     let perp_b = Vec2::new(-b_dir.y, b_dir.x);
 
@@ -25,8 +23,8 @@ pub fn find_intersection(a_start: Vec2, a_end: Vec2, b_start: Vec2, b_end: Vec2,
     if t >= 0.0 {
         let intersection = a_start + t * a_end;
         let b_t = (intersection - b_start).dot(b_dir) / b_dir.dot(b_dir);
-        
-        if b_t >= 0.0 && b_t <= 1.0 {
+
+        if (0.0..=1.0).contains(&b_t) {
             return Some(intersection);
         }
     }
@@ -44,14 +42,14 @@ pub fn line_intersects_circle(start: Vec2, end: Vec2, center: Vec2, radius: f32)
 
     let discriminant = b * b - 4.0 * a * c;
 
-    if discriminant < EPSILON {
+    if discriminant < f32::EPSILON {
         false
     } else {
         let discriminant_sqrt = discriminant.sqrt();
         let t1 = (-b - discriminant_sqrt) / (2.0 * a);
         let t2 = (-b + discriminant_sqrt) / (2.0 * a);
 
-        (0.0 <= t1 && t1 <= 1.0) || (0.0 <= t2 && t2 <= 1.0)
+        (0.0..=1.0).contains(&t1) || (0.0..=1.0).contains(&t2)
     }
 }
 
@@ -65,7 +63,7 @@ mod tests {
     fn test_find_intersection() {
         let a_start = vec2(0.0, 0.0);
         let a_end = vec2(10.0, 0.0);
-        
+
         let b_start = vec2(2.0, -10.0);
         let b_end = vec2(2.0, 10.0);
 
@@ -82,7 +80,7 @@ mod tests {
         let thetha = PI;
 
         let result = rotate_point(point, origin, thetha);
-    
+
         assert!((result.x).abs() < EPSILON);
         assert!((result.y - (-1.0)).abs() < EPSILON);
     }

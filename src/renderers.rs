@@ -48,12 +48,12 @@ pub async fn debug_renderer(texture_manager: &TextureManager, to_draw: &[Box<dyn
 
     clear_background(BLACK);
     next_frame().await;
-    sleep(sleep_duration);
+    sleep(sleep_duration*5);
 
     draw_bg(screen);
     next_frame().await;
     println!("Drawing background");
-    sleep(sleep_duration);
+    sleep(sleep_duration*5);
     for i in 0..draw_in_order.len() {
         draw_bg(screen);
         draw_in_order
@@ -67,4 +67,6 @@ pub async fn debug_renderer(texture_manager: &TextureManager, to_draw: &[Box<dyn
             return;
         }
     }
+
+    println!("Drew {} images", to_draw.len());
 }

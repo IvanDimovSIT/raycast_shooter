@@ -1,4 +1,4 @@
-use macroquad::input::is_key_down;
+use macroquad::input::{get_keys_down, KeyCode};
 
 #[derive(Debug)]
 pub enum Operation {
@@ -9,20 +9,14 @@ pub enum Operation {
 }
 
 pub fn get_input(_screen_size: (f32, f32)) -> Vec<Operation> {
-    let mut input = vec![];
-
-    if is_key_down(macroquad::input::KeyCode::A) || is_key_down(macroquad::input::KeyCode::Left) {
-        input.push(Operation::Left);
-    }
-    if is_key_down(macroquad::input::KeyCode::D) || is_key_down(macroquad::input::KeyCode::Right) {
-        input.push(Operation::Right);
-    }
-    if is_key_down(macroquad::input::KeyCode::W) || is_key_down(macroquad::input::KeyCode::Up) {
-        input.push(Operation::Forward);
-    }
-    if is_key_down(macroquad::input::KeyCode::S) || is_key_down(macroquad::input::KeyCode::Down) {
-        input.push(Operation::Back);
-    }
-
-    input
+    get_keys_down()
+        .into_iter()
+        .filter_map(|key| match key {
+            KeyCode::A | KeyCode::Left => Some(Operation::Left),
+            KeyCode::D | KeyCode::Right => Some(Operation::Right),
+            KeyCode::W | KeyCode::Up => Some(Operation::Forward),
+            KeyCode::S | KeyCode::Down => Some(Operation::Back),
+            _ => None,
+        })
+        .collect()
 }

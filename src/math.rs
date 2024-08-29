@@ -1,9 +1,9 @@
 use macroquad::math::{vec2, Vec2};
 
-pub fn rotate_point(point: Vec2, origin: Vec2, thetha: f32) -> Vec2 {
+pub fn rotate_point(point: Vec2, origin: Vec2, theta: f32) -> Vec2 {
     let p = point - origin;
-    let x_rot = p.x * thetha.cos() - p.y * thetha.sin();
-    let y_rot = p.x * thetha.sin() + p.y * thetha.cos();
+    let x_rot = p.x * theta.cos() - p.y * theta.sin();
+    let y_rot = p.x * theta.sin() + p.y * theta.cos();
 
     vec2(x_rot, y_rot) + origin
 }

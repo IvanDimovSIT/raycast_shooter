@@ -8,7 +8,7 @@ use macroquad::{
 use rayon::iter::{ParallelBridge, ParallelIterator};
 
 use crate::{
-    constants::{FOV, HORIZONTAL_WALL_SEGEMENTS, VIEW_DISTANCE},
+    constants::{FOV, HORIZONTAL_WALL_SEGEMENTS, MIN_BRIGHTNESS, VIEW_DISTANCE},
     math::find_intersection,
     model::{Player, Texture, Wall},
     texture_manager::TextureManager,
@@ -28,22 +28,14 @@ impl Camera {
     }
 }
 
-//pub struct Drawable {//
-//    pub z_index: f32,
-//    pub draw: Box<dyn Fn((f32, f32), Rc<TextureManager>)>
-//}
-//impl Debug for Drawable {
-//    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//        f.debug_struct("Drawable").field("z_index", &self.z_index).finish()
-//    }
-//}
 pub trait Drawable: Send + Sync {
     fn get_z_index(&self) -> f32;
     fn draw(&self, screen_size: (f32, f32), texture_manager: &TextureManager);
 }
+
 struct WallDrawable {
     distance: f32,
-    angle: f32,
+    brightness: f32,
     x: usize,
     texture: Texture,
     relative_position: f32,
@@ -59,7 +51,7 @@ impl Drawable for WallDrawable {
             texture_manager,
             self.x,
             self.distance,
-            self.angle,
+            self.brightness,
             self.texture,
             self.relative_position,
         );
@@ -71,7 +63,6 @@ struct RayHit {
     distance_to_ray: f32,
     texture: Texture,
     relative_position: f32, // 0.0 start of wall, 1.0 end of wall
-    angle: f32,
 }
 
 fn create_rays(look: Vec2) -> Vec<Vec2> {
@@ -96,45 +87,20 @@ fn calculate_relative_position(hit: Vec2, wall_start: Vec2, wall_end: Vec2) -> f
     hit_distance / wall_length
 }
 
-fn calculate_normal_angle(
-    ray_direction: Vec2,
-    ray_origin: Vec2,
-    wall_start: Vec2,
-    wall_end: Vec2,
-) -> f32 {
-    let wall_dir = wall_end - wall_start;
-    let wall_normal = vec2(-wall_dir.y, wall_dir.x).normalize();
-    let dot_product = (ray_direction - ray_origin)
-        .normalize_or_zero()
-        .dot(wall_normal);
-    let clamped_dot = dot_product.clamp(-1.0, 1.0);
-
-    clamped_dot.acos()
-}
-
 fn cast_ray(ray_origin: Vec2, ray_direction: Vec2, walls: &[Wall]) -> Option<RayHit> {
-    let intesections: Vec<_> = walls
+    walls
         .iter()
-        .map(|wall| {
-            (
+        .filter_map(|wall| {
+            Some((
                 wall,
-                find_intersection(ray_origin, ray_direction, wall.start, wall.end),
-            )
+                find_intersection(ray_origin, ray_direction, wall.start, wall.end)?,
+            ))
         })
-        .filter_map(|(wall, point)| {
-            let hit = point?;
-
-            Some(RayHit {
-                distance_to_ray: hit.distance(ray_origin),
-                texture: wall.texture,
-                relative_position: calculate_relative_position(hit, wall.start, wall.end),
-                angle: calculate_normal_angle(ray_direction, ray_origin, wall.start, wall.end),
-            })
+        .map(|(wall, point)| RayHit {
+            distance_to_ray: point.distance(ray_origin),
+            texture: wall.texture,
+            relative_position: calculate_relative_position(point, wall.start, wall.end),
         })
-        .collect();
-
-    intesections
-        .into_iter()
         .min_by(|a, b| a.distance_to_ray.total_cmp(&b.distance_to_ray))
 }
 
@@ -143,7 +109,7 @@ fn draw_wall(
     texture_manager: &TextureManager,
     x: usize,
     distance: f32,
-    angle: f32,
+    brightness: f32,
     texture: Texture,
     relative_position: f32,
 ) {
@@ -151,9 +117,7 @@ fn draw_wall(
     let width = 1.0 / HORIZONTAL_WALL_SEGEMENTS as f32;
     let center_x = x as f32 / HORIZONTAL_WALL_SEGEMENTS as f32 + width / 2.0;
     let center_y = 0.5;
-    let half_pi = PI / 2.0;
 
-    let brightness = ((angle - half_pi).abs() / PI).sqrt().clamp(0.3, 1.0);
     let texture_2d = texture_manager.get_texture(texture);
     let x = center_x - width / 2.0;
     let y = center_y - height / 2.0;
@@ -191,13 +155,15 @@ pub fn draw_walls(camera: &Camera, walls: &[Wall]) -> Vec<Box<dyn Drawable>> {
             let hit = cast_ray(camera.position, *ray, walls)?;
 
             let distance = hit.distance_to_ray;
-            let angle = hit.angle;
+            let brightness = (1.0 / distance.max(0.001))
+                .sqrt()
+                .clamp(MIN_BRIGHTNESS, 1.0);
             let texture = hit.texture;
             let relative_position = hit.relative_position;
 
             let drawable = WallDrawable {
                 distance,
-                angle,
+                brightness,
                 x,
                 texture,
                 relative_position,

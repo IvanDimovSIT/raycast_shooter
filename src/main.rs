@@ -31,18 +31,18 @@ async fn main() {
     let walls = vec![
         Wall {
             texture: Texture::Stone,
-            start: vec2(0.6, 8.0),
-            end: vec2(0.6, 14.0),
+            start: vec2(-1.0, -4.0),
+            end: vec2(-1.0, 4.0),
         },
         Wall {
             texture: Texture::Stone,
-            start: vec2(-0.5, 2.0),
-            end: vec2(0.6, 8.0),
+            start: vec2(1.0, -4.0),
+            end: vec2(1.0, 6.0),
         },
         Wall {
             texture: Texture::Stone,
-            start: vec2(-0.5, 2.0),
-            end: vec2(-0.5, -4.0),
+            start: vec2(1.0, 6.0),
+            end: vec2(-4.0, 6.0),
         },
     ];
 

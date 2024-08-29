@@ -29,25 +29,25 @@ fn handle_right(player: Player, delta: f32) -> Player {
     }
 }
 
-fn handle_forward(game_objects: &GameObjects, delta: f32) -> Player {
+fn handle_forward(game_objects: &GameObjects, player: Player, delta: f32) -> Player {
     Player {
         entity: move_entity(
-            game_objects.player.entity,
-            game_objects.player.look * delta * MOVE_SPEED,
+            player.entity,
+            player.look * delta * MOVE_SPEED,
             game_objects.walls,
         ),
-        look: game_objects.player.look,
+        look: player.look,
     }
 }
 
-fn handle_back(game_objects: &GameObjects, delta: f32) -> Player {
+fn handle_back(game_objects: &GameObjects, player: Player, delta: f32) -> Player {
     Player {
         entity: move_entity(
-            game_objects.player.entity,
-            -game_objects.player.look * delta * MOVE_SPEED,
+            player.entity,
+            -player.look * delta * MOVE_SPEED,
             game_objects.walls,
         ),
-        look: game_objects.player.look,
+        look: player.look,
     }
 }
 
@@ -57,7 +57,7 @@ pub fn handle_input(game_objects: GameObjects, operations: &[Operation], delta: 
         .fold(*game_objects.player, |pl, op| match op {
             Operation::Left => handle_left(pl, delta),
             Operation::Right => handle_right(pl, delta),
-            Operation::Forward => handle_forward(&game_objects, delta),
-            Operation::Back => handle_back(&game_objects, delta),
+            Operation::Forward => handle_forward(&game_objects, pl, delta),
+            Operation::Back => handle_back(&game_objects, pl, delta),
         })
 }

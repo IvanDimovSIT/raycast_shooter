@@ -1,6 +1,6 @@
 use std::{collections::HashMap, fs::read};
 
-use macroquad::texture::Texture2D;
+use macroquad::texture::{FilterMode, Texture2D};
 
 use crate::model::Texture;
 
@@ -27,12 +27,14 @@ impl TextureManager {
     fn load_texture(textures: &mut HashMap<Texture, Texture2D>, texture: Texture, path: &str) {
         let result = read(path);
         if result.is_err() {
-            println!("Error loading file '{}': {}", path, result.err().unwrap());
+            println!("Error loading file '{path}': {}", result.err().unwrap());
             return;
         }
         let bytes = result.unwrap();
 
-        textures.insert(texture, Texture2D::from_file_with_format(&bytes, None));
+        let texture_2d = Texture2D::from_file_with_format(&bytes, None);
+        texture_2d.set_filter(FilterMode::Nearest);
+        textures.insert(texture, texture_2d);
     }
 
     pub fn load() -> Self {

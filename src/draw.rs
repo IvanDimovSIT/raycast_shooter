@@ -8,7 +8,7 @@ use macroquad::{
 use rayon::iter::{ParallelBridge, ParallelIterator};
 
 use crate::{
-    constants::{FOV, HORIZONTAL_WALL_SEGEMENTS, MIN_BRIGHTNESS, VIEW_DISTANCE},
+    constants::{FOV, HORIZONTAL_WALL_SEGEMENTS, MIN_BRIGHTNESS, VIEW_DISTANCE, WALL_RESOLUTION},
     math::find_intersection,
     model::{Entity, Player, Texture, Wall},
     texture_manager::TextureManager,
@@ -160,10 +160,10 @@ fn create_rays(look: Vec2) -> Vec<Vec2> {
         .collect()
 }
 
-fn calculate_relative_position(hit: Vec2, wall_start: Vec2, wall_end: Vec2) -> f32 {
-    let wall_length = wall_start.distance(wall_end);
+fn calculate_relative_position(hit: Vec2, wall_start: Vec2) -> f32 {
     let hit_distance = wall_start.distance(hit);
-    hit_distance / wall_length
+
+    ((hit_distance * WALL_RESOLUTION) as u64 % WALL_RESOLUTION as u64) as f32 / WALL_RESOLUTION
 }
 
 fn cast_ray(ray_origin: Vec2, ray_direction: Vec2, walls: &[Wall]) -> Option<RayHit> {
@@ -178,7 +178,7 @@ fn cast_ray(ray_origin: Vec2, ray_direction: Vec2, walls: &[Wall]) -> Option<Ray
         .map(|(wall, point)| RayHit {
             distance_to_ray: point.distance(ray_origin),
             texture: wall.texture,
-            relative_position: calculate_relative_position(point, wall.start, wall.end),
+            relative_position: calculate_relative_position(point, wall.start),
         })
         .min_by(|a, b| a.distance_to_ray.total_cmp(&b.distance_to_ray))
 }

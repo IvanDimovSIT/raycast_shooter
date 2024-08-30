@@ -5,6 +5,7 @@ use macroquad::{color::Color, color_u8, input::KeyCode};
 pub const HORIZONTAL_WALL_SEGEMENTS: u32 = 150;
 pub const FOV: f32 = PI / 4.0;
 pub const VIEW_DISTANCE: f32 = 1000.0;
+pub const WALL_RESOLUTION: f32 = 10000.0;
 
 pub const TURN_SPEED: f32 = 1.0;
 pub const MOVE_SPEED: f32 = 1.0;

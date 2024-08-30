@@ -19,3 +19,7 @@ pub const DEBUG_DRAW_DELAY_MS: u64 = 50;
 pub const DEBUG_INITAL_DRAW_DELAY_MS: u64 = 500;
 pub const ENTER_DEBUG_MODE_KEY: KeyCode = KeyCode::GraveAccent;
 pub const EXIT_DEBUG_MODE_KEY: KeyCode = KeyCode::Escape;
+
+pub const KEY_ANIMATION_SPEED_MOVEMENT: u128 = 3000;
+pub const KEY_ANIMATION_SPEED_TEXTURES: u128 = 800;
+pub const KEY_DRAW_SIZE_MOD: f32 = 0.5;

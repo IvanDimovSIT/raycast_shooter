@@ -6,6 +6,8 @@ pub enum Operation {
     Right,
     Forward,
     Back,
+    StrafeLeft,
+    StrafeRight,
 }
 
 pub fn get_input(_screen_size: (f32, f32)) -> Vec<Operation> {
@@ -16,6 +18,8 @@ pub fn get_input(_screen_size: (f32, f32)) -> Vec<Operation> {
             KeyCode::D | KeyCode::Right => Some(Operation::Right),
             KeyCode::W | KeyCode::Up => Some(Operation::Forward),
             KeyCode::S | KeyCode::Down => Some(Operation::Back),
+            KeyCode::Q => Some(Operation::StrafeLeft),
+            KeyCode::E => Some(Operation::StrafeRight),
             _ => None,
         })
         .collect()

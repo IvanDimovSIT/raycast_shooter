@@ -1,8 +1,8 @@
 use macroquad::math::Vec2;
 
 use crate::{
-    math::line_intersects_circle,
-    model::{Entity, Wall},
+    math::{check_circles_collide, line_intersects_circle},
+    model::{key_object::KeyObject, Entity, GameEvent, Player, Wall},
 };
 
 pub fn move_entity(entity: Entity, movement: Vec2, walls: &[Wall]) -> Entity {
@@ -20,6 +20,23 @@ pub fn move_entity(entity: Entity, movement: Vec2, walls: &[Wall]) -> Entity {
             size: entity.size,
         }
     }
+}
+
+pub fn check_pickup_key(player: &Player, keys: &[KeyObject]) -> Vec<GameEvent> {
+    keys.iter()
+        .filter_map(|key| {
+            if check_circles_collide(
+                key.entity.position,
+                key.entity.size,
+                player.entity.position,
+                player.entity.size,
+            ) {
+                Some(GameEvent::PickUpKey(key.id))
+            } else {
+                None
+            }
+        })
+        .collect()
 }
 
 #[cfg(test)]

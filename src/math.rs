@@ -53,6 +53,14 @@ pub fn line_intersects_circle(start: Vec2, end: Vec2, center: Vec2, radius: f32)
     }
 }
 
+pub fn check_circles_collide(center1: Vec2, radius1: f32, center2: Vec2, radius2: f32) -> bool {
+    center1.distance(center2) <= radius1 + radius2
+}
+
+pub fn find_perpendicular_vector(v: Vec2) -> Vec2 {
+    vec2(-v.y, v.x)
+}
+
 #[cfg(test)]
 mod tests {
     use std::f32::{consts::PI, EPSILON};
@@ -97,5 +105,22 @@ mod tests {
 
         let center2 = vec2(0.0, 0.8);
         assert!(line_intersects_circle(start, end, center2, r));
+    }
+
+    #[test]
+    fn test_check_circles_collide() {
+        let c1 = vec2(0.0, 0.0);
+        let r1 = 1.0;
+
+        let c2 = vec2(1.5, 0.7);
+        let r2 = 1.0;
+
+        assert!(check_circles_collide(c1, r1, c2, r2));
+
+        let c3 = vec2(1.9, 0.9);
+        let r3 = 1.0;
+
+
+        assert!(!check_circles_collide(c1, r1, c3, r3));
     }
 }

@@ -33,7 +33,7 @@ impl TextureManager {
         let bytes = result.unwrap();
 
         let texture_2d = Texture2D::from_file_with_format(&bytes, None);
-        texture_2d.set_filter(FilterMode::Nearest);
+        texture_2d.set_filter(FilterMode::Linear);
         textures.insert(texture, texture_2d);
     }
 
@@ -42,6 +42,8 @@ impl TextureManager {
 
         textures.insert(Texture::Debug, Self::create_default_texture());
         Self::load_texture(&mut textures, Texture::Stone, "assets/stone.png");
+        Self::load_texture(&mut textures, Texture::Key1, "assets/key1.png");
+        Self::load_texture(&mut textures, Texture::Key2, "assets/key2.png");
         Self { textures }
     }
 

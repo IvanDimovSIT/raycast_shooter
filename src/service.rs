@@ -21,7 +21,7 @@ pub fn move_player(player_entity: Entity, movement: Vec2, walls: &[Wall]) -> Ent
     } else {
         Entity {
             position: new_pos,
-            size: player_entity.size,
+            ..player_entity
         }
     }
 }
@@ -74,9 +74,7 @@ fn move_enemy_to_sides(
     if is_enemy_intersecting_walls(&new_entity, walls).is_none() {
         Enemy {
             entity: new_entity,
-            id: enemy.id,
-            hp: enemy.hp,
-            textures: enemy.textures,
+            ..enemy
         }
     } else {
         enemy
@@ -99,10 +97,8 @@ fn move_enemy(player: &Player, enemy: Enemy, walls: &[Wall], delta: f32) -> Enem
     let intersection = is_enemy_intersecting_walls(&new_entity, walls);
     if intersection.is_none() {
         return Enemy {
-            id: enemy.id,
             entity: new_entity,
-            hp: enemy.hp,
-            textures: enemy.textures,
+            ..enemy
         };
     }
     let hit_wall = intersection.unwrap();
@@ -167,7 +163,7 @@ fn find_shot_enemy<'a>(
     Some(hit_enemy?.0)
 }
 
-pub fn check_shoot_enemies(
+pub fn shoot_enemies(
     player: &Player,
     info: &PlayerInfo,
     enemies: Vec<Enemy>,
@@ -190,10 +186,8 @@ pub fn check_shoot_enemies(
         .map(|enemy| {
             if enemy.id == shot_enemy_id {
                 Enemy {
-                    entity: enemy.entity,
-                    id: enemy.id,
                     hp: enemy.hp - damage,
-                    textures: enemy.textures,
+                    ..enemy
                 }
             } else {
                 enemy

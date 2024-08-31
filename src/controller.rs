@@ -6,22 +6,22 @@ use crate::{
     input::Operation,
     math::{find_perpendicular_vector, rotate_point},
     model::{GameEvent, GameObjects, Player, PlayerInfo},
-    service::{check_pickup_key, check_shoot_enemies, move_enemies_towards_player, move_player},
+    service::{check_pickup_key, shoot_enemies, move_enemies_towards_player, move_player},
 };
 
 fn handle_left(player: Player, delta: f32) -> Player {
     let look = rotate_point(player.look, vec2(0.0, 0.0), TURN_SPEED * delta);
     Player {
-        entity: player.entity,
         look,
+        ..player
     }
 }
 
 fn handle_right(player: Player, delta: f32) -> Player {
     let look = rotate_point(player.look, vec2(0.0, 0.0), -TURN_SPEED * delta);
     Player {
-        entity: player.entity,
         look,
+        ..player
     }
 }
 
@@ -32,7 +32,7 @@ fn handle_forward(game_objects: &GameObjects, player: Player, delta: f32) -> Pla
             player.look * delta * MOVE_SPEED,
             &game_objects.walls,
         ),
-        look: player.look,
+        ..player
     }
 }
 
@@ -43,7 +43,7 @@ fn handle_back(game_objects: &GameObjects, player: Player, delta: f32) -> Player
             -player.look * delta * MOVE_SPEED,
             &game_objects.walls,
         ),
-        look: player.look,
+        ..player
     }
 }
 
@@ -54,7 +54,7 @@ fn handle_strafe_left(game_objects: &GameObjects, player: Player, delta: f32) ->
             find_perpendicular_vector(player.look) * delta * MOVE_SPEED,
             &game_objects.walls,
         ),
-        look: player.look,
+        ..player
     }
 }
 
@@ -65,21 +65,21 @@ fn handle_strafe_right(game_objects: &GameObjects, player: Player, delta: f32) -
             -find_perpendicular_vector(player.look) * delta * MOVE_SPEED,
             &game_objects.walls,
         ),
-        look: player.look,
+        ..player
     }
 }
 
 fn handle_start_shooting(player_info: &PlayerInfo) -> PlayerInfo {
     PlayerInfo {
         is_shooting: true,
-        health: player_info.health,
+        ..player_info.clone()
     }
 }
 
 fn handle_stop_shooting(player_info: &PlayerInfo) -> PlayerInfo {
     PlayerInfo {
         is_shooting: false,
-        health: player_info.health,
+        ..player_info.clone()
     }
 }
 
@@ -108,7 +108,7 @@ fn handle_pickup_key(game_objects: &mut GameObjects, key_id: &Uuid) {
     println!("Picked up key:{}", key_id);
 }
 
-fn handle_enenmy_killed(poition: Vec2) {
+fn handle_enemy_killed(poition: Vec2) {
     println!("Enemy killed at:{}", poition);
 }
 
@@ -116,7 +116,7 @@ fn handle_events(game_objects: &mut GameObjects, events: &[GameEvent]) {
     for e in events {
         match e {
             GameEvent::PickUpKey(key_id) => handle_pickup_key(game_objects, key_id),
-            GameEvent::EnemyKilled { position } => handle_enenmy_killed(*position),
+            GameEvent::EnemyKilled { position } => handle_enemy_killed(*position),
         }
     }
 }
@@ -129,7 +129,7 @@ pub fn next_game_step(mut game_objects: GameObjects, delta: f32) -> GameObjects 
         delta,
     );
     let kill_enemies_events;
-    (game_objects.enemies, kill_enemies_events) = check_shoot_enemies(
+    (game_objects.enemies, kill_enemies_events) = shoot_enemies(
         &game_objects.player,
         &game_objects.player_info,
         game_objects.enemies,

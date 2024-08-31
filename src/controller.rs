@@ -5,7 +5,7 @@ use crate::{
     constants::{MOVE_SPEED, TURN_SPEED},
     input::Operation,
     math::{find_perpendicular_vector, rotate_point},
-    model::{GameEvent, GameObjects, Player},
+    model::{GameEvent, GameObjects, Player, PlayerInfo},
     service::move_entity,
 };
 
@@ -69,17 +69,38 @@ fn handle_strafe_right(game_objects: &GameObjects, player: Player, delta: f32) -
     }
 }
 
-pub fn handle_input(game_objects: &GameObjects, operations: &[Operation], delta: f32) -> Player {
-    operations
-        .iter()
-        .fold(game_objects.player, |pl, op| match op {
-            Operation::Left => handle_left(pl, delta),
-            Operation::Right => handle_right(pl, delta),
-            Operation::Forward => handle_forward(&game_objects, pl, delta),
-            Operation::Back => handle_back(&game_objects, pl, delta),
-            Operation::StrafeLeft => handle_strafe_left(&game_objects, pl, delta),
-            Operation::StrafeRight => handle_strafe_right(&game_objects, pl, delta),
-        })
+fn handle_start_shooting(player_info: &PlayerInfo) -> PlayerInfo {
+    PlayerInfo {
+        is_shooting: true,
+        health: player_info.health,
+    }
+}
+
+fn handle_stop_shooting(player_info: &PlayerInfo) -> PlayerInfo {
+    PlayerInfo {
+        is_shooting: false,
+        health: player_info.health,
+    }
+}
+
+pub fn handle_input(
+    game_objects: &GameObjects,
+    operations: &[Operation],
+    delta: f32,
+) -> (Player, PlayerInfo) {
+    operations.iter().fold(
+        (game_objects.player, game_objects.player_info.clone()),
+        |(pl, info), op| match op {
+            Operation::Left => (handle_left(pl, delta), info),
+            Operation::Right => (handle_right(pl, delta), info),
+            Operation::Forward => (handle_forward(&game_objects, pl, delta), info),
+            Operation::Back => (handle_back(&game_objects, pl, delta), info),
+            Operation::StrafeLeft => (handle_strafe_left(&game_objects, pl, delta), info),
+            Operation::StrafeRight => (handle_strafe_right(&game_objects, pl, delta), info),
+            Operation::StartShooting => (pl, handle_start_shooting(&info)),
+            Operation::StopShooting => (pl, handle_stop_shooting(&info)),
+        },
+    )
 }
 
 fn handle_pickup_key(game_objects: &mut GameObjects, key_id: &Uuid) {

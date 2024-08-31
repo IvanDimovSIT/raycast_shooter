@@ -12,6 +12,16 @@ pub enum Texture {
     Stone,
     Key1,
     Key2,
+    Gun1,
+    Gun2,
+    Gun3,
+    Gun4,
+    Gun5,
+    Gun6,
+    Gun7,
+    Gun8,
+    Gun9,
+    Gun10,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -38,8 +48,23 @@ pub enum GameEvent {
     PickUpKey(Uuid),
 }
 
+#[derive(Debug, Clone)]
+pub struct PlayerInfo {
+    pub is_shooting: bool,
+    pub health: f32,
+}
+impl Default for PlayerInfo {
+    fn default() -> Self {
+        Self {
+            is_shooting: false,
+            health: 100.0,
+        }
+    }
+}
+
 pub struct GameObjects {
     pub player: Player,
+    pub player_info: PlayerInfo,
     pub walls: Vec<Wall>,
     pub keys: Vec<KeyObject>,
 }

@@ -1,5 +1,6 @@
-use std::time::Duration;
+use std::{iter::once, time::Duration};
 
+use gun::draw_gun;
 use macroquad::{
     color::Color,
     math::{vec2, Rect, Vec2},
@@ -16,6 +17,7 @@ use crate::{
     texture_manager::TextureManager,
 };
 
+pub mod gun;
 pub mod sprite_2d;
 pub mod wall;
 
@@ -57,5 +59,12 @@ pub fn draw_game(game_objects: &GameObjects, time_from_start: &Duration) -> Vec<
 
     let sprites_to_draw = draw_sprites(&camera, time_from_start, &sprites);
 
-    walls_to_draw.into_iter().chain(sprites_to_draw).collect()
+    walls_to_draw
+        .into_iter()
+        .chain(sprites_to_draw)
+        .chain(once(draw_gun(
+            time_from_start,
+            game_objects.player_info.is_shooting,
+        )))
+        .collect()
 }

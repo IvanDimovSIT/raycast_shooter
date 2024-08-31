@@ -122,7 +122,7 @@ pub fn draw_sprites(
 ) -> Vec<Box<dyn Drawable>> {
     let camera_pos = camera.position;
     let camera_look = camera.look.normalize_or_zero();
-    
+
     sprites
         .iter()
         .filter_map(|sprite| sprite_to_drawable(time_ellapsed, camera_pos, camera_look, *sprite))

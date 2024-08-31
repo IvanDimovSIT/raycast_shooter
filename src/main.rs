@@ -4,7 +4,7 @@ use controller::{handle_events, handle_input};
 use draw::draw_game;
 use input::get_input;
 use macroquad::{math::vec2, miniquad::window::screen_size, time::get_frame_time};
-use model::{key_object::KeyObject, Entity, GameObjects, Player, Texture, Wall};
+use model::{key_object::KeyObject, Entity, GameObjects, Player, PlayerInfo, Texture, Wall};
 use renderers::render_drawables;
 use service::check_pickup_key;
 use texture_manager::TextureManager;
@@ -51,11 +51,13 @@ fn init_game() -> GameObjects {
         },
         vec![Texture::Key1, Texture::Key2],
     )];
+    let player_info = PlayerInfo::default();
 
     GameObjects {
         player,
         walls,
         keys,
+        player_info,
     }
 }
 
@@ -71,7 +73,9 @@ async fn main() {
 
         let input = get_input(screen_size());
 
-        game_objects.player = handle_input(&game_objects, &input, delta);
+        (game_objects.player, game_objects.player_info) =
+            handle_input(&game_objects, &input, delta);
+
         let events = check_pickup_key(&game_objects.player, &game_objects.keys);
         handle_events(&mut game_objects, &events);
 

@@ -35,7 +35,7 @@ fn sort_drawables(to_draw: &[Box<dyn Drawable>]) -> Vec<&Box<dyn Drawable>> {
 async fn default_renderer(
     texture_manager: &TextureManager,
     screen: (f32, f32),
-    draw_in_order: &Vec<&Box<dyn Drawable>>,
+    draw_in_order: &[&Box<dyn Drawable>],
 ) {
     draw_bg(screen);
     for d in draw_in_order {
@@ -47,7 +47,7 @@ async fn default_renderer(
 async fn debug_renderer(
     texture_manager: &TextureManager,
     screen: (f32, f32),
-    draw_in_order: &Vec<&Box<dyn Drawable>>,
+    draw_in_order: &[&Box<dyn Drawable>],
 ) {
     let initial_delay = Duration::from_millis(DEBUG_INITAL_DRAW_DELAY_MS);
     let sleep_duration = Duration::from_millis(DEBUG_DRAW_DELAY_MS);

@@ -120,7 +120,6 @@ mod tests {
         let c3 = vec2(1.9, 0.9);
         let r3 = 1.0;
 
-
         assert!(!check_circles_collide(c1, r1, c3, r3));
     }
 }

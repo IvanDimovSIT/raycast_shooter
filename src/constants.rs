@@ -1,6 +1,11 @@
 use std::f32::consts::PI;
 
-use macroquad::{color::Color, color_u8, input::KeyCode};
+use macroquad::{
+    color::Color,
+    color_u8,
+    input::KeyCode,
+    math::{vec2, Vec2},
+};
 
 pub const HORIZONTAL_WALL_SEGEMENTS: u32 = 150;
 pub const FOV: f32 = PI / 4.0;
@@ -23,3 +28,8 @@ pub const EXIT_DEBUG_MODE_KEY: KeyCode = KeyCode::Escape;
 pub const KEY_ANIMATION_SPEED_MOVEMENT: u128 = 3000;
 pub const KEY_ANIMATION_SPEED_TEXTURES: u128 = 800;
 pub const KEY_DRAW_SIZE_MOD: f32 = 0.5;
+
+pub const GUN_FIRE_ANIMATION_SPEED: u128 = 80;
+pub const GUN_POSITION: Vec2 = vec2(0.6, 0.6);
+pub const GUN_ROTATION: f32 = 0.5;
+pub const GUN_SIZE: f32 = 0.7;

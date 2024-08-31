@@ -1,6 +1,6 @@
-use macroquad::input::{get_keys_down, KeyCode};
+use macroquad::input::{get_keys_down, get_keys_pressed, get_keys_released, KeyCode};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Operation {
     Left,
     Right,
@@ -8,9 +8,21 @@ pub enum Operation {
     Back,
     StrafeLeft,
     StrafeRight,
+    StartShooting,
+    StopShooting,
 }
 
 pub fn get_input(_screen_size: (f32, f32)) -> Vec<Operation> {
+    let pressed = get_keys_pressed().into_iter().filter_map(|key| match key {
+        KeyCode::Space => Some(Operation::StartShooting),
+        _ => None,
+    });
+
+    let released = get_keys_released().into_iter().filter_map(|key| match key {
+        KeyCode::Space => Some(Operation::StopShooting),
+        _ => None,
+    });
+
     get_keys_down()
         .into_iter()
         .filter_map(|key| match key {
@@ -22,5 +34,7 @@ pub fn get_input(_screen_size: (f32, f32)) -> Vec<Operation> {
             KeyCode::E => Some(Operation::StrafeRight),
             _ => None,
         })
+        .chain(pressed)
+        .chain(released)
         .collect()
 }

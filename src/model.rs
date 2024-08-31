@@ -1,4 +1,4 @@
-use std::{f32::consts::PI, fmt::Debug, time::Duration};
+use std::{fmt::Debug, time::Duration};
 
 use enemy::Enemy;
 use key_object::KeyObject;
@@ -22,8 +22,6 @@ pub enum Texture {
     Gun6,
     Gun7,
     Gun8,
-    Gun9,
-    Gun10,
     Enemy1,
     Enemy2,
     Enemy3,
@@ -56,6 +54,7 @@ pub struct Wall {
 #[derive(Debug, Clone, Copy)]
 pub enum GameEvent {
     PickUpKey(Uuid),
+    EnemyKilled { position: Vec2 },
 }
 
 #[derive(Debug, Clone)]

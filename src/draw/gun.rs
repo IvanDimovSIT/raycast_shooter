@@ -50,8 +50,6 @@ pub fn draw_gun(time_ellapsed: &Duration, is_shooting: bool) -> Box<dyn Drawable
             Texture::Gun6,
             Texture::Gun7,
             Texture::Gun8,
-            Texture::Gun9,
-            Texture::Gun10,
         ];
         shooting_textures[(time_ellapsed.as_millis() / GUN_FIRE_ANIMATION_SPEED) as usize
             % shooting_textures.len()]

@@ -24,7 +24,12 @@ impl TextureManager {
         Texture2D::from_rgba8(width, height, &pixels)
     }
 
-    fn load_texture(textures: &mut HashMap<Texture, Texture2D>, texture: Texture, path: &str) {
+    fn load_texture_with_filter(
+        textures: &mut HashMap<Texture, Texture2D>,
+        texture: Texture,
+        path: &str,
+        filter_mode: FilterMode,
+    ) {
         let result = read(path);
         if result.is_err() {
             println!("Error loading file '{path}': {}", result.err().unwrap());
@@ -33,29 +38,36 @@ impl TextureManager {
         let bytes = result.unwrap();
 
         let texture_2d = Texture2D::from_file_with_format(&bytes, None);
-        texture_2d.set_filter(FilterMode::Linear);
+        texture_2d.set_filter(filter_mode);
         textures.insert(texture, texture_2d);
+    }
+
+    fn load_texture(textures: &mut HashMap<Texture, Texture2D>, texture: Texture, path: &str) {
+        Self::load_texture_with_filter(textures, texture, path, FilterMode::Nearest);
     }
 
     pub fn load() -> Self {
         let mut textures = HashMap::new();
 
         textures.insert(Texture::Debug, Self::create_default_texture());
-        Self::load_texture(&mut textures, Texture::Stone, "assets/stone.png");
+        Self::load_texture_with_filter(
+            &mut textures,
+            Texture::Stone,
+            "assets/stone.png",
+            FilterMode::Linear,
+        );
 
         Self::load_texture(&mut textures, Texture::Key1, "assets/key1.png");
         Self::load_texture(&mut textures, Texture::Key2, "assets/key2.png");
 
         Self::load_texture(&mut textures, Texture::Gun1, "assets/gun/FAMAS_00.png");
-        Self::load_texture(&mut textures, Texture::Gun2, "assets/gun/FAMAS_01.png");
-        Self::load_texture(&mut textures, Texture::Gun3, "assets/gun/FAMAS_02.png");
-        Self::load_texture(&mut textures, Texture::Gun4, "assets/gun/FAMAS_03.png");
-        Self::load_texture(&mut textures, Texture::Gun5, "assets/gun/FAMAS_04.png");
-        Self::load_texture(&mut textures, Texture::Gun6, "assets/gun/FAMAS_05.png");
-        Self::load_texture(&mut textures, Texture::Gun7, "assets/gun/FAMAS_06.png");
-        Self::load_texture(&mut textures, Texture::Gun8, "assets/gun/FAMAS_07.png");
-        Self::load_texture(&mut textures, Texture::Gun9, "assets/gun/FAMAS_08.png");
-        Self::load_texture(&mut textures, Texture::Gun10, "assets/gun/FAMAS_09.png");
+        Self::load_texture(&mut textures, Texture::Gun2, "assets/gun/FAMAS_03.png");
+        Self::load_texture(&mut textures, Texture::Gun3, "assets/gun/FAMAS_04.png");
+        Self::load_texture(&mut textures, Texture::Gun4, "assets/gun/FAMAS_05.png");
+        Self::load_texture(&mut textures, Texture::Gun5, "assets/gun/FAMAS_06.png");
+        Self::load_texture(&mut textures, Texture::Gun6, "assets/gun/FAMAS_07.png");
+        Self::load_texture(&mut textures, Texture::Gun7, "assets/gun/FAMAS_08.png");
+        Self::load_texture(&mut textures, Texture::Gun8, "assets/gun/FAMAS_09.png");
 
         Self::load_texture(&mut textures, Texture::Enemy1, "assets/enemy/enemy1.png");
         Self::load_texture(&mut textures, Texture::Enemy2, "assets/enemy/enemy2.png");

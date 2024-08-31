@@ -28,7 +28,13 @@ impl Sprite2D for KeyObject {
     }
 
     fn get_vertical_offset(&self, time_ellapsed: &Duration) -> f32 {
-        calculate_vertical_offset(KEY_ANIMATION_SPEED_MOVEMENT, self.get_size(), 0.3, 0.05, time_ellapsed)
+        calculate_vertical_offset(
+            KEY_ANIMATION_SPEED_MOVEMENT,
+            self.get_size(),
+            0.3,
+            0.05,
+            time_ellapsed,
+        )
     }
 
     fn get_size(&self) -> f32 {

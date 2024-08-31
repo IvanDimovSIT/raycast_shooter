@@ -12,7 +12,7 @@ use wall::draw_walls;
 
 use crate::{
     constants::{FOV, HORIZONTAL_WALL_SEGEMENTS, MIN_BRIGHTNESS, VIEW_DISTANCE, WALL_RESOLUTION},
-    math::{find_intersection, find_perpendicular_vector},
+    math::find_intersection,
     model::{Entity, GameObjects, Player, Texture, Wall},
     texture_manager::TextureManager,
 };
@@ -68,7 +68,8 @@ pub fn calculate_vertical_offset(
     }
 
     ((time_from_start.as_millis() % speed) as f32 * TAU / speed as f32).sin() * amplitude
-        + base_offset - size * VERTICAL_OFFSET_COEF
+        + base_offset
+        - size * VERTICAL_OFFSET_COEF
 }
 
 pub fn draw_game(game_objects: &GameObjects, time_from_start: &Duration) -> Vec<Box<dyn Drawable>> {

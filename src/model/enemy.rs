@@ -19,7 +19,7 @@ pub struct Enemy {
 }
 impl Enemy {
     pub fn new(entity: Entity, hp: f32, textures: Vec<Texture>) -> Self {
-        assert!(textures.len() > 0);
+        assert!(!textures.is_empty());
         Self {
             id: Uuid::new_v4(),
             entity,

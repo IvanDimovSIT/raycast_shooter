@@ -35,7 +35,10 @@ pub const GUN_ROTATION: f32 = 0.5;
 pub const GUN_SIZE: f32 = 0.7;
 
 pub const ENEMY_ANIMATION_SPEED: u128 = 100;
-pub const ENEMY_DRAW_SIZE_MOD: f32 = 5.0;
+pub const ENEMY_DRAW_SIZE_MOD: f32 = 9.0;
 
 pub const ENEMY_MAX_CHASE_DISTANCE: f32 = 100.0;
 pub const ENEMY_MOVE_SPEED: f32 = 0.6;
+
+pub const GUN_DPS: f32 = 20.0;
+pub const MAX_SHOOT_DISTANCE: f32 = 100.0;

@@ -130,17 +130,16 @@ fn find_shot_enemy<'a>(
 ) -> Option<&'a Enemy> {
     let shoot_ray = player.look.normalize_or_zero() * MAX_SHOOT_DISTANCE;
 
-    //TODO: remove Vec2 from the map and just use dist
     let closest_hit_wall = walls
         .iter()
         .filter_map(|wall| {
             find_intersection(player.entity.position, shoot_ray, wall.start, wall.end)
         })
-        .map(|p| (p, p.distance(player.entity.position)))
-        .min_by(|a, b| a.1.total_cmp(&b.1));
+        .map(|p| p.distance(player.entity.position))
+        .min_by(|a, b| a.total_cmp(b));
 
     let max_distance = if let Some(some) = closest_hit_wall {
-        some.1
+        some
     } else {
         MAX_SHOOT_DISTANCE
     };

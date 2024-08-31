@@ -42,8 +42,10 @@ impl TextureManager {
 
         textures.insert(Texture::Debug, Self::create_default_texture());
         Self::load_texture(&mut textures, Texture::Stone, "assets/stone.png");
+
         Self::load_texture(&mut textures, Texture::Key1, "assets/key1.png");
         Self::load_texture(&mut textures, Texture::Key2, "assets/key2.png");
+
         Self::load_texture(&mut textures, Texture::Gun1, "assets/gun/FAMAS_00.png");
         Self::load_texture(&mut textures, Texture::Gun2, "assets/gun/FAMAS_01.png");
         Self::load_texture(&mut textures, Texture::Gun3, "assets/gun/FAMAS_02.png");
@@ -54,6 +56,15 @@ impl TextureManager {
         Self::load_texture(&mut textures, Texture::Gun8, "assets/gun/FAMAS_07.png");
         Self::load_texture(&mut textures, Texture::Gun9, "assets/gun/FAMAS_08.png");
         Self::load_texture(&mut textures, Texture::Gun10, "assets/gun/FAMAS_09.png");
+
+        Self::load_texture(&mut textures, Texture::Enemy1, "assets/enemy/enemy1.png");
+        Self::load_texture(&mut textures, Texture::Enemy2, "assets/enemy/enemy2.png");
+        Self::load_texture(&mut textures, Texture::Enemy3, "assets/enemy/enemy3.png");
+        Self::load_texture(&mut textures, Texture::Enemy4, "assets/enemy/enemy4.png");
+        Self::load_texture(&mut textures, Texture::Enemy5, "assets/enemy/enemy5.png");
+        Self::load_texture(&mut textures, Texture::Enemy6, "assets/enemy/enemy6.png");
+        Self::load_texture(&mut textures, Texture::Enemy7, "assets/enemy/enemy7.png");
+        Self::load_texture(&mut textures, Texture::Enemy8, "assets/enemy/enemy8.png");
 
         Self { textures }
     }

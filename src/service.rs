@@ -1,23 +1,23 @@
 use macroquad::math::Vec2;
+use rayon::iter::{IntoParallelIterator, IntoParallelRefIterator, ParallelIterator};
 
 use crate::{
-    math::{check_circles_collide, line_intersects_circle},
-    model::{key_object::KeyObject, Entity, GameEvent, Player, Wall},
+    constants::{ENEMY_MAX_CHASE_DISTANCE, ENEMY_MOVE_SPEED}, draw::sprite_2d::Sprite2D, math::{check_circles_collide, line_intersects_circle}, model::{enemy::Enemy, key_object::KeyObject, Entity, GameEvent, Player, Wall}
 };
 
-pub fn move_entity(entity: Entity, movement: Vec2, walls: &[Wall]) -> Entity {
-    let new_pos = entity.position + movement;
+pub fn move_player(player_entity: Entity, movement: Vec2, walls: &[Wall]) -> Entity {
+    let new_pos = player_entity.position + movement;
 
     let is_collision = walls
-        .iter()
-        .any(|wall| line_intersects_circle(wall.start, wall.end, new_pos, entity.size));
+        .par_iter()
+        .any(|wall| line_intersects_circle(wall.start, wall.end, new_pos, player_entity.size));
 
     if is_collision {
-        entity
+        player_entity
     } else {
         Entity {
             position: new_pos,
-            size: entity.size,
+            size: player_entity.size,
         }
     }
 }
@@ -36,6 +36,38 @@ pub fn check_pickup_key(player: &Player, keys: &[KeyObject]) -> Vec<GameEvent> {
                 None
             }
         })
+        .collect()
+}
+
+fn is_enemy_intersecting_walls(entity: &Entity, walls: &[Wall]) -> bool {
+    walls
+        .iter()
+        .any(|wall| line_intersects_circle(wall.start, wall.end, entity.position, entity.size))
+}
+
+
+fn move_enemy(player: &Player, enemy: Enemy, walls: &[Wall], delta: f32) -> Enemy {
+    let vector_towards_player = player.entity.position - enemy.entity.position;
+    if vector_towards_player.length() > ENEMY_MAX_CHASE_DISTANCE {
+        return enemy.clone();
+    };
+
+    let move_vector = vector_towards_player.normalize_or_zero() * ENEMY_MOVE_SPEED * delta;
+    let new_position = enemy.entity.position + move_vector;
+    let is_free_to_move = !is_enemy_intersecting_walls(&enemy.entity, walls);
+    if is_free_to_move {
+        return Enemy{ id: enemy.id, entity: Entity { position: new_position, size: enemy.entity.size }, hp: enemy.hp, textures: enemy.textures };
+    }
+
+    println!("Unimplemented pathfinding!");
+
+    enemy
+}
+
+pub fn move_enemies_towards_player(player: &Player, enemies: Vec<Enemy>, walls: &[Wall], delta: f32) -> Vec<Enemy> {
+    enemies
+        .into_par_iter()
+        .map(|enemy| move_enemy(player, enemy, walls, delta))
         .collect()
 }
 
@@ -60,11 +92,11 @@ mod tests {
             end: vec2(10.0, 1.5),
         }];
 
-        let moved1 = move_entity(entity, movement1, &walls);
+        let moved1 = move_player(entity, movement1, &walls);
         assert_eq!(moved1.position, entity.position);
 
         let movement2 = vec2(0.0, 0.1);
-        let moved2 = move_entity(entity, movement2, &walls);
+        let moved2 = move_player(entity, movement2, &walls);
 
         assert!(moved2.position.y > entity.position.y);
     }

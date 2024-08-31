@@ -1,9 +1,11 @@
 use std::{f32::consts::PI, fmt::Debug, time::Duration};
 
+use enemy::Enemy;
 use key_object::KeyObject;
 use macroquad::math::Vec2;
 use uuid::Uuid;
 
+pub mod enemy;
 pub mod key_object;
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
@@ -22,6 +24,14 @@ pub enum Texture {
     Gun8,
     Gun9,
     Gun10,
+    Enemy1,
+    Enemy2,
+    Enemy3,
+    Enemy4,
+    Enemy5,
+    Enemy6,
+    Enemy7,
+    Enemy8,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -66,5 +76,6 @@ pub struct GameObjects {
     pub player: Player,
     pub player_info: PlayerInfo,
     pub walls: Vec<Wall>,
+    pub enemies: Vec<Enemy>,
     pub keys: Vec<KeyObject>,
 }

@@ -1,6 +1,9 @@
 use uuid::Uuid;
 
-use crate::{constants::*, draw::sprite_2d::Sprite2D};
+use crate::{
+    constants::*,
+    draw::{calculate_vertical_offset, select_animation_texture, sprite_2d::Sprite2D},
+};
 
 use super::*;
 
@@ -25,11 +28,7 @@ impl Sprite2D for KeyObject {
     }
 
     fn get_vertical_offset(&self, time_ellapsed: &Duration) -> f32 {
-        ((time_ellapsed.as_millis() % KEY_ANIMATION_SPEED_MOVEMENT) as f32 * 2.0 * PI
-            / KEY_ANIMATION_SPEED_MOVEMENT as f32)
-            .sin()
-            * 0.05
-            + 0.3
+        calculate_vertical_offset(KEY_ANIMATION_SPEED_MOVEMENT, self.get_size(), 0.3, 0.05, time_ellapsed)
     }
 
     fn get_size(&self) -> f32 {
@@ -37,7 +36,6 @@ impl Sprite2D for KeyObject {
     }
 
     fn get_texture(&self, time_ellapsed: &Duration) -> Texture {
-        self.textures[(time_ellapsed.as_millis() / KEY_ANIMATION_SPEED_TEXTURES) as usize
-            % self.textures.len()]
+        select_animation_texture(&self.textures, KEY_ANIMATION_SPEED_TEXTURES, time_ellapsed)
     }
 }

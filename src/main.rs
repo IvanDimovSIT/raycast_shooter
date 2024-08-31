@@ -4,9 +4,11 @@ use controller::{handle_events, handle_input};
 use draw::draw_game;
 use input::get_input;
 use macroquad::{math::vec2, miniquad::window::screen_size, time::get_frame_time};
-use model::{key_object::KeyObject, Entity, GameObjects, Player, PlayerInfo, Texture, Wall};
+use model::{
+    enemy::Enemy, key_object::KeyObject, Entity, GameObjects, Player, PlayerInfo, Texture, Wall,
+};
 use renderers::render_drawables;
-use service::check_pickup_key;
+use service::{check_pickup_key, move_enemies_towards_player};
 use texture_manager::TextureManager;
 
 mod constants;
@@ -52,10 +54,28 @@ fn init_game() -> GameObjects {
         vec![Texture::Key1, Texture::Key2],
     )];
     let player_info = PlayerInfo::default();
+    let enemies = vec![Enemy::new(
+        Entity {
+            position: vec2(-0.2, 3.5),
+            size: 0.4,
+        },
+        10.0,
+        vec![
+            Texture::Enemy1,
+            Texture::Enemy2,
+            Texture::Enemy3,
+            Texture::Enemy4,
+            Texture::Enemy5,
+            Texture::Enemy6,
+            Texture::Enemy7,
+            Texture::Enemy8,
+        ],
+    )];
 
     GameObjects {
         player,
         walls,
+        enemies,
         keys,
         player_info,
     }
@@ -75,6 +95,8 @@ async fn main() {
 
         (game_objects.player, game_objects.player_info) =
             handle_input(&game_objects, &input, delta);
+
+        game_objects.enemies = move_enemies_towards_player(&game_objects.player, game_objects.enemies, &game_objects.walls, delta);
 
         let events = check_pickup_key(&game_objects.player, &game_objects.keys);
         handle_events(&mut game_objects, &events);

@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use super::*;
+use rayon::prelude::*;
 
 struct Sprite2dDrawable {
     texture: Texture,
@@ -56,7 +57,7 @@ impl Drawable for Sprite2dDrawable {
     }
 }
 
-pub trait Sprite2D {
+pub trait Sprite2D: Send + Sync {
     fn get_position(&self) -> Vec2;
     fn get_vertical_offset(&self, time_ellapsed: &Duration) -> f32;
     fn get_size(&self) -> f32;
@@ -91,19 +92,18 @@ fn sprite_to_drawable(
     sprite: &dyn Sprite2D,
 ) -> Option<Box<dyn Drawable>> {
     let v = sprite.get_position() - camera_pos;
-    let v_norm = v.normalize_or_zero();
-    let dot_p = v_norm.dot(camera_look);
+    let distance = v.length();
+    let sprite_size = sprite.get_size() / distance;
+    let half_sprite_size = sprite_size / 2.0;
 
-    let sprite_half_width = sprite.get_size() / 2.0;
-    if dot_p < (FOV / 2.0).cos() - sprite_half_width {
+    let angle = camera_look.angle_between(v);
+
+    if (angle.abs() - half_sprite_size) > FOV / 2.0 {
         return None;
     }
 
-    let distance = camera_pos.distance(sprite.get_position());
-    let camera_look_perp = find_perpendicular_vector(camera_look);
-    let cos_fov = (FOV / 2.0).cos();
-
-    let screen_x = 0.5 - (v.dot(camera_look_perp) / distance) / (dot_p * cos_fov);
+    let tan_half_fov = (FOV / 2.0).tan();
+    let screen_x = 0.5 - (angle.tan() / tan_half_fov) * 0.5 - half_sprite_size;
 
     Some(Box::new(Sprite2dDrawable {
         texture: sprite.get_texture(time_ellapsed),
@@ -111,7 +111,7 @@ fn sprite_to_drawable(
         z_index: distance,
         brightness: calculate_brightness(distance),
         vertical_offset: sprite.get_vertical_offset(time_ellapsed) * (1.0 / distance),
-        size: sprite.get_size() / distance,
+        size: sprite_size,
     }))
 }
 
@@ -124,7 +124,7 @@ pub fn draw_sprites(
     let camera_look = camera.look.normalize_or_zero();
 
     sprites
-        .iter()
+        .par_iter()
         .filter_map(|sprite| sprite_to_drawable(time_ellapsed, camera_pos, camera_look, *sprite))
         .collect()
 }

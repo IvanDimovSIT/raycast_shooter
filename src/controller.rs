@@ -6,7 +6,7 @@ use crate::{
     input::Operation,
     math::{find_perpendicular_vector, rotate_point},
     model::{GameEvent, GameObjects, Player, PlayerInfo},
-    service::move_entity,
+    service::move_player,
 };
 
 fn handle_left(player: Player, delta: f32) -> Player {
@@ -27,7 +27,7 @@ fn handle_right(player: Player, delta: f32) -> Player {
 
 fn handle_forward(game_objects: &GameObjects, player: Player, delta: f32) -> Player {
     Player {
-        entity: move_entity(
+        entity: move_player(
             player.entity,
             player.look * delta * MOVE_SPEED,
             &game_objects.walls,
@@ -38,7 +38,7 @@ fn handle_forward(game_objects: &GameObjects, player: Player, delta: f32) -> Pla
 
 fn handle_back(game_objects: &GameObjects, player: Player, delta: f32) -> Player {
     Player {
-        entity: move_entity(
+        entity: move_player(
             player.entity,
             -player.look * delta * MOVE_SPEED,
             &game_objects.walls,
@@ -49,7 +49,7 @@ fn handle_back(game_objects: &GameObjects, player: Player, delta: f32) -> Player
 
 fn handle_strafe_left(game_objects: &GameObjects, player: Player, delta: f32) -> Player {
     Player {
-        entity: move_entity(
+        entity: move_player(
             player.entity,
             find_perpendicular_vector(player.look) * delta * MOVE_SPEED,
             &game_objects.walls,
@@ -60,7 +60,7 @@ fn handle_strafe_left(game_objects: &GameObjects, player: Player, delta: f32) ->
 
 fn handle_strafe_right(game_objects: &GameObjects, player: Player, delta: f32) -> Player {
     Player {
-        entity: move_entity(
+        entity: move_player(
             player.entity,
             -find_perpendicular_vector(player.look) * delta * MOVE_SPEED,
             &game_objects.walls,

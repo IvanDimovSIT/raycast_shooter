@@ -36,7 +36,7 @@ impl Drawable for GunDrawable {
     }
 
     fn get_debug_info(&self) -> String {
-        format!("Gun{{texture{:?}}}", self.texture)
+        format!("Gun{{texture`:{:?}}}", self.texture)
     }
 }
 

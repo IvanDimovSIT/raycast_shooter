@@ -1,10 +1,12 @@
 use std::{fmt::Debug, time::Duration};
 
+use decoration::Decoration;
 use enemy::Enemy;
 use key_object::KeyObject;
 use macroquad::math::Vec2;
 use uuid::Uuid;
 
+pub mod decoration;
 pub mod enemy;
 pub mod key_object;
 
@@ -30,6 +32,27 @@ pub enum Texture {
     Enemy6,
     Enemy7,
     Enemy8,
+    Skull,
+    Explostion1,
+
+    Explostion2,
+
+    Explostion3,
+
+    Explostion4,
+
+    Explostion5,
+
+    Explostion6,
+
+    Explostion7,
+    Explostion8,
+    Explostion9,
+}
+impl Default for Texture {
+    fn default() -> Self {
+        Self::Debug
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -38,13 +61,13 @@ pub struct Entity {
     pub size: f32,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct Player {
     pub entity: Entity,
     pub look: Vec2,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct Wall {
     pub texture: Texture,
     pub start: Vec2,
@@ -55,6 +78,7 @@ pub struct Wall {
 pub enum GameEvent {
     PickUpKey(Uuid),
     EnemyKilled { position: Vec2 },
+    LocationShot { position: Vec2 },
 }
 
 #[derive(Debug, Clone)]
@@ -77,4 +101,5 @@ pub struct GameObjects {
     pub walls: Vec<Wall>,
     pub enemies: Vec<Enemy>,
     pub keys: Vec<KeyObject>,
+    pub decorations: Vec<Decoration>,
 }

@@ -70,6 +70,7 @@ fn init_game() -> GameObjects {
             Texture::Enemy8,
         ],
     )];
+    let decorations = vec![];
 
     GameObjects {
         player,
@@ -77,6 +78,7 @@ fn init_game() -> GameObjects {
         enemies,
         keys,
         player_info,
+        decorations,
     }
 }
 

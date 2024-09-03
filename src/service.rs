@@ -1,12 +1,15 @@
 use macroquad::math::Vec2;
-use rayon::iter::{IntoParallelIterator, IntoParallelRefIterator, ParallelIterator};
+use rayon::iter::{self, IntoParallelIterator, IntoParallelRefIterator, ParallelIterator};
 
 use crate::{
     constants::{
-        ENEMY_MAX_CHASE_DISTANCE, ENEMY_MOVE_SPEED, GUN_DPS, MAX_SHOOT_DISTANCE, MOVE_SPEED,
+        CORPSE_OFFSET, CORPSE_SIZE, CREATE_GUNSHOT_HIT_ANIMATION_OFFSET_TO_CAMERA, ENEMY_MAX_CHASE_DISTANCE, ENEMY_MOVE_SPEED, GUNSHOT_ANIMATION_LENGTH, GUNSHOT_ANIMATION_SPEED, GUN_DPS, MAX_SHOOT_DISTANCE, MOVE_SPEED
     },
     math::{check_circles_collide, find_intersection, line_intersects_circle},
-    model::{enemy::Enemy, key_object::KeyObject, Entity, GameEvent, Player, PlayerInfo, Wall},
+    model::{
+        decoration::Decoration, enemy::Enemy, key_object::KeyObject, Entity, GameEvent, Player,
+        PlayerInfo, Texture, Wall,
+    },
 };
 
 pub fn move_player(player_entity: Entity, movement: Vec2, walls: &[Wall]) -> Entity {
@@ -123,7 +126,7 @@ fn find_shot_enemy<'a>(
     player: &'a Player,
     enemies: &'a [Enemy],
     walls: &'a [Wall],
-) -> Option<&'a Enemy> {
+) -> (Option<&'a Enemy>, Option<Vec2>) {
     let shoot_ray = player.look.normalize_or_zero() * MAX_SHOOT_DISTANCE;
 
     let closest_hit_wall = walls
@@ -131,11 +134,11 @@ fn find_shot_enemy<'a>(
         .filter_map(|wall| {
             find_intersection(player.entity.position, shoot_ray, wall.start, wall.end)
         })
-        .map(|p| p.distance(player.entity.position))
-        .min_by(|a, b| a.total_cmp(b));
+        .map(|p| (p.distance(player.entity.position), p))
+        .min_by(|a, b| a.0.total_cmp(&b.0));
 
     let max_distance = if let Some(some) = closest_hit_wall {
-        some
+        some.0
     } else {
         MAX_SHOOT_DISTANCE
     };
@@ -160,7 +163,19 @@ fn find_shot_enemy<'a>(
         })
         .min_by(|a, b| a.1.total_cmp(&b.1));
 
-    Some(hit_enemy?.0)
+    if let Some(some) = hit_enemy {
+        (Some(some.0), Some(some.0.entity.position))
+    } else if let Some(some) = closest_hit_wall {
+        (None, Some(some.1))
+    } else {
+        (None, None)
+    }
+}
+
+fn create_shot_particles_event(shot_location: Vec2) -> GameEvent {
+    GameEvent::LocationShot {
+        position: shot_location,
+    }
 }
 
 pub fn shoot_enemies(
@@ -174,9 +189,16 @@ pub fn shoot_enemies(
         return (enemies, vec![]);
     }
 
-    let shot_enemy_option = find_shot_enemy(player, &enemies, walls);
+    let (shot_enemy_option, shot_location) = find_shot_enemy(player, &enemies, walls);
+
+    let shot_event = if let Some(some) = shot_location {
+        vec![create_shot_particles_event(some)]
+    } else {
+        vec![]
+    };
+
     if shot_enemy_option.is_none() {
-        return (enemies, vec![]);
+        return (enemies, shot_event);
     }
     let shot_enemy_id = shot_enemy_option.unwrap().id;
     let damage = delta * GUN_DPS;
@@ -206,6 +228,7 @@ pub fn shoot_enemies(
                 None
             }
         })
+        .chain(shot_event)
         .collect();
 
     let surviving_enemies = new_hp_enemies
@@ -214,6 +237,46 @@ pub fn shoot_enemies(
         .collect();
 
     (surviving_enemies, game_events)
+}
+
+pub fn create_corpse(location: Vec2) -> Decoration {
+    Decoration {
+        entity: Entity {
+            position: location,
+            size: CORPSE_SIZE,
+        },
+        textures: vec![Texture::Skull],
+        animation_speed: 0,
+        life: None,
+        offset: CORPSE_OFFSET,
+    }
+}
+
+pub fn create_shot_animation_decoration(player: &Player, location: Vec2) -> Decoration {
+    let dir_to_player = (player.entity.position - location).normalize_or_zero();
+    let offset_to_camera = dir_to_player * CREATE_GUNSHOT_HIT_ANIMATION_OFFSET_TO_CAMERA;
+    let position = location + offset_to_camera;
+
+    Decoration {
+        entity: Entity {
+            position,
+            size: 0.2,
+        },
+        textures: vec![
+            Texture::Explostion1,
+            Texture::Explostion2,
+            Texture::Explostion3,
+            Texture::Explostion4,
+            Texture::Explostion5,
+            Texture::Explostion6,
+            Texture::Explostion7,
+            Texture::Explostion8,
+            Texture::Explostion9,
+        ],
+        animation_speed: GUNSHOT_ANIMATION_SPEED,
+        life: Some(GUNSHOT_ANIMATION_LENGTH),
+        offset: 0.1,
+    }
 }
 
 #[cfg(test)]

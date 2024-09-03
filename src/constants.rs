@@ -42,3 +42,11 @@ pub const ENEMY_MOVE_SPEED: f32 = 0.6;
 
 pub const GUN_DPS: f32 = 20.0;
 pub const MAX_SHOOT_DISTANCE: f32 = 100.0;
+
+pub const GUNSHOT_ANIMATION_LENGTH: f32 = 0.5;
+pub const GUNSHOT_ANIMATION_SPEED: u128 = 100;
+pub const CREATE_GUNSHOT_ANIMATION_RATE: f32 = 2.5;
+pub const CREATE_GUNSHOT_HIT_ANIMATION_OFFSET_TO_CAMERA: f32 = 0.1;
+
+pub const CORPSE_SIZE: f32 = 0.15;
+pub const CORPSE_OFFSET: f32 = 0.4;

@@ -57,8 +57,9 @@ impl TextureManager {
             FilterMode::Linear,
         );
 
-        Self::load_texture(&mut textures, Texture::Key1, "assets/key1.png");
-        Self::load_texture(&mut textures, Texture::Key2, "assets/key2.png");
+        Self::load_texture(&mut textures, Texture::Key1, "assets/key/key1.png");
+        Self::load_texture(&mut textures, Texture::Key2, "assets/key/key2.png");
+        Self::load_texture(&mut textures, Texture::Skull, "assets/skull.png");
 
         Self::load_texture(&mut textures, Texture::Gun1, "assets/gun/FAMAS_00.png");
         Self::load_texture(&mut textures, Texture::Gun2, "assets/gun/FAMAS_03.png");
@@ -77,6 +78,52 @@ impl TextureManager {
         Self::load_texture(&mut textures, Texture::Enemy6, "assets/enemy/enemy6.png");
         Self::load_texture(&mut textures, Texture::Enemy7, "assets/enemy/enemy7.png");
         Self::load_texture(&mut textures, Texture::Enemy8, "assets/enemy/enemy8.png");
+
+        Self::load_texture(
+            &mut textures,
+            Texture::Explostion1,
+            "assets/explosion/1.png",
+        );
+        Self::load_texture(
+            &mut textures,
+            Texture::Explostion2,
+            "assets/explosion/2.png",
+        );
+        Self::load_texture(
+            &mut textures,
+            Texture::Explostion3,
+            "assets/explosion/3.png",
+        );
+        Self::load_texture(
+            &mut textures,
+            Texture::Explostion4,
+            "assets/explosion/4.png",
+        );
+        Self::load_texture(
+            &mut textures,
+            Texture::Explostion5,
+            "assets/explosion/5.png",
+        );
+        Self::load_texture(
+            &mut textures,
+            Texture::Explostion6,
+            "assets/explosion/6.png",
+        );
+        Self::load_texture(
+            &mut textures,
+            Texture::Explostion7,
+            "assets/explosion/7.png",
+        );
+        Self::load_texture(
+            &mut textures,
+            Texture::Explostion8,
+            "assets/explosion/8.png",
+        );
+        Self::load_texture(
+            &mut textures,
+            Texture::Explostion9,
+            "assets/explosion/9.png",
+        );
 
         Self { textures }
     }

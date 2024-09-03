@@ -125,8 +125,6 @@ pub fn draw_sprites(
 
     sprites
         .par_iter()
-        .filter_map(|sprite| 
-            sprite_to_drawable(time_ellapsed, camera_pos, camera_look, *sprite)
-        )
+        .filter_map(|sprite| sprite_to_drawable(time_ellapsed, camera_pos, camera_look, *sprite))
         .collect()
 }

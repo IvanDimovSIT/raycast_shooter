@@ -137,7 +137,7 @@ pub async fn render_game_won(time: Duration) {
     draw_text(
         GAME_WON_TEXT,
         x1,
-        0.5 * screen.1,
+        0.4 * screen.1,
         GAME_WON_TEXT_SIZE * screen.0,
         WHITE,
     );

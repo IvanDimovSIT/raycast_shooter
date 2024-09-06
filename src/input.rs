@@ -8,21 +8,10 @@ pub enum Operation {
     Back,
     StrafeLeft,
     StrafeRight,
-    StartShooting,
-    StopShooting,
+    Shoot,
 }
 
 pub fn get_input(_screen_size: (f32, f32)) -> Vec<Operation> {
-    let pressed = get_keys_pressed().into_iter().filter_map(|key| match key {
-        KeyCode::Space => Some(Operation::StartShooting),
-        _ => None,
-    });
-
-    let released = get_keys_released().into_iter().filter_map(|key| match key {
-        KeyCode::Space => Some(Operation::StopShooting),
-        _ => None,
-    });
-
     get_keys_down()
         .into_iter()
         .filter_map(|key| match key {
@@ -32,9 +21,8 @@ pub fn get_input(_screen_size: (f32, f32)) -> Vec<Operation> {
             KeyCode::S | KeyCode::Down => Some(Operation::Back),
             KeyCode::Q => Some(Operation::StrafeLeft),
             KeyCode::E => Some(Operation::StrafeRight),
+            KeyCode::Space => Some(Operation::Shoot),
             _ => None,
         })
-        .chain(pressed)
-        .chain(released)
         .collect()
 }

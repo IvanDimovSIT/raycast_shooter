@@ -1,6 +1,6 @@
 use std::time::Instant;
 
-use controller::{handle_input, next_game_step};
+use controller::{handle_input, next_game_step, reset_state};
 use draw::draw_game;
 use input::get_input;
 use macroquad::{math::vec2, miniquad::window::screen_size, time::get_frame_time};
@@ -91,6 +91,8 @@ async fn main() {
     loop {
         let delta = get_frame_time();
         let time_from_start = start_time.elapsed();
+
+        game_objects = reset_state(game_objects);
 
         let input = get_input(screen_size());
 

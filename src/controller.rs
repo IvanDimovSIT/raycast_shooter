@@ -14,76 +14,41 @@ use crate::{
     model::{decoration::Decoration, GameEvent, GameObjects, Player, PlayerInfo},
     service::{
         check_pickup_key, create_corpse, create_shot_animation_decoration,
-        move_enemies_towards_player, move_player, shoot_enemies,
+        move_enemies_towards_player, move_player, shoot_enemies, start_shooting, stop_shooting,
+        turn_player,
     },
 };
 
 fn handle_left(player: Player, delta: f32) -> Player {
-    let look = rotate_point(player.look, vec2(0.0, 0.0), TURN_SPEED * delta);
-    Player { look, ..player }
+    turn_player(player, TURN_SPEED * delta)
 }
 
 fn handle_right(player: Player, delta: f32) -> Player {
-    let look = rotate_point(player.look, vec2(0.0, 0.0), -TURN_SPEED * delta);
-    Player { look, ..player }
+    turn_player(player, -TURN_SPEED * delta)
 }
 
 fn handle_forward(game_objects: &GameObjects, player: Player, delta: f32) -> Player {
-    Player {
-        entity: move_player(
-            player.entity,
-            player.look * delta * MOVE_SPEED,
-            &game_objects.walls,
-        ),
-        ..player
-    }
+    let direction = player.look;
+    move_player(game_objects, player, direction, delta)
 }
 
 fn handle_back(game_objects: &GameObjects, player: Player, delta: f32) -> Player {
-    Player {
-        entity: move_player(
-            player.entity,
-            -player.look * delta * MOVE_SPEED,
-            &game_objects.walls,
-        ),
-        ..player
-    }
+    let direction = -player.look;
+    move_player(game_objects, player, direction, delta)
 }
 
 fn handle_strafe_left(game_objects: &GameObjects, player: Player, delta: f32) -> Player {
-    Player {
-        entity: move_player(
-            player.entity,
-            find_perpendicular_vector(player.look) * delta * MOVE_SPEED,
-            &game_objects.walls,
-        ),
-        ..player
-    }
+    let direction = find_perpendicular_vector(player.look);
+    move_player(game_objects, player, direction, delta)
 }
 
 fn handle_strafe_right(game_objects: &GameObjects, player: Player, delta: f32) -> Player {
-    Player {
-        entity: move_player(
-            player.entity,
-            -find_perpendicular_vector(player.look) * delta * MOVE_SPEED,
-            &game_objects.walls,
-        ),
-        ..player
-    }
+    let direction = -find_perpendicular_vector(player.look);
+    move_player(game_objects, player, direction, delta)
 }
 
-fn handle_start_shooting(player_info: &PlayerInfo) -> PlayerInfo {
-    PlayerInfo {
-        is_shooting: true,
-        ..player_info.clone()
-    }
-}
-
-fn handle_stop_shooting(player_info: &PlayerInfo) -> PlayerInfo {
-    PlayerInfo {
-        is_shooting: false,
-        ..player_info.clone()
-    }
+fn handle_shoot(player_info: &PlayerInfo) -> PlayerInfo {
+    start_shooting(player_info.clone())
 }
 
 pub fn handle_input(
@@ -103,8 +68,7 @@ pub fn handle_input(
             Operation::Back => (handle_back(game_objects, pl, delta), info),
             Operation::StrafeLeft => (handle_strafe_left(game_objects, pl, delta), info),
             Operation::StrafeRight => (handle_strafe_right(game_objects, pl, delta), info),
-            Operation::StartShooting => (pl, handle_start_shooting(&info)),
-            Operation::StopShooting => (pl, handle_stop_shooting(&info)),
+            Operation::Shoot => (pl, handle_shoot(&info)),
         },
     )
 }
@@ -177,6 +141,12 @@ pub fn next_game_step(mut game_objects: GameObjects, delta: f32) -> GameObjects 
         .collect();
 
     handle_events(&mut game_objects, &events, delta);
+
+    game_objects
+}
+
+pub fn reset_state(mut game_objects: GameObjects) -> GameObjects {
+    game_objects.player_info = stop_shooting(game_objects.player_info);
 
     game_objects
 }

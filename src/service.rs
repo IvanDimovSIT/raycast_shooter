@@ -1,18 +1,20 @@
-use macroquad::math::Vec2;
+use macroquad::math::{vec2, Vec2};
 use rayon::iter::{self, IntoParallelIterator, IntoParallelRefIterator, ParallelIterator};
 
 use crate::{
     constants::{
-        CORPSE_OFFSET, CORPSE_SIZE, CREATE_GUNSHOT_HIT_ANIMATION_OFFSET_TO_CAMERA, ENEMY_MAX_CHASE_DISTANCE, ENEMY_MOVE_SPEED, GUNSHOT_ANIMATION_LENGTH, GUNSHOT_ANIMATION_SPEED, GUN_DPS, MAX_SHOOT_DISTANCE, MOVE_SPEED
+        CORPSE_OFFSET, CORPSE_SIZE, CREATE_GUNSHOT_HIT_ANIMATION_OFFSET_TO_CAMERA,
+        ENEMY_MAX_CHASE_DISTANCE, ENEMY_MOVE_SPEED, GUNSHOT_ANIMATION_LENGTH,
+        GUNSHOT_ANIMATION_SPEED, GUN_DPS, MAX_SHOOT_DISTANCE, MOVE_SPEED,
     },
-    math::{check_circles_collide, find_intersection, line_intersects_circle},
+    math::{check_circles_collide, find_intersection, line_intersects_circle, rotate_point},
     model::{
-        decoration::Decoration, enemy::Enemy, key_object::KeyObject, Entity, GameEvent, Player,
-        PlayerInfo, Texture, Wall,
+        decoration::Decoration, enemy::Enemy, key_object::KeyObject, Entity, GameEvent,
+        GameObjects, Player, PlayerInfo, Texture, Wall,
     },
 };
 
-pub fn move_player(player_entity: Entity, movement: Vec2, walls: &[Wall]) -> Entity {
+pub fn move_player_entity(player_entity: Entity, movement: Vec2, walls: &[Wall]) -> Entity {
     let new_pos = player_entity.position + movement;
 
     let is_collision = walls
@@ -26,6 +28,22 @@ pub fn move_player(player_entity: Entity, movement: Vec2, walls: &[Wall]) -> Ent
             position: new_pos,
             ..player_entity
         }
+    }
+}
+
+pub fn move_player(
+    game_objects: &GameObjects,
+    player: Player,
+    direction: Vec2,
+    delta: f32,
+) -> Player {
+    Player {
+        entity: move_player_entity(
+            player.entity,
+            direction * delta * MOVE_SPEED,
+            &game_objects.walls,
+        ),
+        ..player
     }
 }
 
@@ -251,6 +269,24 @@ pub fn create_corpse(location: Vec2) -> Decoration {
         offset: CORPSE_OFFSET,
     }
 }
+pub fn start_shooting(player_info: PlayerInfo) -> PlayerInfo {
+    PlayerInfo {
+        is_shooting: true,
+        ..player_info
+    }
+}
+
+pub fn stop_shooting(player_info: PlayerInfo) -> PlayerInfo {
+    PlayerInfo {
+        is_shooting: false,
+        ..player_info
+    }
+}
+
+pub fn turn_player(player: Player, thetha: f32) -> Player {
+    let look = rotate_point(player.look, vec2(0.0, 0.0), thetha);
+    Player { look, ..player }
+}
 
 pub fn create_shot_animation_decoration(player: &Player, location: Vec2) -> Decoration {
     let dir_to_player = (player.entity.position - location).normalize_or_zero();
@@ -300,11 +336,11 @@ mod tests {
             end: vec2(10.0, 1.5),
         }];
 
-        let moved1 = move_player(entity, movement1, &walls);
+        let moved1 = move_player_entity(entity, movement1, &walls);
         assert_eq!(moved1.position, entity.position);
 
         let movement2 = vec2(0.0, 0.1);
-        let moved2 = move_player(entity, movement2, &walls);
+        let moved2 = move_player_entity(entity, movement2, &walls);
 
         assert!(moved2.position.y > entity.position.y);
     }

@@ -95,6 +95,7 @@ impl Default for PlayerInfo {
     }
 }
 
+#[derive(Debug)]
 pub struct GameObjects {
     pub player: Player,
     pub player_info: PlayerInfo,

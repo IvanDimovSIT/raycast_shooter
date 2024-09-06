@@ -30,12 +30,10 @@ impl Sprite2D for Decoration {
     }
 
     fn get_texture(&self, time_ellapsed: &Duration) -> Texture {
-        if self.textures.len() > 1 {
-            select_animation_texture(&self.textures, self.animation_speed, time_ellapsed)
-        } else if self.textures.len() == 1 {
-            self.textures[0]
-        } else {
-            Texture::default()
+        match self.textures.len() {
+            0 => Texture::default(),
+            1 => self.textures[0],
+            _ => select_animation_texture(&self.textures, self.animation_speed, time_ellapsed)
         }
     }
 }

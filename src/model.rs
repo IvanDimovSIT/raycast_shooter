@@ -78,12 +78,14 @@ pub enum GameEvent {
 #[derive(Debug, Clone)]
 pub struct PlayerInfo {
     pub is_shooting: bool,
+    pub picked_up_keys: usize,
     pub health: f32,
 }
 impl Default for PlayerInfo {
     fn default() -> Self {
         Self {
             is_shooting: false,
+            picked_up_keys: 0,
             health: 100.0,
         }
     }

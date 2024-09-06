@@ -1,6 +1,7 @@
 use std::{f32::consts::TAU, iter::once, time::Duration};
 
 use gun::draw_gun;
+use key_display::draw_key_display;
 use macroquad::{
     color::Color,
     math::{vec2, Rect, Vec2},
@@ -18,6 +19,7 @@ use crate::{
 };
 
 pub mod gun;
+pub mod key_display;
 pub mod sprite_2d;
 pub mod wall;
 
@@ -93,5 +95,6 @@ pub fn draw_game(game_objects: &GameObjects, time_from_start: &Duration) -> Vec<
             time_from_start,
             game_objects.player_info.is_shooting,
         )))
+        .chain(once(draw_key_display(game_objects)))
         .collect()
 }

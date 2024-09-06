@@ -63,3 +63,8 @@ pub const GAME_WON_TEXT_SIZE: f32 = 0.15;
 pub const GAME_WON_TIME_TEXT_SIZE: f32 = 0.10;
 pub const TRY_AGAIN_WON_TEXT: &str = "Play again (Y/N)?";
 pub const TRY_AGAIN_WON_TEXT_SIZE: f32 = 0.07;
+
+pub const KEYS_UI_BOX_COLOR: Color = Color::new(0.1, 0.1, 0.1, 0.5);
+pub const KEYS_UI_TEXT_COLOR: Color = Color::new(1.0, 1.0, 1.0, 0.7);
+pub const KEYS_UI_SIZE: f32 = 0.05;
+pub const KEYS_UI_POSITION: Vec2 = vec2(0.05, 0.92);

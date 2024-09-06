@@ -1,9 +1,6 @@
 use std::mem::take;
 
-use macroquad::{
-    math::Vec2,
-    rand::gen_range,
-};
+use macroquad::{math::Vec2, rand::gen_range};
 use uuid::Uuid;
 
 use crate::{
@@ -74,6 +71,10 @@ pub fn handle_input(
 
 fn handle_pickup_key(game_objects: &mut GameObjects, key_id: &Uuid) {
     game_objects.keys.retain(|key| key.id != *key_id);
+    game_objects.player_info = PlayerInfo {
+        picked_up_keys: game_objects.player_info.picked_up_keys + 1,
+        ..game_objects.player_info
+    };
     println!("Picked up key:{}", key_id);
 }
 

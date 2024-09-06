@@ -1,19 +1,18 @@
 use std::mem::take;
 
 use macroquad::{
-    math::{vec2, Vec2},
-    rand::{gen_range, rand},
+    math::Vec2,
+    rand::gen_range,
 };
-use rayon::iter;
 use uuid::Uuid;
 
 use crate::{
-    constants::{CREATE_GUNSHOT_ANIMATION_RATE, MOVE_SPEED, TURN_SPEED},
+    constants::{CREATE_GUNSHOT_ANIMATION_RATE, TURN_SPEED},
     input::Operation,
-    math::{find_perpendicular_vector, rotate_point},
+    math::find_perpendicular_vector,
     model::{decoration::Decoration, GameEvent, GameObjects, Player, PlayerInfo},
     service::{
-        check_pickup_key, create_corpse, create_shot_animation_decoration,
+        check_pickup_key, create_corpse, create_shot_animation_decoration, deal_damage_to_player,
         move_enemies_towards_player, move_player, shoot_enemies, start_shooting, stop_shooting,
         turn_player,
     },
@@ -140,6 +139,8 @@ pub fn next_game_step(mut game_objects: GameObjects, delta: f32) -> GameObjects 
         .chain(kill_enemies_events)
         .collect();
 
+    game_objects.player_info = deal_damage_to_player(&game_objects, delta);
+
     handle_events(&mut game_objects, &events, delta);
 
     game_objects
@@ -149,4 +150,12 @@ pub fn reset_state(mut game_objects: GameObjects) -> GameObjects {
     game_objects.player_info = stop_shooting(game_objects.player_info);
 
     game_objects
+}
+
+pub fn is_game_over(game_objects: &GameObjects) -> bool {
+    game_objects.player_info.health <= 0.0
+}
+
+pub fn is_game_won(game_objects: &GameObjects) -> bool {
+    game_objects.keys.is_empty()
 }

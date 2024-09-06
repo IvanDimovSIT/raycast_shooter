@@ -1,16 +1,19 @@
 use crate::{
     constants::{
         CEILING_COLOR, DEBUG_DRAW_DELAY_MS, DEBUG_INITAL_DRAW_DELAY_MS, ENTER_DEBUG_MODE_KEY,
-        EXIT_DEBUG_MODE_KEY, FLOOR_COLOR,
+        EXIT_DEBUG_MODE_KEY, FLOOR_COLOR, GAME_OVER_TEXT, GAME_OVER_TEXT_SIZE, GAME_WON_TEXT,
+        GAME_WON_TEXT_SIZE, GAME_WON_TIME_TEXT_SIZE, TRY_AGAIN_TEXT, TRY_AGAIN_TEXT_SIZE,
+        TRY_AGAIN_WON_TEXT, TRY_AGAIN_WON_TEXT_SIZE,
     },
     draw::Drawable,
     texture_manager::TextureManager,
 };
 use macroquad::{
-    color::BLACK,
+    color::{BLACK, ORANGE, RED, WHITE},
     input::is_key_pressed,
     miniquad::window::screen_size,
     shapes::draw_rectangle,
+    text::draw_text,
     window::{clear_background, next_frame},
 };
 use std::{thread::sleep, time::Duration};
@@ -87,4 +90,71 @@ pub async fn render_drawables(texture_manager: &TextureManager, to_draw: &[Box<d
     } else {
         default_renderer(texture_manager, screen, &draw_in_order).await;
     };
+}
+
+pub async fn render_game_over() {
+    let screen = screen_size();
+    clear_background(RED);
+
+    let x1 = (0.5 - GAME_OVER_TEXT.len() as f32 * GAME_OVER_TEXT_SIZE * 0.25) * screen.0;
+    let x2 = (0.5 - TRY_AGAIN_TEXT.len() as f32 * TRY_AGAIN_TEXT_SIZE * 0.25) * screen.0;
+
+    draw_text(
+        GAME_OVER_TEXT,
+        x1,
+        0.5 * screen.1,
+        GAME_OVER_TEXT_SIZE * screen.0,
+        WHITE,
+    );
+
+    draw_text(
+        TRY_AGAIN_TEXT,
+        x2,
+        0.8 * screen.1,
+        TRY_AGAIN_TEXT_SIZE * screen.0,
+        WHITE,
+    );
+
+    next_frame().await;
+}
+
+fn time_to_text(time: Duration) -> String {
+    let minutes = time.as_secs() / 60;
+    let secs = time.as_secs() % 60;
+    format!("{:02}:{:02}", minutes, secs)
+}
+
+pub async fn render_game_won(time: Duration) {
+    let screen = screen_size();
+    clear_background(ORANGE);
+
+    let time_text = format!("Time: {}", time_to_text(time));
+
+    let x1 = (0.5 - GAME_WON_TEXT.len() as f32 * GAME_WON_TEXT_SIZE * 0.25) * screen.0;
+    let x2 = (0.5 - time_text.len() as f32 * GAME_WON_TIME_TEXT_SIZE * 0.25) * screen.0;
+    let x3 = (0.5 - TRY_AGAIN_WON_TEXT.len() as f32 * TRY_AGAIN_WON_TEXT_SIZE * 0.25) * screen.0;
+
+    draw_text(
+        GAME_WON_TEXT,
+        x1,
+        0.5 * screen.1,
+        GAME_WON_TEXT_SIZE * screen.0,
+        WHITE,
+    );
+    draw_text(
+        &time_text,
+        x2,
+        0.6 * screen.1,
+        GAME_WON_TIME_TEXT_SIZE * screen.0,
+        WHITE,
+    );
+    draw_text(
+        TRY_AGAIN_WON_TEXT,
+        x3,
+        0.85 * screen.1,
+        TRY_AGAIN_WON_TEXT_SIZE * screen.0,
+        WHITE,
+    );
+
+    next_frame().await;
 }

@@ -1,4 +1,4 @@
-use macroquad::input::{get_keys_down, get_keys_pressed, get_keys_released, KeyCode};
+use macroquad::input::{get_keys_down, KeyCode};
 
 #[derive(Debug, PartialEq)]
 pub enum Operation {

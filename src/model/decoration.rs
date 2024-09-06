@@ -33,7 +33,7 @@ impl Sprite2D for Decoration {
         match self.textures.len() {
             0 => Texture::default(),
             1 => self.textures[0],
-            _ => select_animation_texture(&self.textures, self.animation_speed, time_ellapsed)
+            _ => select_animation_texture(&self.textures, self.animation_speed, time_ellapsed),
         }
     }
 }

@@ -12,8 +12,8 @@ pub const FOV: f32 = PI / 4.0;
 pub const VIEW_DISTANCE: f32 = 1000.0;
 pub const WALL_RESOLUTION: f32 = 10000.0;
 
-pub const TURN_SPEED: f32 = 1.0;
-pub const MOVE_SPEED: f32 = 1.0;
+pub const TURN_SPEED: f32 = 1.2;
+pub const MOVE_SPEED: f32 = 1.9;
 
 pub const FLOOR_COLOR: Color = color_u8!(55, 55, 75, 255);
 pub const CEILING_COLOR: Color = color_u8!(60, 40, 40, 255);
@@ -38,9 +38,11 @@ pub const ENEMY_ANIMATION_SPEED: u128 = 100;
 pub const ENEMY_DRAW_SIZE_MOD: f32 = 9.0;
 
 pub const ENEMY_MAX_CHASE_DISTANCE: f32 = 100.0;
-pub const ENEMY_MOVE_SPEED: f32 = 0.6;
+pub const ENEMY_MOVE_SPEED: f32 = 1.8;
+pub const ENEMY_DPS: f32 = 80.0;
+pub const ENEMY_ATTACK_RANGE: f32 = 0.8;
 
-pub const GUN_DPS: f32 = 20.0;
+pub const GUN_DPS: f32 = 50.0;
 pub const MAX_SHOOT_DISTANCE: f32 = 100.0;
 
 pub const GUNSHOT_ANIMATION_LENGTH: f32 = 0.5;
@@ -49,4 +51,15 @@ pub const CREATE_GUNSHOT_ANIMATION_RATE: f32 = 2.5;
 pub const CREATE_GUNSHOT_HIT_ANIMATION_OFFSET_TO_CAMERA: f32 = 0.1;
 
 pub const CORPSE_SIZE: f32 = 0.15;
-pub const CORPSE_OFFSET: f32 = 0.4;
+pub const CORPSE_OFFSET: f32 = 0.45;
+
+pub const GAME_OVER_TEXT: &str = "Game Over!";
+pub const GAME_OVER_TEXT_SIZE: f32 = 0.15;
+pub const TRY_AGAIN_TEXT: &str = "Try again (Y/N)?";
+pub const TRY_AGAIN_TEXT_SIZE: f32 = 0.07;
+
+pub const GAME_WON_TEXT: &str = "Escaped!";
+pub const GAME_WON_TEXT_SIZE: f32 = 0.15;
+pub const GAME_WON_TIME_TEXT_SIZE: f32 = 0.10;
+pub const TRY_AGAIN_WON_TEXT: &str = "Play again (Y/N)?";
+pub const TRY_AGAIN_WON_TEXT_SIZE: f32 = 0.07;

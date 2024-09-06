@@ -1,11 +1,11 @@
 use macroquad::math::{vec2, Vec2};
-use rayon::iter::{self, IntoParallelIterator, IntoParallelRefIterator, ParallelIterator};
+use rayon::iter::{IntoParallelIterator, IntoParallelRefIterator, ParallelIterator};
 
 use crate::{
     constants::{
         CORPSE_OFFSET, CORPSE_SIZE, CREATE_GUNSHOT_HIT_ANIMATION_OFFSET_TO_CAMERA,
-        ENEMY_MAX_CHASE_DISTANCE, ENEMY_MOVE_SPEED, GUNSHOT_ANIMATION_LENGTH,
-        GUNSHOT_ANIMATION_SPEED, GUN_DPS, MAX_SHOOT_DISTANCE, MOVE_SPEED,
+        ENEMY_ATTACK_RANGE, ENEMY_DPS, ENEMY_MAX_CHASE_DISTANCE, ENEMY_MOVE_SPEED,
+        GUNSHOT_ANIMATION_LENGTH, GUNSHOT_ANIMATION_SPEED, GUN_DPS, MAX_SHOOT_DISTANCE, MOVE_SPEED,
     },
     math::{check_circles_collide, find_intersection, line_intersects_circle, rotate_point},
     model::{
@@ -312,6 +312,34 @@ pub fn create_shot_animation_decoration(player: &Player, location: Vec2) -> Deco
         animation_speed: GUNSHOT_ANIMATION_SPEED,
         life: Some(GUNSHOT_ANIMATION_LENGTH),
         offset: 0.1,
+    }
+}
+
+fn enemy_can_attack_player(enemy: &Enemy, player: &Player) -> bool {
+    check_circles_collide(
+        player.entity.position,
+        player.entity.size,
+        enemy.entity.position,
+        ENEMY_ATTACK_RANGE,
+    )
+}
+
+pub fn deal_damage_to_player(game_objects: &GameObjects, delta: f32) -> PlayerInfo {
+    let damage: f32 = game_objects
+        .enemies
+        .iter()
+        .map(|enemy| {
+            if enemy_can_attack_player(enemy, &game_objects.player) {
+                delta * ENEMY_DPS
+            } else {
+                0.0
+            }
+        })
+        .sum();
+
+    PlayerInfo {
+        health: game_objects.player_info.health - damage,
+        ..game_objects.player_info
     }
 }
 

@@ -34,17 +34,11 @@ pub enum Texture {
     Enemy8,
     Skull,
     Explostion1,
-
     Explostion2,
-
     Explostion3,
-
     Explostion4,
-
     Explostion5,
-
     Explostion6,
-
     Explostion7,
     Explostion8,
     Explostion9,

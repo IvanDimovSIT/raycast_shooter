@@ -4,16 +4,18 @@ use decoration::Decoration;
 use enemy::Enemy;
 use key_object::KeyObject;
 use macroquad::math::Vec2;
+use serde::Deserialize;
 use uuid::Uuid;
 
 pub mod decoration;
 pub mod enemy;
 pub mod key_object;
 
-#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Deserialize)]
 pub enum Texture {
     Debug,
     Stone,
+    Metal,
     Key1,
     Key2,
     Gun1,

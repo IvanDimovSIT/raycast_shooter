@@ -10,6 +10,7 @@ mod model;
 mod renderers;
 mod service;
 mod texture_manager;
+mod level_loader;
 
 #[macroquad::main("Game")]
 async fn main() {

@@ -1,3 +1,4 @@
+use macroquad::math::vec2;
 use uuid::Uuid;
 
 use crate::{
@@ -43,5 +44,17 @@ impl Sprite2D for KeyObject {
 
     fn get_texture(&self, time_ellapsed: &Duration) -> Texture {
         select_animation_texture(&self.textures, KEY_ANIMATION_SPEED_TEXTURES, time_ellapsed)
+    }
+}
+impl Default for KeyObject {
+    fn default() -> Self {
+        Self { 
+            id: Uuid::new_v4(),
+            textures: vec![Texture::Key1, Texture::Key2],
+            entity: Entity {
+                position: vec2(0.0, 0.0),
+                size: KEY_SIZE
+            } 
+        }
     }
 }

@@ -7,9 +7,13 @@ use macroquad::{
 };
 
 use crate::{
-    controller::{handle_input, is_game_over, is_game_won, next_game_step, reset_state}, draw::draw_game, input::get_input, level_loader::load_level, model::
-        GameObjects
-    , renderers::{render_drawables, render_game_over, render_game_won}, texture_manager::TextureManager
+    controller::{handle_input, is_game_over, is_game_won, next_game_step, reset_state},
+    draw::draw_game,
+    input::get_input,
+    level_loader::load_level,
+    model::GameObjects,
+    renderers::{render_drawables, render_game_over, render_game_won},
+    texture_manager::TextureManager,
 };
 
 pub struct GameContext {

@@ -64,37 +64,41 @@ pub fn check_pickup_key(player: &Player, keys: &[KeyObject]) -> Vec<GameEvent> {
         .collect()
 }
 
-fn is_enemy_intersecting_walls<'a>(entity: &'a Entity, walls: &'a [Wall]) -> Option<&'a Wall> {
+fn get_enemy_intersecting_walls<'a>(entity: &'a Entity, walls: &'a [Wall]) -> Vec<&'a Wall> {
     walls
         .iter()
-        .find(|wall| line_intersects_circle(wall.start, wall.end, entity.position, entity.size))
+        .filter(|wall| line_intersects_circle(wall.start, wall.end, entity.position, entity.size))
+        .collect()
 }
 
 fn move_enemy_to_sides(
     player: &Player,
     enemy: Enemy,
     walls: &[Wall],
-    hit_wall_direction: Vec2,
+    hit_wall_directions: Vec<Vec2>,
 ) -> Enemy {
-    let left_pos = enemy.entity.position + hit_wall_direction;
-    let left_dist = left_pos.distance(player.entity.position);
-    let right_pos = enemy.entity.position - hit_wall_direction;
-    let right_dist = right_pos.distance(player.entity.position);
+    let move_to = hit_wall_directions
+        .iter()
+        .map(|dir| enemy.entity.position + *dir)
+        .filter(|new_pos| {
+            get_enemy_intersecting_walls(
+                &Entity {
+                    position: *new_pos,
+                    ..enemy.entity
+                },
+                walls,
+            )
+            .is_empty()
+        })
+        .map(|new_pos| (new_pos, new_pos.distance(player.entity.position)))
+        .min_by(|a, b| a.1.total_cmp(&b.1));
 
-    let move_pos = if left_dist < right_dist {
-        left_pos
-    } else {
-        right_pos
-    };
-
-    let new_entity = Entity {
-        position: move_pos,
-        size: enemy.entity.size,
-    };
-
-    if is_enemy_intersecting_walls(&new_entity, walls).is_none() {
+    if let Some(new_pos) = move_to {
         Enemy {
-            entity: new_entity,
+            entity: Entity {
+                position: new_pos.0,
+                ..enemy.entity
+            },
             ..enemy
         }
     } else {
@@ -115,17 +119,20 @@ fn move_enemy(player: &Player, enemy: Enemy, walls: &[Wall], delta: f32) -> Enem
         position: new_position,
         size: enemy.entity.size,
     };
-    let intersection = is_enemy_intersecting_walls(&new_entity, walls);
-    if intersection.is_none() {
+    let intersections = get_enemy_intersecting_walls(&new_entity, walls);
+    if intersections.is_empty() {
         return Enemy {
             entity: new_entity,
             ..enemy
         };
     }
-    let hit_wall = intersection.unwrap();
-    let wall_direction = (hit_wall.start - hit_wall.end).normalize_or_zero() * delta * MOVE_SPEED;
 
-    move_enemy_to_sides(player, enemy, walls, wall_direction)
+    let wall_directions = intersections
+        .iter()
+        .map(|w| (w.start - w.end).normalize_or_zero() * delta * MOVE_SPEED)
+        .collect();
+
+    move_enemy_to_sides(player, enemy, walls, wall_directions)
 }
 
 pub fn move_enemies_towards_player(

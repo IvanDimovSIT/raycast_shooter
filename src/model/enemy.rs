@@ -17,17 +17,6 @@ pub struct Enemy {
     pub hp: f32,
     pub textures: Vec<Texture>,
 }
-impl Enemy {
-    pub fn new(entity: Entity, hp: f32, textures: Vec<Texture>) -> Self {
-        assert!(!textures.is_empty());
-        Self {
-            id: Uuid::new_v4(),
-            entity,
-            hp,
-            textures,
-        }
-    }
-}
 impl Sprite2D for Enemy {
     fn get_position(&self) -> Vec2 {
         self.entity.position
@@ -47,10 +36,13 @@ impl Sprite2D for Enemy {
 }
 impl Default for Enemy {
     fn default() -> Self {
-        Self { 
+        Self {
             id: Uuid::new_v4(),
-            entity: Entity { position: vec2(0.0, 0.0), size: ENEMY_SIZE },
-            hp: ENEMY_HP, 
+            entity: Entity {
+                position: vec2(0.0, 0.0),
+                size: ENEMY_SIZE,
+            },
+            hp: ENEMY_HP,
             textures: vec![
                 Texture::Enemy1,
                 Texture::Enemy2,

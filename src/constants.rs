@@ -10,14 +10,13 @@ use macroquad::{
 pub const LEVEL_PATH: &str = "resources/level.json";
 pub const TEXTURE_PATH: &str = "resources/textures/";
 
-
 pub const HORIZONTAL_WALL_SEGEMENTS: u32 = 150;
 pub const FOV: f32 = PI / 4.0;
 pub const VIEW_DISTANCE: f32 = 1000.0;
 pub const WALL_RESOLUTION: f32 = 10000.0;
 
 pub const PLAYER_SIZE: f32 = 0.2;
-pub const TURN_SPEED: f32 = 1.2;
+pub const TURN_SPEED: f32 = 1.3;
 pub const MOVE_SPEED: f32 = 1.9;
 
 pub const FLOOR_COLOR: Color = color_u8!(55, 55, 75, 255);
@@ -44,7 +43,7 @@ pub const ENEMY_ANIMATION_SPEED: u128 = 100;
 pub const ENEMY_SIZE: f32 = 0.2;
 pub const ENEMY_DRAW_SIZE_MOD: f32 = 9.0;
 pub const ENEMY_HP: f32 = 10.0;
-pub const ENEMY_MAX_CHASE_DISTANCE: f32 = 100.0;
+pub const ENEMY_MAX_CHASE_DISTANCE: f32 = 40.0;
 pub const ENEMY_MOVE_SPEED: f32 = 1.8;
 pub const ENEMY_DPS: f32 = 80.0;
 pub const ENEMY_ATTACK_RANGE: f32 = 0.6;

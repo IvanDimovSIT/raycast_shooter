@@ -14,15 +14,6 @@ pub struct KeyObject {
     pub textures: Vec<Texture>,
     pub entity: Entity,
 }
-impl KeyObject {
-    pub fn new(entity: Entity, textures: Vec<Texture>) -> Self {
-        Self {
-            id: Uuid::new_v4(),
-            textures,
-            entity,
-        }
-    }
-}
 impl Sprite2D for KeyObject {
     fn get_position(&self) -> Vec2 {
         self.entity.position
@@ -48,13 +39,13 @@ impl Sprite2D for KeyObject {
 }
 impl Default for KeyObject {
     fn default() -> Self {
-        Self { 
+        Self {
             id: Uuid::new_v4(),
             textures: vec![Texture::Key1, Texture::Key2],
             entity: Entity {
                 position: vec2(0.0, 0.0),
-                size: KEY_SIZE
-            } 
+                size: KEY_SIZE,
+            },
         }
     }
 }

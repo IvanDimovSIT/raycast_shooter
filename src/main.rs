@@ -5,12 +5,12 @@ mod controller;
 mod draw;
 mod game_state;
 mod input;
+mod level_loader;
 mod math;
 mod model;
 mod renderers;
 mod service;
 mod texture_manager;
-mod level_loader;
 
 #[macroquad::main("Game")]
 async fn main() {

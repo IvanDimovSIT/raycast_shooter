@@ -1,5 +1,5 @@
 use super::*;
-use crate::model::Texture;
+use crate::{math::rotate_point, model::Texture};
 
 struct WallDrawable {
     distance: f32,
@@ -48,10 +48,7 @@ fn create_rays(look: Vec2) -> Vec<Vec2> {
         .rev()
         .map(|x| {
             let angle = -half_fov + x as f32 * segment_angle;
-            Vec2::new(
-                look.x * angle.cos() - look.y * angle.sin(),
-                look.x * angle.sin() + look.y * angle.cos(),
-            )
+            rotate_point(vec2(look.x, look.y), vec2(0.0, 0.0), angle)
         })
         .collect()
 }

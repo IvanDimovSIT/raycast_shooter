@@ -276,6 +276,7 @@ pub fn create_corpse(location: Vec2) -> Decoration {
         offset: CORPSE_OFFSET,
     }
 }
+
 pub fn start_shooting(player_info: PlayerInfo) -> PlayerInfo {
     PlayerInfo {
         is_shooting: true,
@@ -323,7 +324,12 @@ pub fn create_shot_animation_decoration(player: &Player, location: Vec2) -> Deco
 }
 
 fn enemy_can_attack_player(enemy: &Enemy, player: &Player, walls: &[Wall]) -> bool {
-    !walls.iter().any(|wall| {
+    check_circles_collide(
+        player.entity.position,
+        player.entity.size,
+        enemy.entity.position,
+        ENEMY_ATTACK_RANGE,
+    ) && !walls.iter().any(|wall| {
         find_intersection(
             enemy.entity.position,
             player.entity.position,
@@ -331,12 +337,7 @@ fn enemy_can_attack_player(enemy: &Enemy, player: &Player, walls: &[Wall]) -> bo
             wall.end,
         )
         .is_some()
-    }) && check_circles_collide(
-        player.entity.position,
-        player.entity.size,
-        enemy.entity.position,
-        ENEMY_ATTACK_RANGE,
-    )
+    })
 }
 
 pub fn deal_damage_to_player(game_objects: &GameObjects, delta: f32) -> PlayerInfo {
@@ -361,13 +362,17 @@ pub fn deal_damage_to_player(game_objects: &GameObjects, delta: f32) -> PlayerIn
 #[cfg(test)]
 mod tests {
     use macroquad::math::vec2;
+    use uuid::Uuid;
 
-    use crate::model::Texture;
+    use crate::{
+        constants::{ENEMY_SIZE, PLAYER_SIZE},
+        model::Texture,
+    };
 
     use super::*;
 
     #[test]
-    fn test_move_entity() {
+    fn test_move_player_entity() {
         let entity = Entity {
             position: vec2(0.0, 0.0),
             size: 1.0,
@@ -387,4 +392,174 @@ mod tests {
 
         assert!(moved2.position.y > entity.position.y);
     }
+
+    #[test]
+    fn test_enemy_can_attack_player() {
+        let player = Player {
+            entity: Entity {
+                position: vec2(0.0, 0.0),
+                size: PLAYER_SIZE,
+            },
+            look: vec2(0.0, 0.0),
+        };
+
+        let enemy = Enemy {
+            entity: Entity {
+                position: vec2(0.0, ENEMY_ATTACK_RANGE + PLAYER_SIZE + 0.1),
+                size: ENEMY_SIZE,
+            },
+            ..Default::default()
+        };
+
+        let walls = vec![];
+
+        assert!(!enemy_can_attack_player(&enemy, &player, &walls));
+
+        let enemy2 = Enemy {
+            entity: Entity {
+                position: vec2(0.0, ENEMY_ATTACK_RANGE + PLAYER_SIZE - 0.1),
+                size: ENEMY_SIZE,
+            },
+            ..Default::default()
+        };
+
+        assert!(enemy_can_attack_player(&enemy2, &player, &walls));
+
+        let walls2 = vec![Wall {
+            texture: Texture::default(),
+            start: vec2(-100.0, ENEMY_ATTACK_RANGE / 2.0),
+            end: vec2(100.0, ENEMY_ATTACK_RANGE / 2.0),
+        }];
+
+        assert!(!enemy_can_attack_player(&enemy, &player, &walls2));
+    }
+
+    #[test]
+    fn test_check_pickup_key() {
+        let player = Player {
+            entity: Entity {
+                position: vec2(0.0, 0.0),
+                size: 1.0,
+            },
+            look: vec2(0.0, 0.0),
+        };
+
+        let key = KeyObject {
+            id: Uuid::new_v4(),
+            textures: vec![],
+            entity: Entity {
+                position: vec2(0.0, 0.5),
+                size: 1.0,
+            },
+        };
+
+        let keys = vec![key];
+
+        let events = check_pickup_key(&player, &keys);
+        assert_eq!(events.len(), 1);
+
+        let player_far = Player {
+            entity: Entity {
+                position: vec2(10.0, 10.0),
+                size: 1.0,
+            },
+            look: vec2(0.0, 0.0),
+        };
+
+        let events_far = check_pickup_key(&player_far, &keys);
+        assert_eq!(events_far.len(), 0);
+    }
+
+    #[test]
+    fn test_move_enemy() {
+        let player = Player {
+            entity: Entity {
+                position: vec2(0.0, 0.0),
+                size: PLAYER_SIZE,
+            },
+            look: vec2(0.0, 0.0),
+        };
+
+        let enemy = Enemy {
+            entity: Entity {
+                position: vec2(10.0, 0.0),
+                size: ENEMY_SIZE,
+            },
+            hp: 100.0,
+            ..Default::default()
+        };
+
+        let walls = vec![Wall {
+            texture: Texture::Debug,
+            start: vec2(-5.0, 0.0),
+            end: vec2(5.0, 0.0),
+        }];
+
+        let delta = 1.0;
+
+        let moved_enemy = move_enemy(&player, enemy.clone(), &walls, delta);
+
+        assert!(
+            moved_enemy.entity.position.distance(player.entity.position)
+                < enemy.entity.position.distance(player.entity.position)
+        );
+
+        let far_enemy = Enemy {
+            entity: Entity {
+                position: vec2(ENEMY_MAX_CHASE_DISTANCE + 10.0, 0.0),
+                size: ENEMY_SIZE,
+            },
+            ..Default::default()
+        };
+
+        let not_moved_enemy = move_enemy(&player, far_enemy.clone(), &walls, delta);
+        assert_eq!(not_moved_enemy.entity.position, far_enemy.entity.position);
+    }
+
+    #[test]
+    fn test_shoot_enemies() {
+        let player = Player {
+            entity: Entity {
+                position: vec2(0.0, 0.0),
+                size: PLAYER_SIZE,
+            },
+            look: vec2(1.0, 0.0),
+        };
+
+        let player_info = PlayerInfo {
+            is_shooting: true,
+            ..Default::default()
+        };
+
+        let enemy = Enemy {
+            entity: Entity {
+                position: vec2(MAX_SHOOT_DISTANCE - 1.0, 0.0),
+                size: ENEMY_SIZE,
+            },
+            hp: 100.0,
+            ..Default::default()
+        };
+
+        let walls = vec![];
+
+        let delta = 1.0;
+        let (remaining_enemies, game_events) =
+            shoot_enemies(&player, &player_info, vec![enemy.clone()], &walls, delta);
+
+        assert_eq!(remaining_enemies[0].hp, 100.0 - (GUN_DPS * delta));
+
+        assert!(!game_events.is_empty());
+        assert!(matches!(game_events[0], GameEvent::LocationShot { .. }));
+
+        let player_not_shooting = PlayerInfo {
+            is_shooting: false,
+            ..Default::default()
+        };
+
+        let (no_hit_enemies, no_hit_events) =
+            shoot_enemies(&player, &player_not_shooting, vec![enemy], &walls, delta);
+        assert_eq!(no_hit_enemies.len(), 1);
+        assert!(no_hit_events.is_empty());
+    }
+
 }

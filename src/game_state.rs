@@ -12,7 +12,7 @@ use crate::{
     input::get_input,
     level_loader::load_level,
     model::GameObjects,
-    renderers::{render_drawables, render_game_over, render_game_won},
+    renderer::{render_drawables, render_game_over, render_game_won},
     texture_manager::TextureManager,
 };
 

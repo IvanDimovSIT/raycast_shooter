@@ -8,7 +8,7 @@ mod input;
 mod level_loader;
 mod math;
 mod model;
-mod renderers;
+mod renderer;
 mod service;
 mod texture_manager;
 

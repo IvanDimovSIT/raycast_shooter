@@ -352,13 +352,6 @@ pub fn deal_damage_to_player(game_objects: &GameObjects, delta: f32) -> PlayerIn
         })
         .sum();
 
-    #[cfg(debug_assertions)]
-    {
-        if damage > 0.0 {
-            println!("dmg:{}", damage);
-        }
-    }
-
     PlayerInfo {
         health: game_objects.player_info.health - damage,
         ..game_objects.player_info

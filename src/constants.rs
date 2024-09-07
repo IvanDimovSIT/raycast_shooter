@@ -46,7 +46,7 @@ pub const ENEMY_HP: f32 = 10.0;
 pub const ENEMY_MAX_CHASE_DISTANCE: f32 = 40.0;
 pub const ENEMY_MOVE_SPEED: f32 = 1.8;
 pub const ENEMY_DPS: f32 = 80.0;
-pub const ENEMY_ATTACK_RANGE: f32 = 0.6;
+pub const ENEMY_ATTACK_RANGE: f32 = 1.0;
 
 pub const GUN_DPS: f32 = 50.0;
 pub const MAX_SHOOT_DISTANCE: f32 = 100.0;

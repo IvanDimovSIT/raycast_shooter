@@ -322,8 +322,16 @@ pub fn create_shot_animation_decoration(player: &Player, location: Vec2) -> Deco
     }
 }
 
-fn enemy_can_attack_player(enemy: &Enemy, player: &Player) -> bool {
-    check_circles_collide(
+fn enemy_can_attack_player(enemy: &Enemy, player: &Player, walls: &[Wall]) -> bool {
+    !walls.iter().any(|wall| {
+        find_intersection(
+            enemy.entity.position,
+            player.entity.position,
+            wall.start,
+            wall.end,
+        )
+        .is_some()
+    }) && check_circles_collide(
         player.entity.position,
         player.entity.size,
         enemy.entity.position,
@@ -336,7 +344,7 @@ pub fn deal_damage_to_player(game_objects: &GameObjects, delta: f32) -> PlayerIn
         .enemies
         .iter()
         .map(|enemy| {
-            if enemy_can_attack_player(enemy, &game_objects.player) {
+            if enemy_can_attack_player(enemy, &game_objects.player, &game_objects.walls) {
                 delta * ENEMY_DPS
             } else {
                 0.0

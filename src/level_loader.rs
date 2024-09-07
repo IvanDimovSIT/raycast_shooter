@@ -90,7 +90,8 @@ fn array_to_vec(arr: [f32; 2]) -> Vec2 {
 }
 
 pub fn load_level() -> GameObjects {
-    let data = read(LEVEL_PATH).unwrap_or_else(|_| panic!("Failed to find level file '{}'", LEVEL_PATH));
+    let data =
+        read(LEVEL_PATH).unwrap_or_else(|_| panic!("Failed to find level file '{}'", LEVEL_PATH));
     let level: Level = from_slice(&data).expect("Failed to deserialize level data");
 
     level.into()

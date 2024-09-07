@@ -9,27 +9,22 @@ pub fn rotate_point(point: Vec2, origin: Vec2, theta: f32) -> Vec2 {
 }
 
 pub fn find_intersection(a_start: Vec2, a_end: Vec2, b_start: Vec2, b_end: Vec2) -> Option<Vec2> {
-    let b_dir = b_end - b_start;
-    let perp_b = Vec2::new(-b_dir.y, b_dir.x);
-
-    let denom = a_end.dot(perp_b);
-
-    if denom.abs() < f32::EPSILON {
-        return None;
+    let line_1 = geo::Line::new(
+        geo::coord! {x: a_start.x, y: a_start.y},
+        geo::coord! { x: a_end.x, y: a_end.y },
+    );
+    let line_2 = geo::Line::new(
+        geo::coord! {x: b_start.x, y: b_start.y},
+        geo::coord! { x: b_end.x, y: b_end.y },
+    );
+    let inter = geo::line_intersection::line_intersection(line_1, line_2)?;
+    match inter {
+        geo::LineIntersection::SinglePoint {
+            intersection,
+            is_proper: _,
+        } => Some(vec2(intersection.x, intersection.y)),
+        _ => None,
     }
-
-    let t = (b_start - a_start).dot(perp_b) / denom;
-
-    if t >= 0.0 {
-        let intersection = a_start + t * a_end;
-        let b_t = (intersection - b_start).dot(b_dir) / b_dir.dot(b_dir);
-
-        if (0.0..=1.0).contains(&b_t) {
-            return Some(intersection);
-        }
-    }
-
-    None
 }
 
 pub fn line_intersects_circle(start: Vec2, end: Vec2, center: Vec2, radius: f32) -> bool {

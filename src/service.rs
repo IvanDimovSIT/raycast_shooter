@@ -256,7 +256,7 @@ fn find_shot_enemy<'a>(
     enemies: &'a [Enemy],
     walls: &'a [Wall],
 ) -> (Option<&'a Enemy>, Option<Vec2>) {
-    let shoot_ray = player.look.normalize_or_zero() * MAX_SHOOT_DISTANCE;
+    let shoot_ray = player.entity.position + player.look.normalize_or_zero() * MAX_SHOOT_DISTANCE;
 
     let closest_hit_wall = walls
         .iter()

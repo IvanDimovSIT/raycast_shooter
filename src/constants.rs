@@ -7,6 +7,8 @@ use macroquad::{
     math::{vec2, Vec2},
 };
 
+pub const FOCUS_KEY: KeyCode = KeyCode::Escape;
+
 pub const LEVEL_PATH: &str = "resources/level.json";
 pub const TEXTURE_PATH: &str = "resources/textures/";
 
@@ -16,7 +18,8 @@ pub const VIEW_DISTANCE: f32 = 1000.0;
 pub const WALL_RESOLUTION: f32 = 10000.0;
 
 pub const PLAYER_SIZE: f32 = 0.2;
-pub const TURN_SPEED: f32 = 1.3;
+pub const KEYS_TURN_SPEED: f32 = 1.3;
+pub const MOUSE_TURN_SPEED: f32 = 50.0;
 pub const MOVE_SPEED: f32 = 1.9;
 
 pub const FLOOR_COLOR: Color = color_u8!(55, 55, 75, 255);
@@ -27,7 +30,7 @@ pub const MIN_BRIGHTNESS: f32 = 0.2;
 pub const DEBUG_DRAW_DELAY_MS: u64 = 50;
 pub const DEBUG_INITAL_DRAW_DELAY_MS: u64 = 500;
 pub const ENTER_DEBUG_MODE_KEY: KeyCode = KeyCode::GraveAccent;
-pub const EXIT_DEBUG_MODE_KEY: KeyCode = KeyCode::Escape;
+pub const EXIT_DEBUG_MODE_KEY: KeyCode = KeyCode::Delete;
 
 pub const KEY_SIZE: f32 = 0.5;
 pub const KEY_ANIMATION_SPEED_MOVEMENT: u128 = 3000;

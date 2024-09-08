@@ -4,7 +4,6 @@ use macroquad::math::Vec2;
 use uuid::Uuid;
 
 use crate::{
-    constants::TURN_SPEED,
     input::Operation,
     math::find_perpendicular_vector,
     model::{decoration::Decoration, GameEvent, GameObjects, Player, PlayerInfo},
@@ -15,12 +14,12 @@ use crate::{
     },
 };
 
-fn handle_left(player: Player, delta: f32) -> Player {
-    turn_player(player, TURN_SPEED * delta)
+fn handle_left(player: Player, angle: f32, delta: f32) -> Player {
+    turn_player(player, angle * delta)
 }
 
-fn handle_right(player: Player, delta: f32) -> Player {
-    turn_player(player, -TURN_SPEED * delta)
+fn handle_right(player: Player, angle: f32, delta: f32) -> Player {
+    turn_player(player, -angle * delta)
 }
 
 fn handle_forward(game_objects: &GameObjects, player: Player, delta: f32) -> Player {
@@ -58,8 +57,8 @@ pub fn handle_input(
             game_objects.player_info.clone(),
         ),
         |(pl, info), op| match op {
-            Operation::Left => (handle_left(pl, delta), info),
-            Operation::Right => (handle_right(pl, delta), info),
+            Operation::Left(angle) => (handle_left(pl, *angle, delta), info),
+            Operation::Right(angle) => (handle_right(pl, *angle, delta), info),
             Operation::Forward => (handle_forward(game_objects, pl, delta), info),
             Operation::Back => (handle_back(game_objects, pl, delta), info),
             Operation::StrafeLeft => (handle_strafe_left(game_objects, pl, delta), info),

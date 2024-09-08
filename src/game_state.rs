@@ -2,7 +2,6 @@ use std::time::{Duration, Instant};
 
 use macroquad::{
     input::{is_key_released, KeyCode},
-    miniquad::window::screen_size,
     time::get_frame_time,
 };
 
@@ -43,7 +42,7 @@ async fn normal_run(mut context: Box<GameContext>) -> (GameState, bool) {
 
     context.game_objects = reset_state(context.game_objects);
 
-    let input = get_input(screen_size());
+    let input = get_input();
 
     (
         context.game_objects.player,

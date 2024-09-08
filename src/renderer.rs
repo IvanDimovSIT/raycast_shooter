@@ -10,7 +10,7 @@ use crate::{
 };
 use macroquad::{
     color::{BLACK, ORANGE, RED, WHITE},
-    input::is_key_pressed,
+    input::{is_key_pressed, is_key_released},
     miniquad::window::screen_size,
     shapes::draw_rectangle,
     text::draw_text,
@@ -85,7 +85,7 @@ pub async fn render_drawables(texture_manager: &TextureManager, to_draw: &[Box<d
     let draw_in_order = sort_drawables(to_draw);
     let screen = screen_size();
 
-    if is_key_pressed(ENTER_DEBUG_MODE_KEY) {
+    if is_key_released(ENTER_DEBUG_MODE_KEY) {
         debug_renderer(texture_manager, screen, &draw_in_order).await;
     } else {
         default_renderer(texture_manager, screen, &draw_in_order).await;

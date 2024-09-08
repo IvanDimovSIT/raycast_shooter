@@ -7,6 +7,8 @@ use macroquad::math::Vec2;
 use serde::Deserialize;
 use uuid::Uuid;
 
+use crate::constants::MAX_BULLETS;
+
 pub mod decoration;
 pub mod enemy;
 pub mod key_object;
@@ -77,18 +79,29 @@ pub enum GameEvent {
     LocationShot { position: Vec2 },
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ShootingStatus {
+    Shooting,
+    NotShooting,
+    Reloading,
+}
+
 #[derive(Debug, Clone)]
 pub struct PlayerInfo {
-    pub is_shooting: bool,
+    pub shooting_status: ShootingStatus,
+    pub time_since_last_shot: f32,
+    pub bullets: usize,
     pub picked_up_keys: usize,
     pub health: f32,
 }
 impl Default for PlayerInfo {
     fn default() -> Self {
         Self {
-            is_shooting: false,
+            shooting_status: ShootingStatus::NotShooting,
             picked_up_keys: 0,
             health: 100.0,
+            time_since_last_shot: 0.0,
+            bullets: MAX_BULLETS,
         }
     }
 }

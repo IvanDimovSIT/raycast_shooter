@@ -5,12 +5,13 @@ use crate::{
     constants::{
         CORPSE_OFFSET, CORPSE_SIZE, CREATE_GUNSHOT_HIT_ANIMATION_OFFSET_TO_CAMERA,
         ENEMY_ATTACK_RANGE, ENEMY_DPS, ENEMY_MAX_CHASE_DISTANCE, ENEMY_MOVE_SPEED,
-        GUNSHOT_ANIMATION_LENGTH, GUNSHOT_ANIMATION_SPEED, GUN_DPS, MAX_SHOOT_DISTANCE, MOVE_SPEED,
+        GUNSHOT_ANIMATION_LENGTH, GUNSHOT_ANIMATION_SPEED, GUN_DAMAGE, MAX_BULLETS,
+        MAX_SHOOT_DISTANCE, MOVE_SPEED, RELOAD_SPEED, SHOOT_SPEED,
     },
     math::{check_circles_collide, find_intersection, line_intersects_circle, rotate_point},
     model::{
         decoration::Decoration, enemy::Enemy, key_object::KeyObject, Entity, GameEvent,
-        GameObjects, Player, PlayerInfo, Texture, Wall,
+        GameObjects, Player, PlayerInfo, ShootingStatus, Texture, Wall,
     },
 };
 
@@ -147,6 +148,109 @@ pub fn move_enemies_towards_player(
         .collect()
 }
 
+fn update_shoot_shooting(time_since_last_shot: f32, player_info: PlayerInfo) -> (PlayerInfo, bool) {
+    if player_info.bullets == 0 {
+        return (
+            PlayerInfo {
+                shooting_status: ShootingStatus::Reloading,
+                time_since_last_shot,
+                ..player_info
+            },
+            false,
+        );
+    }
+
+    if time_since_last_shot < SHOOT_SPEED {
+        return (
+            PlayerInfo {
+                time_since_last_shot,
+                ..player_info
+            },
+            false,
+        );
+    }
+
+    if player_info.bullets == 1 {
+        (
+            PlayerInfo {
+                shooting_status: ShootingStatus::Reloading,
+                time_since_last_shot: 0.0,
+                bullets: 0,
+                ..player_info
+            },
+            true,
+        )
+    } else {
+        (
+            PlayerInfo {
+                time_since_last_shot: 0.0,
+                bullets: player_info.bullets - 1,
+                ..player_info
+            },
+            true,
+        )
+    }
+}
+
+fn update_shoot_not_shooting(
+    time_since_last_shot: f32,
+    player_info: PlayerInfo,
+) -> (PlayerInfo, bool) {
+    if time_since_last_shot >= RELOAD_SPEED {
+        (
+            PlayerInfo {
+                time_since_last_shot,
+                bullets: MAX_BULLETS,
+                ..player_info
+            },
+            false,
+        )
+    } else {
+        (
+            PlayerInfo {
+                time_since_last_shot,
+                ..player_info
+            },
+            false,
+        )
+    }
+}
+
+fn update_shoot_reloading(
+    time_since_last_shot: f32,
+    player_info: PlayerInfo,
+) -> (PlayerInfo, bool) {
+    if time_since_last_shot >= RELOAD_SPEED {
+        (
+            PlayerInfo {
+                shooting_status: ShootingStatus::NotShooting,
+                time_since_last_shot,
+                bullets: MAX_BULLETS,
+                ..player_info
+            },
+            false,
+        )
+    } else {
+        (
+            PlayerInfo {
+                time_since_last_shot,
+                ..player_info
+            },
+            false,
+        )
+    }
+}
+
+pub fn update_shoot(player_info: PlayerInfo, delta: f32) -> (PlayerInfo, bool) {
+    let time_since_last_shot = player_info.time_since_last_shot + delta;
+
+    match player_info.shooting_status {
+        ShootingStatus::Shooting => update_shoot_shooting(time_since_last_shot, player_info),
+        ShootingStatus::NotShooting => update_shoot_not_shooting(time_since_last_shot, player_info),
+        ShootingStatus::Reloading => update_shoot_reloading(time_since_last_shot, player_info),
+    }
+}
+
 fn find_shot_enemy<'a>(
     player: &'a Player,
     enemies: &'a [Enemy],
@@ -205,15 +309,9 @@ fn create_shot_particles_event(shot_location: Vec2) -> GameEvent {
 
 pub fn shoot_enemies(
     player: &Player,
-    info: &PlayerInfo,
     enemies: Vec<Enemy>,
     walls: &[Wall],
-    delta: f32,
 ) -> (Vec<Enemy>, Vec<GameEvent>) {
-    if !info.is_shooting {
-        return (enemies, vec![]);
-    }
-
     let (shot_enemy_option, shot_location) = find_shot_enemy(player, &enemies, walls);
 
     let shot_event = if let Some(some) = shot_location {
@@ -226,14 +324,13 @@ pub fn shoot_enemies(
         return (enemies, shot_event);
     }
     let shot_enemy_id = shot_enemy_option.unwrap().id;
-    let damage = delta * GUN_DPS;
 
     let new_hp_enemies: Vec<_> = enemies
         .into_iter()
         .map(|enemy| {
             if enemy.id == shot_enemy_id {
                 Enemy {
-                    hp: enemy.hp - damage,
+                    hp: enemy.hp - GUN_DAMAGE,
                     ..enemy
                 }
             } else {
@@ -278,16 +375,24 @@ pub fn create_corpse(location: Vec2) -> Decoration {
 }
 
 pub fn start_shooting(player_info: PlayerInfo) -> PlayerInfo {
-    PlayerInfo {
-        is_shooting: true,
-        ..player_info
+    if matches!(player_info.shooting_status, ShootingStatus::NotShooting) {
+        PlayerInfo {
+            shooting_status: ShootingStatus::Shooting,
+            ..player_info
+        }
+    } else {
+        player_info
     }
 }
 
 pub fn stop_shooting(player_info: PlayerInfo) -> PlayerInfo {
-    PlayerInfo {
-        is_shooting: false,
-        ..player_info
+    if matches!(player_info.shooting_status, ShootingStatus::Shooting) {
+        PlayerInfo {
+            shooting_status: ShootingStatus::NotShooting,
+            ..player_info
+        }
+    } else {
+        player_info
     }
 }
 
@@ -526,11 +631,6 @@ mod tests {
             look: vec2(1.0, 0.0),
         };
 
-        let player_info = PlayerInfo {
-            is_shooting: true,
-            ..Default::default()
-        };
-
         let enemy = Enemy {
             entity: Entity {
                 position: vec2(MAX_SHOOT_DISTANCE - 1.0, 0.0),
@@ -542,24 +642,133 @@ mod tests {
 
         let walls = vec![];
 
-        let delta = 1.0;
-        let (remaining_enemies, game_events) =
-            shoot_enemies(&player, &player_info, vec![enemy.clone()], &walls, delta);
+        let (remaining_enemies, game_events) = shoot_enemies(&player, vec![enemy.clone()], &walls);
 
-        assert_eq!(remaining_enemies[0].hp, 100.0 - (GUN_DPS * delta));
+        assert_eq!(remaining_enemies[0].hp, 100.0 - GUN_DAMAGE);
 
-        assert!(!game_events.is_empty());
         assert!(matches!(game_events[0], GameEvent::LocationShot { .. }));
+    }
 
-        let player_not_shooting = PlayerInfo {
-            is_shooting: false,
+    #[test]
+    fn test_update_shoot_shooting() {
+        let player_info = PlayerInfo {
+            bullets: 5,
+            shooting_status: ShootingStatus::Shooting,
+            time_since_last_shot: SHOOT_SPEED,
             ..Default::default()
         };
 
-        let (no_hit_enemies, no_hit_events) =
-            shoot_enemies(&player, &player_not_shooting, vec![enemy], &walls, delta);
-        assert_eq!(no_hit_enemies.len(), 1);
-        assert!(no_hit_events.is_empty());
+        let (updated_player_info, shot_fired) = update_shoot(player_info.clone(), 0.0);
+
+        assert_eq!(updated_player_info.bullets, 4);
+        assert!(shot_fired);
+
+        let player_info_not_ready = PlayerInfo {
+            bullets: 5,
+            shooting_status: ShootingStatus::Shooting,
+            time_since_last_shot: SHOOT_SPEED - 0.1,
+            ..Default::default()
+        };
+
+        let (updated_player_info, shot_fired) = update_shoot(player_info_not_ready, 0.0);
+
+        assert_eq!(updated_player_info.bullets, 5);
+        assert!(!shot_fired);
+
+        let player_info_one_bullet = PlayerInfo {
+            bullets: 1,
+            shooting_status: ShootingStatus::Shooting,
+            time_since_last_shot: SHOOT_SPEED,
+            ..Default::default()
+        };
+
+        let (updated_player_info, shot_fired) = update_shoot(player_info_one_bullet.clone(), 0.0);
+
+        assert_eq!(updated_player_info.bullets, 0);
+        assert_eq!(
+            updated_player_info.shooting_status,
+            ShootingStatus::Reloading
+        );
+        assert!(shot_fired);
+
+        let player_info_no_bullets = PlayerInfo {
+            bullets: 0,
+            shooting_status: ShootingStatus::Shooting,
+            time_since_last_shot: SHOOT_SPEED,
+            ..Default::default()
+        };
+
+        let (updated_player_info, shot_fired) = update_shoot(player_info_no_bullets.clone(), 0.0);
+
+        assert_eq!(updated_player_info.bullets, 0);
+        assert_eq!(
+            updated_player_info.shooting_status,
+            ShootingStatus::Reloading
+        );
+        assert!(!shot_fired);
     }
 
+    #[test]
+    fn test_update_shoot_not_shooting() {
+        let player_info = PlayerInfo {
+            bullets: 5,
+            shooting_status: ShootingStatus::NotShooting,
+            time_since_last_shot: RELOAD_SPEED * 0.5,
+            ..Default::default()
+        };
+
+        let (updated_player_info, shot_fired) =
+            update_shoot(player_info.clone(), RELOAD_SPEED * 0.4);
+
+        assert_eq!(updated_player_info.bullets, 5);
+        assert!(!shot_fired);
+
+        let player_info_needs_reload = PlayerInfo {
+            bullets: 0,
+            shooting_status: ShootingStatus::NotShooting,
+            time_since_last_shot: RELOAD_SPEED * 0.95,
+            ..Default::default()
+        };
+
+        let (updated_player_info, shot_fired) =
+            update_shoot(player_info_needs_reload.clone(), RELOAD_SPEED * 0.1);
+
+        assert_eq!(updated_player_info.bullets, MAX_BULLETS);
+        assert!(!shot_fired);
+    }
+
+    #[test]
+    fn test_update_shoot_reloading() {
+        let player_info = PlayerInfo {
+            bullets: 0,
+            shooting_status: ShootingStatus::Reloading,
+            time_since_last_shot: RELOAD_SPEED - 0.5,
+            ..Default::default()
+        };
+
+        let (updated_player_info, shot_fired) = update_shoot(player_info.clone(), 0.4);
+
+        assert_eq!(
+            updated_player_info.shooting_status,
+            ShootingStatus::Reloading
+        );
+        assert_eq!(updated_player_info.bullets, 0);
+        assert!(!shot_fired);
+
+        let player_info_reloaded = PlayerInfo {
+            bullets: 0,
+            shooting_status: ShootingStatus::Reloading,
+            time_since_last_shot: RELOAD_SPEED - 0.5,
+            ..Default::default()
+        };
+
+        let (updated_player_info, shot_fired) = update_shoot(player_info_reloaded.clone(), 0.6);
+
+        assert_eq!(updated_player_info.bullets, MAX_BULLETS);
+        assert_eq!(
+            updated_player_info.shooting_status,
+            ShootingStatus::NotShooting
+        );
+        assert!(!shot_fired);
+    }
 }

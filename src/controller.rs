@@ -1,17 +1,17 @@
 use std::mem::take;
 
-use macroquad::{math::Vec2, rand::gen_range};
+use macroquad::math::Vec2;
 use uuid::Uuid;
 
 use crate::{
-    constants::{CREATE_GUNSHOT_ANIMATION_RATE, TURN_SPEED},
+    constants::TURN_SPEED,
     input::Operation,
     math::find_perpendicular_vector,
     model::{decoration::Decoration, GameEvent, GameObjects, Player, PlayerInfo},
     service::{
         check_pickup_key, create_corpse, create_shot_animation_decoration, deal_damage_to_player,
         move_enemies_towards_player, move_player, shoot_enemies, start_shooting, stop_shooting,
-        turn_player,
+        turn_player, update_shoot,
     },
 };
 
@@ -87,26 +87,22 @@ fn handle_enemy_killed(game_objects: &mut GameObjects, position: Vec2) {
     println!("Enemy killed at:{}", position);
 }
 
-fn handle_location_shot(game_objects: &mut GameObjects, position: Vec2, delta: f32) {
-    if delta * CREATE_GUNSHOT_ANIMATION_RATE > gen_range(0.0, 1.0) {
-        game_objects.decorations = take(&mut game_objects.decorations)
-            .into_iter()
-            .chain(std::iter::once(create_shot_animation_decoration(
-                &game_objects.player,
-                position,
-            )))
-            .collect();
-    }
+fn handle_location_shot(game_objects: &mut GameObjects, position: Vec2) {
+    game_objects.decorations = take(&mut game_objects.decorations)
+        .into_iter()
+        .chain(std::iter::once(create_shot_animation_decoration(
+            &game_objects.player,
+            position,
+        )))
+        .collect();
 }
 
-fn handle_events(game_objects: &mut GameObjects, events: &[GameEvent], delta: f32) {
+fn handle_events(game_objects: &mut GameObjects, events: &[GameEvent]) {
     for e in events {
         match e {
             GameEvent::PickUpKey(key_id) => handle_pickup_key(game_objects, key_id),
             GameEvent::EnemyKilled { position } => handle_enemy_killed(game_objects, *position),
-            GameEvent::LocationShot { position } => {
-                handle_location_shot(game_objects, *position, delta)
-            }
+            GameEvent::LocationShot { position } => handle_location_shot(game_objects, *position),
         }
     }
 }
@@ -125,14 +121,21 @@ pub fn next_game_step(mut game_objects: GameObjects, delta: f32) -> GameObjects 
         &game_objects.walls,
         delta,
     );
+
+    let can_shoot;
+    (game_objects.player_info, can_shoot) = update_shoot(game_objects.player_info, delta);
+
     let kill_enemies_events;
-    (game_objects.enemies, kill_enemies_events) = shoot_enemies(
-        &game_objects.player,
-        &game_objects.player_info,
-        game_objects.enemies,
-        &game_objects.walls,
-        delta,
-    );
+    (game_objects.enemies, kill_enemies_events) = if can_shoot {
+        shoot_enemies(
+            &game_objects.player,
+            game_objects.enemies,
+            &game_objects.walls,
+        )
+    } else {
+        (game_objects.enemies, vec![])
+    };
+
     game_objects.decorations = update_decorations(game_objects.decorations, delta);
 
     let events: Vec<_> = check_pickup_key(&game_objects.player, &game_objects.keys)
@@ -142,7 +145,7 @@ pub fn next_game_step(mut game_objects: GameObjects, delta: f32) -> GameObjects 
 
     game_objects.player_info = deal_damage_to_player(&game_objects, delta);
 
-    handle_events(&mut game_objects, &events, delta);
+    handle_events(&mut game_objects, &events);
 
     game_objects
 }

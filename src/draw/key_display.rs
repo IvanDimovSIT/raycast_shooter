@@ -1,7 +1,10 @@
 use macroquad::{shapes::draw_rectangle, text::draw_text};
 
 use crate::{
-    constants::{KEYS_UI_BOX_COLOR, KEYS_UI_POSITION, KEYS_UI_SIZE, KEYS_UI_TEXT_COLOR},
+    constants::{
+        KEYS_UI_BOX_COLOR, KEYS_UI_BOX_WIDTH_TO_HEIGHT, KEYS_UI_POSITION, KEYS_UI_SIZE,
+        KEYS_UI_TEXT_COLOR,
+    },
     model::GameObjects,
     texture_manager::TextureManager,
 };
@@ -18,10 +21,10 @@ impl Drawable for KeyDisplay {
 
     fn draw(&self, screen_size: (f32, f32), _texture_manager: &TextureManager) {
         let x = KEYS_UI_POSITION.x * screen_size.0;
-        let w = KEYS_UI_SIZE * screen_size.0 * 3.0;
+        let w = KEYS_UI_SIZE * screen_size.1 * KEYS_UI_BOX_WIDTH_TO_HEIGHT;
         let h = KEYS_UI_SIZE * screen_size.1;
         let y = KEYS_UI_POSITION.y * screen_size.1;
-        let font_size = KEYS_UI_SIZE * screen_size.0.min(screen_size.1) * 0.8;
+        let font_size = KEYS_UI_SIZE * screen_size.1 * 0.8;
 
         let offset_x = 0.2 * KEYS_UI_SIZE * screen_size.0;
         let offset_y = 0.2 * KEYS_UI_SIZE * screen_size.1;

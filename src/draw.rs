@@ -1,5 +1,6 @@
 use std::{f32::consts::TAU, iter::once, time::Duration};
 
+use bullets_display::draw_bullets_display;
 use gun::draw_gun;
 use key_display::draw_key_display;
 use macroquad::{
@@ -18,6 +19,7 @@ use crate::{
     texture_manager::TextureManager,
 };
 
+pub mod bullets_display;
 pub mod gun;
 pub mod key_display;
 pub mod sprite_2d;
@@ -93,8 +95,9 @@ pub fn draw_game(game_objects: &GameObjects, time_from_start: &Duration) -> Vec<
         .chain(sprites_to_draw)
         .chain(once(draw_gun(
             time_from_start,
-            game_objects.player_info.is_shooting,
+            game_objects.player_info.shooting_status,
         )))
         .chain(once(draw_key_display(game_objects)))
+        .chain(once(draw_bullets_display(&game_objects.player_info)))
         .collect()
 }

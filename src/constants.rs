@@ -42,18 +42,20 @@ pub const GUN_SIZE: f32 = 0.7;
 pub const ENEMY_ANIMATION_SPEED: u128 = 100;
 pub const ENEMY_SIZE: f32 = 0.2;
 pub const ENEMY_DRAW_SIZE_MOD: f32 = 9.0;
-pub const ENEMY_HP: f32 = 10.0;
+pub const ENEMY_HP: f32 = 100.0;
 pub const ENEMY_MAX_CHASE_DISTANCE: f32 = 40.0;
 pub const ENEMY_MOVE_SPEED: f32 = 1.8;
 pub const ENEMY_DPS: f32 = 80.0;
 pub const ENEMY_ATTACK_RANGE: f32 = 1.0;
 
-pub const GUN_DPS: f32 = 50.0;
+pub const RELOAD_SPEED: f32 = 3.0;
+pub const SHOOT_SPEED: f32 = 0.1;
+pub const MAX_BULLETS: usize = 30;
+pub const GUN_DAMAGE: f32 = 50.0;
 pub const MAX_SHOOT_DISTANCE: f32 = 100.0;
 
 pub const GUNSHOT_ANIMATION_LENGTH: f32 = 0.5;
 pub const GUNSHOT_ANIMATION_SPEED: u128 = 100;
-pub const CREATE_GUNSHOT_ANIMATION_RATE: f32 = 2.5;
 pub const CREATE_GUNSHOT_HIT_ANIMATION_OFFSET_TO_CAMERA: f32 = 0.1;
 
 pub const CORPSE_SIZE: f32 = 0.15;
@@ -73,4 +75,11 @@ pub const TRY_AGAIN_WON_TEXT_SIZE: f32 = 0.07;
 pub const KEYS_UI_BOX_COLOR: Color = Color::new(0.1, 0.1, 0.1, 0.5);
 pub const KEYS_UI_TEXT_COLOR: Color = Color::new(1.0, 1.0, 1.0, 0.7);
 pub const KEYS_UI_SIZE: f32 = 0.05;
-pub const KEYS_UI_POSITION: Vec2 = vec2(0.05, 0.92);
+pub const KEYS_UI_POSITION: Vec2 = vec2(0.05, 0.85);
+pub const KEYS_UI_BOX_WIDTH_TO_HEIGHT: f32 = 4.0;
+
+pub const BULLETS_UI_BOX_COLOR: Color = Color::new(0.1, 0.1, 0.1, 0.5);
+pub const BULLETS_UI_TEXT_COLOR: Color = Color::new(1.0, 1.0, 1.0, 0.7);
+pub const BULLETS_UI_SIZE: f32 = 0.07;
+pub const BULLETS_UI_POSITION: Vec2 = vec2(0.05, 0.95);
+pub const BULLETS_UI_BOX_WIDTH_TO_HEIGHT: f32 = 5.0;

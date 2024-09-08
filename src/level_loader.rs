@@ -97,4 +97,3 @@ pub fn load_level() -> GameObjects {
 
     level.into()
 }
-

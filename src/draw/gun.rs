@@ -1,6 +1,9 @@
 use macroquad::color::WHITE;
 
-use crate::constants::{GUN_FIRE_ANIMATION_SPEED, GUN_POSITION, GUN_ROTATION, GUN_SIZE};
+use crate::{
+    constants::{GUN_FIRE_ANIMATION_SPEED, GUN_POSITION, GUN_ROTATION, GUN_SIZE},
+    model::ShootingStatus,
+};
 
 use super::*;
 
@@ -40,8 +43,8 @@ impl Drawable for GunDrawable {
     }
 }
 
-pub fn draw_gun(time_ellapsed: &Duration, is_shooting: bool) -> Box<dyn Drawable> {
-    let texture = if is_shooting {
+pub fn draw_gun(time_ellapsed: &Duration, shooting_status: ShootingStatus) -> Box<dyn Drawable> {
+    let texture = if matches!(shooting_status, ShootingStatus::Shooting) {
         let shooting_textures = [
             Texture::Gun2,
             Texture::Gun3,

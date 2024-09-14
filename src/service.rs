@@ -11,7 +11,7 @@ use crate::{
     math::{check_circles_collide, find_intersection, line_intersects_circle, rotate_point},
     model::{
         decoration::{Decoration, DecorationGraphics},
-        enemy::{self, Enemy},
+        enemy::Enemy,
         key_object::KeyObject,
         Animation, Entity, GameEvent, GameObjects, Player, PlayerInfo, ShootingStatus, Texture,
         Wall,
@@ -449,6 +449,19 @@ pub fn deal_damage_to_player(game_objects: &GameObjects, delta: f32) -> PlayerIn
         health: game_objects.player_info.health - damage,
         ..game_objects.player_info
     }
+}
+
+pub fn is_player_at_exit(game_objects: &GameObjects) -> bool {
+    game_objects.exit_triggers
+        .iter()
+        .any(|trigger| 
+            check_circles_collide(
+                trigger.position,
+                trigger.size,
+                game_objects.player.entity.position,
+                game_objects.player.entity.size
+            )
+        )
 }
 
 #[cfg(test)]

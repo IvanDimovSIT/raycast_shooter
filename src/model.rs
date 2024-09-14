@@ -158,5 +158,6 @@ pub struct GameObjects {
     pub walls: Vec<Wall>,
     pub enemies: Vec<Enemy>,
     pub keys: Vec<KeyObject>,
+    pub exit_triggers: Vec<Entity>,
     pub decorations: Vec<Decoration>,
 }

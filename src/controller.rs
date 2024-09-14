@@ -5,12 +5,10 @@ use uuid::Uuid;
 
 use crate::{
     input::Operation,
-    math::find_perpendicular_vector,
+    math::{check_circles_collide, find_perpendicular_vector},
     model::{decoration::Decoration, GameEvent, GameObjects, Player, PlayerInfo},
     service::{
-        check_pickup_key, create_corpse, create_shot_animation_decoration, deal_damage_to_player,
-        move_enemies_towards_player, move_player, shoot_enemies, start_shooting, stop_shooting,
-        turn_player, update_shoot,
+        check_pickup_key, create_corpse, create_shot_animation_decoration, deal_damage_to_player, is_player_at_exit, move_enemies_towards_player, move_player, shoot_enemies, start_shooting, stop_shooting, turn_player, update_shoot
     },
 };
 
@@ -159,5 +157,5 @@ pub fn is_game_over(game_objects: &GameObjects) -> bool {
 }
 
 pub fn is_game_won(game_objects: &GameObjects) -> bool {
-    game_objects.keys.is_empty()
+    game_objects.keys.len() == 0 && is_player_at_exit(game_objects)
 }

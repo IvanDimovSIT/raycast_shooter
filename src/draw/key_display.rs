@@ -2,8 +2,7 @@ use macroquad::{shapes::draw_rectangle, text::draw_text};
 
 use crate::{
     constants::{
-        KEYS_UI_BOX_COLOR, KEYS_UI_BOX_WIDTH_TO_HEIGHT, KEYS_UI_POSITION, KEYS_UI_SIZE,
-        KEYS_UI_TEXT_COLOR,
+        KEYS_UI_BOX_COLOR, KEYS_UI_BOX_WIDTH_TO_HEIGHT, KEYS_UI_FIND_EXIT_TEXT, KEYS_UI_POSITION, KEYS_UI_SIZE, KEYS_UI_TEXT_COLOR
     },
     model::GameObjects,
     texture_manager::TextureManager,
@@ -39,11 +38,15 @@ impl Drawable for KeyDisplay {
 }
 
 pub fn draw_key_display(game_objects: &GameObjects) -> Box<dyn Drawable> {
-    let text = format!(
-        "Keys:{}/{}",
-        game_objects.player_info.picked_up_keys,
-        game_objects.player_info.picked_up_keys + game_objects.keys.len()
-    );
+    let text = if game_objects.keys.len() == 0 {
+        KEYS_UI_FIND_EXIT_TEXT.to_string()
+    } else { 
+        format!(
+            "Keys:{}/{}",
+            game_objects.player_info.picked_up_keys,
+            game_objects.player_info.picked_up_keys + game_objects.keys.len()
+        )
+    };
 
     Box::new(KeyDisplay { text })
 }

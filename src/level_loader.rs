@@ -24,11 +24,18 @@ struct Player {
 }
 
 #[derive(Deserialize)]
+struct ExitTigger {
+    position: [f32; 2],
+    size: f32,
+}
+
+#[derive(Deserialize)]
 struct Level {
     walls: Vec<Wall>,
     player: Player,
     enemies: Vec<[f32; 2]>,
     keys: Vec<[f32; 2]>,
+    exit_triggers: Vec<ExitTigger>
 }
 impl Into<GameObjects> for Level {
     fn into(self) -> GameObjects {
@@ -62,7 +69,7 @@ impl Into<GameObjects> for Level {
             })
             .collect();
 
-        let keys = self
+        let keys: Vec<_> = self
             .keys
             .iter()
             .map(|key| KeyObject {
@@ -74,12 +81,30 @@ impl Into<GameObjects> for Level {
             })
             .collect();
 
+        if keys.len() == 0 {
+            panic!("Invalid level: no keys");
+        }
+
+        let exit_triggers: Vec<_> = self
+            .exit_triggers
+            .iter()
+            .map(|exit_tigger| Entity{
+                position: array_to_vec(exit_tigger.position),
+                size: exit_tigger.size
+            })
+            .collect();
+
+        if exit_triggers.len() == 0 {
+            panic!("Invalid level: no exit triggers");
+        }
+
         GameObjects {
             player,
             player_info: PlayerInfo::default(),
             walls,
             enemies,
             keys,
+            exit_triggers,
             decorations: vec![],
         }
     }

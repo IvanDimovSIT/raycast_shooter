@@ -34,7 +34,7 @@ impl Camera {
     pub fn for_player(player: &Player) -> Self {
         Self {
             position: player.entity.position,
-            look: player.entity.position + player.look * VIEW_DISTANCE,
+            look: player.entity.position + player.look.normalize_or_zero() * VIEW_DISTANCE,
         }
     }
 }
@@ -100,4 +100,79 @@ pub fn draw_game(game_objects: &GameObjects, time_from_start: &Duration) -> Vec<
         .chain(once(draw_key_display(game_objects)))
         .chain(once(draw_bullets_display(&game_objects.player_info)))
         .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::model::{PlayerInfo, ShootingStatus};
+
+    #[test]
+    fn test_camera_for_player() {
+        let player = Player {
+            entity: Entity {
+                position: vec2(10.0, 5.0),
+                size: 1.0,
+            },
+            look: vec2(0.0, 10.0),
+        };
+
+        let camera = Camera::for_player(&player);
+
+        assert_eq!(camera.position, vec2(10.0, 5.0));
+        assert_eq!(camera.look, vec2(10.0, 5.0 + VIEW_DISTANCE));
+    }
+
+    #[test]
+    fn test_calculate_brightness() {
+        let brightness1 = calculate_brightness(0.1);
+        assert!((brightness1 - 1.0).abs() < f32::EPSILON);
+
+        let brightness2 = calculate_brightness(500.0);
+        assert!((brightness2 - MIN_BRIGHTNESS).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn test_select_animation_texture() {
+        let textures = vec![Texture::Debug, Texture::Stone, Texture::Metal];
+
+        let speed = 100;
+
+        let time_from_start1 = Duration::from_millis(0);
+        let selected_texture1 = select_animation_texture(&textures, speed, &time_from_start1);
+        assert_eq!(selected_texture1, Texture::Debug);
+
+        let time_from_start2 = Duration::from_millis(250);
+        let selected_texture2 = select_animation_texture(&textures, speed, &time_from_start2);
+        assert_eq!(selected_texture2, Texture::Metal);
+
+        let time_from_start3 = Duration::from_millis(50);
+        let selected_texture3 = select_animation_texture(&textures, speed, &time_from_start3);
+        assert_eq!(selected_texture3, Texture::Debug);
+
+        let time_from_start4 = Duration::from_millis(350);
+        let selected_texture4 = select_animation_texture(&textures, speed, &time_from_start4);
+        assert_eq!(selected_texture4, Texture::Debug);
+    }
+
+    #[test]
+    fn test_calculate_vertical_offset() {
+        let speed = 0;
+        let size = 2.0;
+        let base_offset = 5.0;
+        let amplitude = 1.0;
+        let time_from_start = Duration::from_millis(500);
+
+        let vertical_offset =
+            calculate_vertical_offset(speed, size, base_offset, amplitude, &time_from_start);
+        assert_eq!(vertical_offset, base_offset - size * 0.7);
+
+        let speed2 = 1000;
+        let vertical_offset2 =
+            calculate_vertical_offset(speed2, size, base_offset, amplitude, &time_from_start);
+        assert!(
+            vertical_offset2 > base_offset - size * 0.7 - amplitude
+                && vertical_offset2 < base_offset - size * 0.7 + amplitude
+        );
+    }
 }

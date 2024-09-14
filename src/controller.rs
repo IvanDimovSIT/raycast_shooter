@@ -5,11 +5,11 @@ use uuid::Uuid;
 
 use crate::{
     input::Operation,
-    math::{check_circles_collide, find_perpendicular_vector},
+    math::find_perpendicular_vector,
     model::{decoration::Decoration, GameEvent, GameObjects, Player, PlayerInfo},
-    service::{
-        check_pickup_key, create_corpse, create_shot_animation_decoration, deal_damage_to_player, is_player_at_exit, move_enemies_towards_player, move_player, shoot_enemies, start_shooting, stop_shooting, turn_player, update_shoot
-    },
+    service::enemy::*,
+    service::player::*,
+    service::shoot::*,
 };
 
 fn handle_left(player: Player, angle: f32, delta: f32) -> Player {

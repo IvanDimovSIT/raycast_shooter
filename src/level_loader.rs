@@ -35,7 +35,7 @@ struct Level {
     player: Player,
     enemies: Vec<[f32; 2]>,
     keys: Vec<[f32; 2]>,
-    exit_triggers: Vec<ExitTigger>
+    exit_triggers: Vec<ExitTigger>,
 }
 impl Into<GameObjects> for Level {
     fn into(self) -> GameObjects {
@@ -81,20 +81,20 @@ impl Into<GameObjects> for Level {
             })
             .collect();
 
-        if keys.len() == 0 {
+        if keys.is_empty() {
             panic!("Invalid level: no keys");
         }
 
         let exit_triggers: Vec<_> = self
             .exit_triggers
             .iter()
-            .map(|exit_tigger| Entity{
+            .map(|exit_tigger| Entity {
                 position: array_to_vec(exit_tigger.position),
-                size: exit_tigger.size
+                size: exit_tigger.size,
             })
             .collect();
 
-        if exit_triggers.len() == 0 {
+        if exit_triggers.is_empty() {
             panic!("Invalid level: no exit triggers");
         }
 

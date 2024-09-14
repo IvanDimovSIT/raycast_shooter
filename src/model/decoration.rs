@@ -2,17 +2,25 @@ use std::time::Duration;
 
 use macroquad::math::Vec2;
 
-use super::Entity;
+use super::{Animation, Entity};
 use crate::{
     draw::{calculate_vertical_offset, select_animation_texture, sprite_2d::Sprite2D},
     model::Texture,
 };
 
 #[derive(Debug, Clone)]
+pub enum DecorationGraphics {
+    Animation {
+        animation: Animation,
+        animation_speed: u128,
+    },
+    Texture(Texture),
+}
+
+#[derive(Debug, Clone)]
 pub struct Decoration {
     pub entity: Entity,
-    pub textures: Vec<Texture>,
-    pub animation_speed: u128,
+    pub graphics: DecorationGraphics,
     pub life: Option<f32>,
     pub offset: f32,
 }
@@ -30,10 +38,20 @@ impl Sprite2D for Decoration {
     }
 
     fn get_texture(&self, time_ellapsed: &Duration) -> Texture {
-        match self.textures.len() {
-            0 => Texture::default(),
-            1 => self.textures[0],
-            _ => select_animation_texture(&self.textures, self.animation_speed, time_ellapsed),
+        match self.graphics {
+            DecorationGraphics::Animation {
+                animation,
+                animation_speed,
+            } => {
+                let textures = animation.get_textures();
+
+                match textures.len() {
+                    0 => Texture::default(),
+                    1 => textures[0],
+                    _ => select_animation_texture(&textures, animation_speed, time_ellapsed),
+                }
+            }
+            DecorationGraphics::Texture(texture) => texture,
         }
     }
 }

@@ -10,8 +10,11 @@ use crate::{
     },
     math::{check_circles_collide, find_intersection, line_intersects_circle, rotate_point},
     model::{
-        decoration::Decoration, enemy::Enemy, key_object::KeyObject, Entity, GameEvent,
-        GameObjects, Player, PlayerInfo, ShootingStatus, Texture, Wall,
+        decoration::{Decoration, DecorationGraphics},
+        enemy::{self, Enemy},
+        key_object::KeyObject,
+        Animation, Entity, GameEvent, GameObjects, Player, PlayerInfo, ShootingStatus, Texture,
+        Wall,
     },
 };
 
@@ -309,7 +312,7 @@ fn create_shot_particles_event(shot_location: Vec2) -> GameEvent {
 
 pub fn shoot_enemies(
     player: &Player,
-    enemies: Vec<Enemy>,
+    mut enemies: Vec<Enemy>,
     walls: &[Wall],
 ) -> (Vec<Enemy>, Vec<GameEvent>) {
     let (shot_enemy_option, shot_location) = find_shot_enemy(player, &enemies, walls);
@@ -325,21 +328,17 @@ pub fn shoot_enemies(
     }
     let shot_enemy_id = shot_enemy_option.unwrap().id;
 
-    let new_hp_enemies: Vec<_> = enemies
-        .into_iter()
+    enemies
+        .iter_mut()
+        .find(|enemy| enemy.id == shot_enemy_id)
         .map(|enemy| {
-            if enemy.id == shot_enemy_id {
-                Enemy {
-                    hp: enemy.hp - GUN_DAMAGE,
-                    ..enemy
-                }
-            } else {
-                enemy
-            }
-        })
-        .collect();
+            *enemy = Enemy {
+                hp: enemy.hp - GUN_DAMAGE,
+                ..*enemy
+            };
+        });
 
-    let game_events = new_hp_enemies
+    let game_events = enemies
         .iter()
         .filter_map(|enemy| {
             if enemy.hp <= 0.0 {
@@ -353,12 +352,9 @@ pub fn shoot_enemies(
         .chain(shot_event)
         .collect();
 
-    let surviving_enemies = new_hp_enemies
-        .into_iter()
-        .filter(|enemy| enemy.hp > 0.0)
-        .collect();
+    enemies.retain(|enemy| enemy.hp > 0.0);
 
-    (surviving_enemies, game_events)
+    (enemies, game_events)
 }
 
 pub fn create_corpse(location: Vec2) -> Decoration {
@@ -367,8 +363,7 @@ pub fn create_corpse(location: Vec2) -> Decoration {
             position: location,
             size: CORPSE_SIZE,
         },
-        textures: vec![Texture::Skull],
-        animation_speed: 0,
+        graphics: DecorationGraphics::Texture(Texture::Skull),
         life: None,
         offset: CORPSE_OFFSET,
     }
@@ -411,18 +406,10 @@ pub fn create_shot_animation_decoration(player: &Player, location: Vec2) -> Deco
             position,
             size: 0.2,
         },
-        textures: vec![
-            Texture::Explostion1,
-            Texture::Explostion2,
-            Texture::Explostion3,
-            Texture::Explostion4,
-            Texture::Explostion5,
-            Texture::Explostion6,
-            Texture::Explostion7,
-            Texture::Explostion8,
-            Texture::Explostion9,
-        ],
-        animation_speed: GUNSHOT_ANIMATION_SPEED,
+        graphics: DecorationGraphics::Animation {
+            animation: Animation::Explosion,
+            animation_speed: GUNSHOT_ANIMATION_SPEED,
+        },
         life: Some(GUNSHOT_ANIMATION_LENGTH),
         offset: 0.1,
     }
@@ -551,7 +538,6 @@ mod tests {
 
         let key = KeyObject {
             id: Uuid::new_v4(),
-            textures: vec![],
             entity: Entity {
                 position: vec2(0.0, 0.5),
                 size: 1.0,

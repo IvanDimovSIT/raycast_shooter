@@ -49,7 +49,7 @@ async fn normal_run(mut context: Box<GameContext>) -> (GameState, bool) {
         context.game_objects.player_info,
     ) = handle_input(&context.game_objects, &input, delta);
 
-    context.game_objects = next_game_step(context.game_objects, delta);
+    next_game_step(&mut context.game_objects, delta);
 
     let to_draw = draw_game(&context.game_objects, &time_from_start);
 

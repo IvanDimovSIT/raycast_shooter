@@ -54,6 +54,51 @@ impl Default for Texture {
 }
 
 #[derive(Debug, Clone, Copy)]
+pub enum Animation {
+    Enemy,
+    Key,
+    Gun,
+    Explosion,
+}
+impl Animation {
+    pub fn get_textures(&self) -> Vec<Texture> {
+        match self {
+            Animation::Enemy => vec![
+                Texture::Enemy1,
+                Texture::Enemy2,
+                Texture::Enemy3,
+                Texture::Enemy4,
+                Texture::Enemy5,
+                Texture::Enemy6,
+                Texture::Enemy7,
+                Texture::Enemy8,
+            ],
+            Animation::Key => vec![Texture::Key1, Texture::Key2],
+            Animation::Gun => vec![
+                Texture::Gun1,
+                Texture::Gun2,
+                Texture::Gun3,
+                Texture::Gun4,
+                Texture::Gun5,
+                Texture::Gun6,
+                Texture::Gun7,
+                Texture::Gun8,
+            ],
+            Animation::Explosion => vec![
+                Texture::Explostion2,
+                Texture::Explostion3,
+                Texture::Explostion4,
+                Texture::Explostion5,
+                Texture::Explostion6,
+                Texture::Explostion7,
+                Texture::Explostion8,
+                Texture::Explostion9,
+            ],
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
 pub struct Entity {
     pub position: Vec2,
     pub size: f32,

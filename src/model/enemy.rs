@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+use crate::model::Animation;
 use macroquad::math::{vec2, Vec2};
 use uuid::Uuid;
 
@@ -15,7 +16,6 @@ pub struct Enemy {
     pub id: Uuid,
     pub entity: Entity,
     pub hp: f32,
-    pub textures: Vec<Texture>,
 }
 impl Sprite2D for Enemy {
     fn get_position(&self) -> Vec2 {
@@ -31,7 +31,11 @@ impl Sprite2D for Enemy {
     }
 
     fn get_texture(&self, time_ellapsed: &Duration) -> Texture {
-        select_animation_texture(&self.textures, ENEMY_ANIMATION_SPEED, time_ellapsed)
+        select_animation_texture(
+            &Animation::Enemy.get_textures(),
+            ENEMY_ANIMATION_SPEED,
+            time_ellapsed,
+        )
     }
 }
 impl Default for Enemy {
@@ -43,16 +47,6 @@ impl Default for Enemy {
                 size: ENEMY_SIZE,
             },
             hp: ENEMY_HP,
-            textures: vec![
-                Texture::Enemy1,
-                Texture::Enemy2,
-                Texture::Enemy3,
-                Texture::Enemy4,
-                Texture::Enemy5,
-                Texture::Enemy6,
-                Texture::Enemy7,
-                Texture::Enemy8,
-            ],
         }
     }
 }

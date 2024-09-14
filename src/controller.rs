@@ -113,29 +113,30 @@ fn update_decorations(decorations: Vec<Decoration>, delta: f32) -> Vec<Decoratio
         .collect()
 }
 
-pub fn next_game_step(mut game_objects: GameObjects, delta: f32) -> GameObjects {
+pub fn next_game_step(game_objects: &mut GameObjects, delta: f32) {
     game_objects.enemies = move_enemies_towards_player(
         &game_objects.player,
-        game_objects.enemies,
+        take(&mut game_objects.enemies),
         &game_objects.walls,
         delta,
     );
 
     let can_shoot;
-    (game_objects.player_info, can_shoot) = update_shoot(game_objects.player_info, delta);
+    (game_objects.player_info, can_shoot) =
+        update_shoot(take(&mut game_objects.player_info), delta);
 
     let kill_enemies_events;
     (game_objects.enemies, kill_enemies_events) = if can_shoot {
         shoot_enemies(
             &game_objects.player,
-            game_objects.enemies,
+            take(&mut game_objects.enemies),
             &game_objects.walls,
         )
     } else {
-        (game_objects.enemies, vec![])
+        (take(&mut game_objects.enemies), vec![])
     };
 
-    game_objects.decorations = update_decorations(game_objects.decorations, delta);
+    game_objects.decorations = update_decorations(take(&mut game_objects.decorations), delta);
 
     let events: Vec<_> = check_pickup_key(&game_objects.player, &game_objects.keys)
         .into_iter()
@@ -144,9 +145,7 @@ pub fn next_game_step(mut game_objects: GameObjects, delta: f32) -> GameObjects 
 
     game_objects.player_info = deal_damage_to_player(&game_objects, delta);
 
-    handle_events(&mut game_objects, &events);
-
-    game_objects
+    handle_events(game_objects, &events);
 }
 
 pub fn reset_state(mut game_objects: GameObjects) -> GameObjects {

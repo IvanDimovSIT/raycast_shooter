@@ -1,16 +1,16 @@
 use std::{fmt::Debug, time::Duration};
 
 use decoration::Decoration;
-use enemy::Enemy;
+use melee_enemy::MeleeEnemy;
 use key_object::KeyObject;
 use macroquad::math::Vec2;
 use serde::Deserialize;
 use uuid::Uuid;
 
-use crate::constants::MAX_BULLETS;
+use crate::{constants::MAX_BULLETS, draw::sprite_2d::Sprite2D};
 
 pub mod decoration;
-pub mod enemy;
+pub mod melee_enemy;
 pub mod key_object;
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Deserialize)]
@@ -122,6 +122,8 @@ pub enum GameEvent {
     PickUpKey(Uuid),
     EnemyKilled { position: Vec2 },
     LocationShot { position: Vec2 },
+    PlayerTakeDamage(f32),
+    CreateEnemyProjectile {position: Vec2, direction: Vec2}
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -151,12 +153,20 @@ impl Default for PlayerInfo {
     }
 }
 
+pub trait Enemy: Sprite2D + Debug {
+    fn update(&self, player: &Player, walls: &[Wall], delta: f32) -> (Box<dyn Enemy>, Vec<GameEvent>);
+    fn as_sprite(&self) -> &dyn Sprite2D;
+    fn get_id(&self) -> Uuid;
+    fn take_damage(&self, damage: f32) -> Box<dyn Enemy>; 
+    fn get_hp(&self) -> f32;
+}
+
 #[derive(Debug)]
 pub struct GameObjects {
     pub player: Player,
     pub player_info: PlayerInfo,
     pub walls: Vec<Wall>,
-    pub enemies: Vec<Enemy>,
+    pub enemies: Vec<Box<dyn Enemy>>,
     pub keys: Vec<KeyObject>,
     pub exit_triggers: Vec<Entity>,
     pub decorations: Vec<Decoration>,

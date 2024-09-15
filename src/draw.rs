@@ -84,7 +84,7 @@ pub fn draw_game(game_objects: &GameObjects, time_from_start: &Duration) -> Vec<
         .keys
         .iter()
         .map(|x| x as &dyn Sprite2D)
-        .chain(game_objects.enemies.iter().map(|x| x as &dyn Sprite2D))
+        .chain(game_objects.enemies.iter().map(|x| x.as_sprite()))
         .chain(game_objects.decorations.iter().map(|x| x as &dyn Sprite2D))
         .collect();
 

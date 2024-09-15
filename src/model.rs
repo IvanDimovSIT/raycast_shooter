@@ -122,6 +122,8 @@ pub enum GameEvent {
     PickUpKey(Uuid),
     EnemyKilled { position: Vec2 },
     LocationShot { position: Vec2 },
+    PlayerTakeDamage(f32),
+    CreateProjectile { position: Vec2, direction: Vec2 },
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

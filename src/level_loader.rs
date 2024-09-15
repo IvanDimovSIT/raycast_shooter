@@ -5,8 +5,8 @@ use serde::Deserialize;
 use serde_json::from_slice;
 
 use crate::{
-    constants::{ENEMY_SIZE, KEY_SIZE, LEVEL_PATH, PLAYER_SIZE},
-    model::{enemy::Enemy, key_object::KeyObject, Entity, GameObjects, PlayerInfo, Texture},
+    constants::{KEY_SIZE, LEVEL_PATH, PLAYER_SIZE},
+    model::{enemy::EnemyType, key_object::KeyObject, Entity, GameObjects, PlayerInfo, Texture},
 };
 
 #[derive(Deserialize)]
@@ -30,13 +30,25 @@ struct ExitTigger {
 }
 
 #[derive(Deserialize)]
+struct Enemy {
+    position: [f32; 2],
+    enemy_type: EnemyType,
+}
+impl Into<crate::model::enemy::Enemy> for Enemy {
+    fn into(self) -> crate::model::enemy::Enemy {
+        self.enemy_type.to_enemy(array_to_vec(self.position))
+    }
+}
+
+#[derive(Deserialize)]
 struct Level {
     walls: Vec<Wall>,
     player: Player,
-    enemies: Vec<[f32; 2]>,
+    enemies: Vec<Enemy>,
     keys: Vec<[f32; 2]>,
     exit_triggers: Vec<ExitTigger>,
 }
+
 impl Into<GameObjects> for Level {
     fn into(self) -> GameObjects {
         let player = crate::model::Player {
@@ -57,17 +69,7 @@ impl Into<GameObjects> for Level {
             })
             .collect();
 
-        let enemies = self
-            .enemies
-            .iter()
-            .map(|enemy| Enemy {
-                entity: Entity {
-                    position: array_to_vec(*enemy),
-                    size: ENEMY_SIZE,
-                },
-                ..Default::default()
-            })
-            .collect();
+        let enemies = self.enemies.into_iter().map(|enemy| enemy.into()).collect();
 
         let keys: Vec<_> = self
             .keys

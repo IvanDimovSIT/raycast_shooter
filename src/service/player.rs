@@ -2,12 +2,9 @@ use macroquad::math::{vec2, Vec2};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
 use crate::{
-    constants::{ENEMY_ATTACK_RANGE, ENEMY_DPS, MOVE_SPEED},
-    math::{check_circles_collide, find_intersection, line_intersects_circle, rotate_point},
-    model::{
-        enemy::Enemy, key_object::KeyObject, Entity, GameEvent, GameObjects, Player, PlayerInfo,
-        Wall,
-    },
+    constants::MOVE_SPEED,
+    math::{check_circles_collide, line_intersects_circle, rotate_point},
+    model::{key_object::KeyObject, Entity, GameEvent, GameObjects, Player, Wall},
 };
 
 pub fn move_player_entity(player_entity: Entity, movement: Vec2, walls: &[Wall]) -> Entity {
@@ -65,42 +62,6 @@ pub fn turn_player(player: Player, thetha: f32) -> Player {
     Player { look, ..player }
 }
 
-fn enemy_can_attack_player(enemy: &Enemy, player: &Player, walls: &[Wall]) -> bool {
-    check_circles_collide(
-        player.entity.position,
-        player.entity.size,
-        enemy.entity.position,
-        ENEMY_ATTACK_RANGE,
-    ) && !walls.iter().any(|wall| {
-        find_intersection(
-            enemy.entity.position,
-            player.entity.position,
-            wall.start,
-            wall.end,
-        )
-        .is_some()
-    })
-}
-
-pub fn deal_damage_to_player(game_objects: &GameObjects, delta: f32) -> PlayerInfo {
-    let damage: f32 = game_objects
-        .enemies
-        .iter()
-        .map(|enemy| {
-            if enemy_can_attack_player(enemy, &game_objects.player, &game_objects.walls) {
-                delta * ENEMY_DPS
-            } else {
-                0.0
-            }
-        })
-        .sum();
-
-    PlayerInfo {
-        health: game_objects.player_info.health - damage,
-        ..game_objects.player_info
-    }
-}
-
 pub fn is_player_at_exit(game_objects: &GameObjects) -> bool {
     game_objects.exit_triggers.iter().any(|trigger| {
         check_circles_collide(
@@ -117,10 +78,7 @@ mod tests {
     use macroquad::math::vec2;
     use uuid::Uuid;
 
-    use crate::{
-        constants::{ENEMY_SIZE, PLAYER_SIZE},
-        model::Texture,
-    };
+    use crate::model::Texture;
 
     use super::*;
 
@@ -144,47 +102,6 @@ mod tests {
         let moved2 = move_player_entity(entity, movement2, &walls);
 
         assert!(moved2.position.y > entity.position.y);
-    }
-
-    #[test]
-    fn test_enemy_can_attack_player() {
-        let player = Player {
-            entity: Entity {
-                position: vec2(0.0, 0.0),
-                size: PLAYER_SIZE,
-            },
-            look: vec2(0.0, 0.0),
-        };
-
-        let enemy = Enemy {
-            entity: Entity {
-                position: vec2(0.0, ENEMY_ATTACK_RANGE + PLAYER_SIZE + 0.1),
-                size: ENEMY_SIZE,
-            },
-            ..Default::default()
-        };
-
-        let walls = vec![];
-
-        assert!(!enemy_can_attack_player(&enemy, &player, &walls));
-
-        let enemy2 = Enemy {
-            entity: Entity {
-                position: vec2(0.0, ENEMY_ATTACK_RANGE + PLAYER_SIZE - 0.1),
-                size: ENEMY_SIZE,
-            },
-            ..Default::default()
-        };
-
-        assert!(enemy_can_attack_player(&enemy2, &player, &walls));
-
-        let walls2 = vec![Wall {
-            texture: Texture::default(),
-            start: vec2(-100.0, ENEMY_ATTACK_RANGE / 2.0),
-            end: vec2(100.0, ENEMY_ATTACK_RANGE / 2.0),
-        }];
-
-        assert!(!enemy_can_attack_player(&enemy, &player, &walls2));
     }
 
     #[test]

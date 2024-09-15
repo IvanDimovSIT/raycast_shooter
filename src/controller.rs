@@ -94,12 +94,31 @@ fn handle_location_shot(game_objects: &mut GameObjects, position: Vec2) {
         .collect();
 }
 
+fn handle_player_take_damage(game_objects: &mut GameObjects, damage: f32) {
+    game_objects.player_info.health -= damage;
+    println!("Player took damage({damage})");
+}
+
+fn handle_create_projectile(game_objects: &mut GameObjects, position: Vec2, direction: Vec2) {
+    todo!(
+        "handle_create_projectile {:?}{:?}{:?}",
+        game_objects,
+        position,
+        direction
+    )
+}
+
 fn handle_events(game_objects: &mut GameObjects, events: &[GameEvent]) {
     for e in events {
         match e {
             GameEvent::PickUpKey(key_id) => handle_pickup_key(game_objects, key_id),
             GameEvent::EnemyKilled { position } => handle_enemy_killed(game_objects, *position),
             GameEvent::LocationShot { position } => handle_location_shot(game_objects, *position),
+            GameEvent::PlayerTakeDamage(damage) => handle_player_take_damage(game_objects, *damage),
+            GameEvent::CreateProjectile {
+                position,
+                direction,
+            } => handle_create_projectile(game_objects, *position, *direction),
         }
     }
 }
@@ -134,14 +153,21 @@ pub fn next_game_step(game_objects: &mut GameObjects, delta: f32) {
         (take(&mut game_objects.enemies), vec![])
     };
 
+    let attack_events;
+    (game_objects.enemies, attack_events) = enemies_attack_player(
+        &game_objects.player,
+        take(&mut game_objects.enemies),
+        &game_objects.walls,
+        delta,
+    );
+
     game_objects.decorations = update_decorations(take(&mut game_objects.decorations), delta);
 
     let events: Vec<_> = check_pickup_key(&game_objects.player, &game_objects.keys)
         .into_iter()
         .chain(kill_enemies_events)
+        .chain(attack_events)
         .collect();
-
-    game_objects.player_info = deal_damage_to_player(&game_objects, delta);
 
     handle_events(game_objects, &events);
 }

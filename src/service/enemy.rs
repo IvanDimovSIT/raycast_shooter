@@ -2,9 +2,14 @@ use macroquad::math::Vec2;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use crate::{
-    constants::{ENEMY_MAX_CHASE_DISTANCE, ENEMY_MOVE_SPEED, MOVE_SPEED},
-    math::line_intersects_circle,
-    model::{enemy::Enemy, Entity, Player, Wall},
+    constants::{
+        ENEMY_MAX_CHASE_DISTANCE, MELEE_ENEMY_DAMAGE, MOVE_SPEED, RANGED_ENEMY_SHOOT_RANGE,
+    },
+    math::{check_circles_collide, find_intersection, line_intersects_circle},
+    model::{
+        enemy::{Enemy, EnemyType},
+        Entity, GameEvent, Player, Wall,
+    },
 };
 
 fn get_enemy_intersecting_walls<'a>(entity: &'a Entity, walls: &'a [Wall]) -> Vec<&'a Wall> {
@@ -49,13 +54,13 @@ fn move_enemy_to_sides(
     }
 }
 
-fn move_enemy(player: &Player, enemy: Enemy, walls: &[Wall], delta: f32) -> Enemy {
+fn move_enemy(player: &Player, enemy: Enemy, walls: &[Wall], speed: f32, delta: f32) -> Enemy {
     let vector_towards_player = player.entity.position - enemy.entity.position;
     if vector_towards_player.length() > ENEMY_MAX_CHASE_DISTANCE {
         return enemy.clone();
     };
 
-    let move_vector = vector_towards_player.normalize_or_zero() * ENEMY_MOVE_SPEED * delta;
+    let move_vector = vector_towards_player.normalize_or_zero() * speed * delta;
     let new_position = enemy.entity.position + move_vector;
 
     let new_entity = Entity {
@@ -78,6 +83,83 @@ fn move_enemy(player: &Player, enemy: Enemy, walls: &[Wall], delta: f32) -> Enem
     move_enemy_to_sides(player, enemy, walls, wall_directions)
 }
 
+fn move_enemy_for_type(player: &Player, enemy: Enemy, walls: &[Wall], delta: f32) -> Enemy {
+    let speed = enemy.enemy_type.get_movement_speed();
+    match &enemy.enemy_type {
+        EnemyType::Melee => move_enemy(player, enemy, walls, speed, delta),
+        EnemyType::Ranged => {
+            if enemy.entity.position.distance(player.entity.position) < RANGED_ENEMY_SHOOT_RANGE {
+                move_enemy(player, enemy, walls, speed, delta)
+            } else {
+                enemy
+            }
+        }
+    }
+}
+
+fn enemy_can_attack_player(enemy: &Enemy, player: &Player, walls: &[Wall]) -> bool {
+    check_circles_collide(
+        player.entity.position,
+        player.entity.size,
+        enemy.entity.position,
+        enemy.enemy_type.get_attack_range(),
+    ) && !walls.iter().any(|wall| {
+        find_intersection(
+            enemy.entity.position,
+            player.entity.position,
+            wall.start,
+            wall.end,
+        )
+        .is_some()
+    })
+}
+
+fn melee_enemy_attack_player(enemy: Enemy) -> (Enemy, Vec<GameEvent>) {
+    (
+        Enemy {
+            attack_delay: enemy.enemy_type.get_attack_speed(),
+            ..enemy
+        },
+        vec![GameEvent::PlayerTakeDamage(MELEE_ENEMY_DAMAGE)],
+    )
+}
+
+fn enemy_attack_player(
+    player: &Player,
+    enemy: Enemy,
+    walls: &[Wall],
+    delta: f32,
+) -> (Enemy, Vec<GameEvent>) {
+    let new_attack_delay = (enemy.attack_delay - delta).max(0.0);
+    let updated_enemy = Enemy {
+        attack_delay: new_attack_delay,
+        ..enemy
+    };
+
+    if new_attack_delay > 0.0 || !enemy_can_attack_player(&updated_enemy, player, walls) {
+        return (updated_enemy, vec![]);
+    }
+
+    match enemy.enemy_type {
+        EnemyType::Melee => melee_enemy_attack_player(updated_enemy),
+        EnemyType::Ranged => todo!(),
+    }
+}
+
+pub fn enemies_attack_player(
+    player: &Player,
+    enemies: Vec<Enemy>,
+    walls: &[Wall],
+    delta: f32,
+) -> (Vec<Enemy>, Vec<GameEvent>) {
+    let (attacked, events): (Vec<_>, Vec<_>) = enemies
+        .into_iter()
+        .map(|enemy| enemy_attack_player(player, enemy, walls, delta))
+        .unzip();
+
+    (attacked, events.into_iter().flatten().collect())
+}
+
 pub fn move_enemies_towards_player(
     player: &Player,
     enemies: Vec<Enemy>,
@@ -86,7 +168,7 @@ pub fn move_enemies_towards_player(
 ) -> Vec<Enemy> {
     enemies
         .into_par_iter()
-        .map(|enemy| move_enemy(player, enemy, walls, delta))
+        .map(|enemy| move_enemy_for_type(player, enemy, walls, delta))
         .collect()
 }
 
@@ -102,7 +184,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_move_enemy() {
+    fn test_move_enemy_for_type() {
         let player = Player {
             entity: Entity {
                 position: vec2(0.0, 0.0),
@@ -128,7 +210,7 @@ mod tests {
 
         let delta = 1.0;
 
-        let moved_enemy = move_enemy(&player, enemy.clone(), &walls, delta);
+        let moved_enemy = move_enemy_for_type(&player, enemy.clone(), &walls, delta);
 
         assert!(
             moved_enemy.entity.position.distance(player.entity.position)
@@ -143,7 +225,7 @@ mod tests {
             ..Default::default()
         };
 
-        let not_moved_enemy = move_enemy(&player, far_enemy.clone(), &walls, delta);
+        let not_moved_enemy = move_enemy_for_type(&player, far_enemy.clone(), &walls, delta);
         assert_eq!(not_moved_enemy.entity.position, far_enemy.entity.position);
     }
 }

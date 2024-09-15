@@ -8,7 +8,9 @@ use crate::{
     },
     math::{find_intersection, line_intersects_circle},
     model::{
-        decoration::{Decoration, DecorationGraphics}, melee_enemy::MeleeEnemy, Animation, Enemy, Entity, GameEvent, Player, PlayerInfo, ShootingStatus, Texture, Wall
+        decoration::{Decoration, DecorationGraphics},
+        enemy::Enemy,
+        Animation, Entity, GameEvent, Player, PlayerInfo, ShootingStatus, Texture, Wall,
     },
 };
 
@@ -117,9 +119,9 @@ pub fn update_shoot(player_info: PlayerInfo, delta: f32) -> (PlayerInfo, bool) {
 
 fn find_shot_enemy<'a>(
     player: &'a Player,
-    enemies: &'a [Box<dyn Enemy>],
+    enemies: &'a [Enemy],
     walls: &'a [Wall],
-) -> (Option<&'a Box<dyn Enemy>>, Option<Vec2>) {
+) -> (Option<&'a Enemy>, Option<Vec2>) {
     let shoot_ray = player.entity.position + player.look.normalize_or_zero() * MAX_SHOOT_DISTANCE;
 
     let closest_hit_wall = walls
@@ -142,12 +144,12 @@ fn find_shot_enemy<'a>(
             line_intersects_circle(
                 player.entity.position,
                 shoot_ray,
-                enemy.get_position(),
-                enemy.get_size(),
+                enemy.entity.position,
+                enemy.entity.size,
             )
         })
         .filter_map(|enemy| {
-            let dist = enemy.get_position().distance(player.entity.position);
+            let dist = enemy.entity.position.distance(player.entity.position);
             if dist > max_distance {
                 None
             } else {
@@ -157,7 +159,7 @@ fn find_shot_enemy<'a>(
         .min_by(|a, b| a.1.total_cmp(&b.1));
 
     if let Some(some) = hit_enemy {
-        (Some(some.0), Some(some.0.get_position()))
+        (Some(some.0), Some(some.0.entity.position))
     } else if let Some(some) = closest_hit_wall {
         (None, Some(some.1))
     } else {
@@ -173,9 +175,9 @@ fn create_shot_particles_event(shot_location: Vec2) -> GameEvent {
 
 pub fn shoot_enemies(
     player: &Player,
-    mut enemies: Vec<Box<dyn Enemy>>,
+    mut enemies: Vec<Enemy>,
     walls: &[Wall],
-) -> (Vec<Box<dyn Enemy>>, Vec<GameEvent>) {
+) -> (Vec<Enemy>, Vec<GameEvent>) {
     let (shot_enemy_option, shot_location) = find_shot_enemy(player, &enemies, walls);
 
     let shot_event = if let Some(some) = shot_location {
@@ -187,21 +189,24 @@ pub fn shoot_enemies(
     if shot_enemy_option.is_none() {
         return (enemies, shot_event);
     }
-    let shot_enemy_id = shot_enemy_option.unwrap().get_id();
+    let shot_enemy_id = shot_enemy_option.unwrap().id;
 
     enemies
         .iter_mut()
-        .find(|enemy| enemy.get_id() == shot_enemy_id)
+        .find(|enemy| enemy.id == shot_enemy_id)
         .map(|enemy| {
-            *enemy = enemy.take_damage(GUN_DAMAGE);
+            *enemy = Enemy {
+                hp: enemy.hp - GUN_DAMAGE,
+                ..*enemy
+            };
         });
 
     let game_events = enemies
         .iter()
         .filter_map(|enemy| {
-            if enemy.get_hp() <= 0.0 {
+            if enemy.hp <= 0.0 {
                 Some(GameEvent::EnemyKilled {
-                    position: enemy.get_position(),
+                    position: enemy.entity.position,
                 })
             } else {
                 None
@@ -210,7 +215,7 @@ pub fn shoot_enemies(
         .chain(shot_event)
         .collect();
 
-    enemies.retain(|enemy| enemy.get_hp() > 0.0);
+    enemies.retain(|enemy| enemy.hp > 0.0);
 
     (enemies, game_events)
 }
@@ -286,7 +291,7 @@ mod tests {
             look: vec2(1.0, 0.0),
         };
 
-        let enemy = MeleeEnemy {
+        let enemy = Enemy {
             entity: Entity {
                 position: vec2(MAX_SHOOT_DISTANCE - 1.0, 0.0),
                 size: ENEMY_SIZE,
@@ -297,9 +302,9 @@ mod tests {
 
         let walls = vec![];
 
-        let (remaining_enemies, game_events) = shoot_enemies(&player, vec![Box::new(enemy.clone())], &walls);
+        let (remaining_enemies, game_events) = shoot_enemies(&player, vec![enemy.clone()], &walls);
 
-        assert_eq!(remaining_enemies[0].get_hp(), 100.0 - GUN_DAMAGE);
+        assert_eq!(remaining_enemies[0].hp, 100.0 - GUN_DAMAGE);
 
         assert!(matches!(game_events[0], GameEvent::LocationShot { .. }));
     }

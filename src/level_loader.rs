@@ -6,7 +6,7 @@ use serde_json::from_slice;
 
 use crate::{
     constants::{ENEMY_SIZE, KEY_SIZE, LEVEL_PATH, PLAYER_SIZE},
-    model::{melee_enemy::MeleeEnemy, key_object::KeyObject, Entity, GameObjects, PlayerInfo, Texture},
+    model::{enemy::Enemy, key_object::KeyObject, Entity, GameObjects, PlayerInfo, Texture},
 };
 
 #[derive(Deserialize)]
@@ -29,25 +29,11 @@ struct ExitTigger {
     size: f32,
 }
 
-
-#[derive(Deserialize)]
-enum EnemyType {
-    Melee,
-    Ranged
-}
-
-#[derive(Deserialize)]
-struct Enemy {
-    position: [f32; 2],
-    enemy_type: EnemyType
-}
-
-
 #[derive(Deserialize)]
 struct Level {
     walls: Vec<Wall>,
     player: Player,
-    enemies: Vec<Enemy>,
+    enemies: Vec<[f32; 2]>,
     keys: Vec<[f32; 2]>,
     exit_triggers: Vec<ExitTigger>,
 }
@@ -73,8 +59,14 @@ impl Into<GameObjects> for Level {
 
         let enemies = self
             .enemies
-            .into_iter()
-            .map(|enemy| enemy_json_to_enemy(enemy))
+            .iter()
+            .map(|enemy| Enemy {
+                entity: Entity {
+                    position: array_to_vec(*enemy),
+                    size: ENEMY_SIZE,
+                },
+                ..Default::default()
+            })
             .collect();
 
         let keys: Vec<_> = self
@@ -116,16 +108,6 @@ impl Into<GameObjects> for Level {
             decorations: vec![],
         }
     }
-}
-
-fn enemy_json_to_enemy(enemy_json: Enemy) -> Box<dyn crate::model::Enemy> {
-    match enemy_json.enemy_type {
-        EnemyType::Melee => Box::new(MeleeEnemy {
-            entity: Entity { position: array_to_vec(enemy_json.position), size: ENEMY_SIZE },
-            ..Default::default()
-        }),
-        EnemyType::Ranged => todo!(),
-    }   
 }
 
 fn array_to_vec(arr: [f32; 2]) -> Vec2 {

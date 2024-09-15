@@ -94,12 +94,25 @@ fn handle_location_shot(game_objects: &mut GameObjects, position: Vec2) {
         .collect();
 }
 
+fn handle_player_take_damage(game_objects: &mut GameObjects, damage: f32) {
+    game_objects.player_info = PlayerInfo {
+        health: game_objects.player_info.health - damage,
+        ..game_objects.player_info
+    };
+}
+
+fn handle_create_enemy_projectile(game_objects: &GameObjects, position: Vec2, direction: Vec2) {
+    todo!()
+}
+
 fn handle_events(game_objects: &mut GameObjects, events: &[GameEvent]) {
     for e in events {
         match e {
             GameEvent::PickUpKey(key_id) => handle_pickup_key(game_objects, key_id),
             GameEvent::EnemyKilled { position } => handle_enemy_killed(game_objects, *position),
             GameEvent::LocationShot { position } => handle_location_shot(game_objects, *position),
+            GameEvent::PlayerTakeDamage(damage) => handle_player_take_damage(game_objects, *damage),
+            GameEvent::CreateEnemyProjectile { position, direction } => handle_create_enemy_projectile(game_objects, *position, *direction),
         }
     }
 }
@@ -111,13 +124,12 @@ fn update_decorations(decorations: Vec<Decoration>, delta: f32) -> Vec<Decoratio
         .collect()
 }
 
+
+
 pub fn next_game_step(game_objects: &mut GameObjects, delta: f32) {
-    game_objects.enemies = move_enemies_towards_player(
-        &game_objects.player,
-        take(&mut game_objects.enemies),
-        &game_objects.walls,
-        delta,
-    );
+    let enemy_events;
+    (game_objects.enemies, enemy_events) = update_enemies(&game_objects.player, take(&mut game_objects.enemies), &game_objects.walls, delta);
+
 
     let can_shoot;
     (game_objects.player_info, can_shoot) =
@@ -139,9 +151,8 @@ pub fn next_game_step(game_objects: &mut GameObjects, delta: f32) {
     let events: Vec<_> = check_pickup_key(&game_objects.player, &game_objects.keys)
         .into_iter()
         .chain(kill_enemies_events)
+        .chain(enemy_events)
         .collect();
-
-    game_objects.player_info = deal_damage_to_player(&game_objects, delta);
 
     handle_events(game_objects, &events);
 }

@@ -105,7 +105,6 @@ pub fn draw_game(game_objects: &GameObjects, time_from_start: &Duration) -> Vec<
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::model::{PlayerInfo, ShootingStatus};
 
     #[test]
     fn test_camera_for_player() {

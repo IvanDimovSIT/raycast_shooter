@@ -12,7 +12,7 @@ use serde::Deserialize;
 use uuid::Uuid;
 
 use crate::{
-    constants::{ENEMY_DRAW_SIZE_MOD, ENEMY_HP, ENEMY_SIZE, MELEE_ENEMY_ANIMATION_SPEED},
+    constants::{ENEMY_HP, ENEMY_SIZE, MELEE_ENEMY_ANIMATION_SPEED},
     draw::{calculate_vertical_offset, select_animation_texture, sprite_2d::Sprite2D},
 };
 
@@ -93,11 +93,11 @@ impl Sprite2D for Enemy {
     }
 
     fn get_vertical_offset(&self, time_ellapsed: &Duration) -> f32 {
-        calculate_vertical_offset(300, self.get_size(), -0.1, 0.02, time_ellapsed)
+        calculate_vertical_offset(300, self.get_size(), 0.2, 0.02, time_ellapsed)
     }
 
     fn get_size(&self) -> f32 {
-        self.entity.size * ENEMY_DRAW_SIZE_MOD
+        self.entity.size
     }
 
     fn get_texture(&self, time_ellapsed: &Duration) -> Texture {

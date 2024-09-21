@@ -183,5 +183,5 @@ pub fn is_game_over(game_objects: &GameObjects) -> bool {
 }
 
 pub fn is_game_won(game_objects: &GameObjects) -> bool {
-    game_objects.keys.len() == 0 && is_player_at_exit(game_objects)
+    game_objects.keys.is_empty() && is_player_at_exit(game_objects)
 }

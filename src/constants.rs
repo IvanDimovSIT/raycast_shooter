@@ -42,8 +42,7 @@ pub const GUN_POSITION: Vec2 = vec2(0.6, 0.6);
 pub const GUN_ROTATION: f32 = 0.5;
 pub const GUN_SIZE: f32 = 0.7;
 
-pub const ENEMY_SIZE: f32 = 0.2;
-pub const ENEMY_DRAW_SIZE_MOD: f32 = 9.0;
+pub const ENEMY_SIZE: f32 = 0.5;
 pub const ENEMY_HP: f32 = 100.0;
 pub const ENEMY_MAX_CHASE_DISTANCE: f32 = 40.0;
 

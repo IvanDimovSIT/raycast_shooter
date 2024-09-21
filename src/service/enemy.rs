@@ -102,7 +102,7 @@ fn enemy_can_attack_player(enemy: &Enemy, player: &Player, walls: &[Wall]) -> bo
         player.entity.position,
         player.entity.size,
         enemy.entity.position,
-        enemy.enemy_type.get_attack_range(),
+        enemy.enemy_type.get_attack_range() + enemy.entity.size,
     ) && !walls.iter().any(|wall| {
         find_intersection(
             enemy.entity.position,

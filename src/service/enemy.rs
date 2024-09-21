@@ -4,6 +4,7 @@ use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use crate::{
     constants::{
         ENEMY_MAX_CHASE_DISTANCE, MELEE_ENEMY_DAMAGE, MOVE_SPEED, RANGED_ENEMY_SHOOT_RANGE,
+        RANGED_ENEMY_SHOT_SPEED,
     },
     math::{check_circles_collide, find_intersection, line_intersects_circle},
     model::{
@@ -124,6 +125,22 @@ fn melee_enemy_attack_player(enemy: Enemy) -> (Enemy, Vec<GameEvent>) {
     )
 }
 
+fn ranged_enemy_attack_player(enemy: Enemy, player: &Player) -> (Enemy, Vec<GameEvent>) {
+    let create_projectile_event = GameEvent::CreateProjectile {
+        position: enemy.entity.position,
+        direction: (player.entity.position - enemy.entity.position).normalize_or_zero()
+            * RANGED_ENEMY_SHOT_SPEED,
+    };
+
+    (
+        Enemy {
+            attack_delay: enemy.enemy_type.get_attack_speed(),
+            ..enemy
+        },
+        vec![create_projectile_event],
+    )
+}
+
 fn enemy_attack_player(
     player: &Player,
     enemy: Enemy,
@@ -139,10 +156,9 @@ fn enemy_attack_player(
     if new_attack_delay > 0.0 || !enemy_can_attack_player(&updated_enemy, player, walls) {
         return (updated_enemy, vec![]);
     }
-
     match enemy.enemy_type {
         EnemyType::Melee => melee_enemy_attack_player(updated_enemy),
-        EnemyType::Ranged => todo!(),
+        EnemyType::Ranged => ranged_enemy_attack_player(updated_enemy, player),
     }
 }
 

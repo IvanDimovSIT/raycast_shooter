@@ -4,6 +4,7 @@ use decoration::Decoration;
 use enemy::Enemy;
 use key_object::KeyObject;
 use macroquad::math::Vec2;
+use projectile::Projectile;
 use serde::Deserialize;
 use uuid::Uuid;
 
@@ -12,6 +13,7 @@ use crate::constants::MAX_BULLETS;
 pub mod decoration;
 pub mod enemy;
 pub mod key_object;
+pub mod projectile;
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Deserialize)]
 pub enum Texture {
@@ -36,6 +38,14 @@ pub enum Texture {
     Enemy6,
     Enemy7,
     Enemy8,
+    RangedEnemy1,
+    RangedEnemy2,
+    RangedEnemy3,
+    RangedEnemy4,
+    RangedEnemy5,
+    RangedEnemy6,
+    RangedEnemy7,
+    RangedEnemy8,
     Skull,
     Explostion1,
     Explostion2,
@@ -56,6 +66,7 @@ impl Default for Texture {
 #[derive(Debug, Clone, Copy)]
 pub enum Animation {
     Enemy,
+    RangedEnemy,
     Key,
     Gun,
     Explosion,
@@ -93,6 +104,16 @@ impl Animation {
                 Texture::Explostion7,
                 Texture::Explostion8,
                 Texture::Explostion9,
+            ],
+            Animation::RangedEnemy => vec![
+                Texture::RangedEnemy1,
+                Texture::RangedEnemy2,
+                Texture::RangedEnemy3,
+                Texture::RangedEnemy4,
+                Texture::RangedEnemy5,
+                Texture::RangedEnemy6,
+                Texture::RangedEnemy7,
+                Texture::RangedEnemy8,
             ],
         }
     }
@@ -162,4 +183,5 @@ pub struct GameObjects {
     pub keys: Vec<KeyObject>,
     pub exit_triggers: Vec<Entity>,
     pub decorations: Vec<Decoration>,
+    pub projectiles: Vec<Projectile>,
 }

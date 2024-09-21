@@ -3,6 +3,7 @@ use std::time::Duration;
 use crate::{
     constants::{
         MELEE_ENEMY_ATTACK_DELAY, MELEE_ENEMY_ATTACK_RANGE, MELEE_ENEMY_MOVE_SPEED,
+        RANGED_ENEMY_ANIMATION_SPEED, RANGED_ENEMY_ATTACK_DELAY, RANGED_ENEMY_MOVE_SPEED,
         RANGED_ENEMY_SHOOT_RANGE,
     },
     model::Animation,
@@ -39,14 +40,20 @@ impl EnemyType {
                 attack_delay: 0.0,
                 enemy_type: *self,
             },
-            EnemyType::Ranged => todo!(),
+            EnemyType::Ranged => Enemy {
+                id,
+                entity,
+                hp: ENEMY_HP,
+                attack_delay: RANGED_ENEMY_ATTACK_DELAY,
+                enemy_type: *self,
+            },
         }
     }
 
     pub fn get_movement_speed(&self) -> f32 {
         match self {
             EnemyType::Melee => MELEE_ENEMY_MOVE_SPEED,
-            EnemyType::Ranged => todo!(),
+            EnemyType::Ranged => RANGED_ENEMY_MOVE_SPEED,
         }
     }
 
@@ -60,21 +67,21 @@ impl EnemyType {
     pub fn get_attack_speed(&self) -> f32 {
         match self {
             EnemyType::Melee => MELEE_ENEMY_ATTACK_DELAY,
-            EnemyType::Ranged => todo!(),
+            EnemyType::Ranged => RANGED_ENEMY_ATTACK_DELAY,
         }
     }
 
     pub fn get_animation(&self) -> Vec<Texture> {
         match self {
             EnemyType::Melee => Animation::Enemy.get_textures(),
-            EnemyType::Ranged => todo!(),
+            EnemyType::Ranged => Animation::RangedEnemy.get_textures(),
         }
     }
 
     pub fn get_animation_speed(&self) -> u128 {
         match self {
             EnemyType::Melee => MELEE_ENEMY_ANIMATION_SPEED,
-            EnemyType::Ranged => todo!(),
+            EnemyType::Ranged => RANGED_ENEMY_ANIMATION_SPEED,
         }
     }
 }

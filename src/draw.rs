@@ -86,6 +86,7 @@ pub fn draw_game(game_objects: &GameObjects, time_from_start: &Duration) -> Vec<
         .map(|x| x as &dyn Sprite2D)
         .chain(game_objects.enemies.iter().map(|x| x as &dyn Sprite2D))
         .chain(game_objects.decorations.iter().map(|x| x as &dyn Sprite2D))
+        .chain(game_objects.projectiles.iter().map(|x| x as &dyn Sprite2D))
         .collect();
 
     let sprites_to_draw = draw_sprites(&camera, time_from_start, &sprites);

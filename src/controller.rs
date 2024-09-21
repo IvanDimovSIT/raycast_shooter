@@ -4,12 +4,14 @@ use macroquad::math::Vec2;
 use uuid::Uuid;
 
 use crate::{
+    constants::{RANGED_ENEMY_DAMAGE, RANGED_ENEMY_SHOT_SIZE},
     input::Operation,
     math::find_perpendicular_vector,
-    model::{decoration::Decoration, GameEvent, GameObjects, Player, PlayerInfo},
-    service::enemy::*,
-    service::player::*,
-    service::shoot::*,
+    model::{
+        decoration::Decoration, projectile::Projectile, Entity, GameEvent, GameObjects, Player,
+        PlayerInfo, Texture,
+    },
+    service::{enemy::*, player::*, projectile::update_projctiles, shoot::*},
 };
 
 fn handle_left(player: Player, angle: f32, delta: f32) -> Player {
@@ -100,12 +102,15 @@ fn handle_player_take_damage(game_objects: &mut GameObjects, damage: f32) {
 }
 
 fn handle_create_projectile(game_objects: &mut GameObjects, position: Vec2, direction: Vec2) {
-    todo!(
-        "handle_create_projectile {:?}{:?}{:?}",
-        game_objects,
-        position,
-        direction
-    )
+    game_objects.projectiles.push(Projectile {
+        entity: Entity {
+            position,
+            size: RANGED_ENEMY_SHOT_SIZE,
+        },
+        direction,
+        damage: RANGED_ENEMY_DAMAGE,
+        texture: Texture::Debug,
+    });
 }
 
 pub fn handle_events(game_objects: &mut GameObjects, events: &[GameEvent]) {
@@ -155,10 +160,18 @@ pub fn next_game_step(game_objects: GameObjects, delta: f32) -> (GameObjects, Ve
 
     let updated_decorations = update_decorations(game_objects.decorations, delta);
 
+    let (projectiles, projectile_events) = update_projctiles(
+        game_objects.projectiles,
+        &game_objects.player,
+        &game_objects.walls,
+        delta,
+    );
+
     let events: Vec<_> = check_pickup_key(&game_objects.player, &game_objects.keys)
         .into_iter()
         .chain(kill_enemies_events)
         .chain(attack_events)
+        .chain(projectile_events)
         .collect();
 
     let new_game_objects = GameObjects {
@@ -169,6 +182,7 @@ pub fn next_game_step(game_objects: GameObjects, delta: f32) -> (GameObjects, Ve
         keys: game_objects.keys,
         exit_triggers: game_objects.exit_triggers,
         decorations: updated_decorations,
+        projectiles,
     };
 
     (new_game_objects, events)

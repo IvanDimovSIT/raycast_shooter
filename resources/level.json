@@ -31,7 +31,7 @@
         },
         {
             "position": [9.0, 16.0],
-            "enemy_type": "Melee"    
+            "enemy_type": "Ranged"    
         },
         {
             "position": [15.0, 12.0],

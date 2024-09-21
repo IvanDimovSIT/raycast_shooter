@@ -108,6 +108,7 @@ impl Into<GameObjects> for Level {
             keys,
             exit_triggers,
             decorations: vec![],
+            projectiles: vec![],
         }
     }
 }

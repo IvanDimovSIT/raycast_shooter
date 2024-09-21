@@ -42,17 +42,23 @@ pub const GUN_POSITION: Vec2 = vec2(0.6, 0.6);
 pub const GUN_ROTATION: f32 = 0.5;
 pub const GUN_SIZE: f32 = 0.7;
 
-pub const ENEMY_SIZE: f32 = 0.5;
+pub const ENEMY_SIZE: f32 = 0.55;
 pub const ENEMY_HP: f32 = 100.0;
 pub const ENEMY_MAX_CHASE_DISTANCE: f32 = 40.0;
 
 pub const MELEE_ENEMY_ANIMATION_SPEED: u128 = 100;
 pub const MELEE_ENEMY_MOVE_SPEED: f32 = 1.8;
-pub const MELEE_ENEMY_ATTACK_RANGE: f32 = 1.0;
+pub const MELEE_ENEMY_ATTACK_RANGE: f32 = 0.1;
 pub const MELEE_ENEMY_ATTACK_DELAY: f32 = 1.0;
 pub const MELEE_ENEMY_DAMAGE: f32 = 80.0;
 
+pub const RANGED_ENEMY_ANIMATION_SPEED: u128 = 100;
 pub const RANGED_ENEMY_SHOOT_RANGE: f32 = 8.0;
+pub const RANGED_ENEMY_MOVE_SPEED: f32 = 1.4;
+pub const RANGED_ENEMY_ATTACK_DELAY: f32 = 1.5;
+pub const RANGED_ENEMY_DAMAGE: f32 = 40.0;
+pub const RANGED_ENEMY_SHOT_SIZE: f32 = 0.1;
+pub const RANGED_ENEMY_SHOT_SPEED: f32 = 3.4;
 
 pub const RELOAD_SPEED: f32 = 3.0;
 pub const SHOOT_SPEED: f32 = 0.1;
@@ -90,3 +96,5 @@ pub const BULLETS_UI_TEXT_COLOR: Color = Color::new(1.0, 1.0, 1.0, 0.7);
 pub const BULLETS_UI_SIZE: f32 = 0.07;
 pub const BULLETS_UI_POSITION: Vec2 = vec2(0.05, 0.95);
 pub const BULLETS_UI_BOX_WIDTH_TO_HEIGHT: f32 = 5.0;
+
+pub const PROJECTILE_OFFSET: f32 = 0.0;

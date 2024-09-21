@@ -78,14 +78,62 @@ impl TextureManager {
         Self::load_texture(&mut textures, Texture::Gun7, "gun/FAMAS_08.png");
         Self::load_texture(&mut textures, Texture::Gun8, "gun/FAMAS_09.png");
 
-        Self::load_texture(&mut textures, Texture::Enemy1, "enemy/enemy1.png");
-        Self::load_texture(&mut textures, Texture::Enemy2, "enemy/enemy2.png");
-        Self::load_texture(&mut textures, Texture::Enemy3, "enemy/enemy3.png");
-        Self::load_texture(&mut textures, Texture::Enemy4, "enemy/enemy4.png");
-        Self::load_texture(&mut textures, Texture::Enemy5, "enemy/enemy5.png");
-        Self::load_texture(&mut textures, Texture::Enemy6, "enemy/enemy6.png");
-        Self::load_texture(&mut textures, Texture::Enemy7, "enemy/enemy7.png");
-        Self::load_texture(&mut textures, Texture::Enemy8, "enemy/enemy8.png");
+        Self::load_texture(&mut textures, Texture::Enemy1, "enemy/melee/enemy1.png");
+        Self::load_texture(&mut textures, Texture::Enemy2, "enemy/melee/enemy2.png");
+        Self::load_texture(&mut textures, Texture::Enemy3, "enemy/melee/enemy3.png");
+        Self::load_texture(&mut textures, Texture::Enemy4, "enemy/melee/enemy4.png");
+        Self::load_texture(&mut textures, Texture::Enemy5, "enemy/melee/enemy5.png");
+        Self::load_texture(&mut textures, Texture::Enemy6, "enemy/melee/enemy6.png");
+        Self::load_texture(&mut textures, Texture::Enemy7, "enemy/melee/enemy7.png");
+        Self::load_texture(&mut textures, Texture::Enemy8, "enemy/melee/enemy8.png");
+
+        Self::load_texture(
+            &mut textures,
+            Texture::RangedEnemy1,
+            "enemy/ranged/enemy1.png",
+        );
+
+        Self::load_texture(
+            &mut textures,
+            Texture::RangedEnemy2,
+            "enemy/ranged/enemy2.png",
+        );
+
+        Self::load_texture(
+            &mut textures,
+            Texture::RangedEnemy3,
+            "enemy/ranged/enemy3.png",
+        );
+
+        Self::load_texture(
+            &mut textures,
+            Texture::RangedEnemy4,
+            "enemy/ranged/enemy4.png",
+        );
+
+        Self::load_texture(
+            &mut textures,
+            Texture::RangedEnemy5,
+            "enemy/ranged/enemy5.png",
+        );
+
+        Self::load_texture(
+            &mut textures,
+            Texture::RangedEnemy6,
+            "enemy/ranged/enemy6.png",
+        );
+
+        Self::load_texture(
+            &mut textures,
+            Texture::RangedEnemy7,
+            "enemy/ranged/enemy7.png",
+        );
+
+        Self::load_texture(
+            &mut textures,
+            Texture::RangedEnemy8,
+            "enemy/ranged/enemy8.png",
+        );
 
         Self::load_texture(&mut textures, Texture::Explostion1, "explosion/1.png");
         Self::load_texture(&mut textures, Texture::Explostion2, "explosion/2.png");

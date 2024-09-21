@@ -46,6 +46,7 @@ pub enum Texture {
     RangedEnemy6,
     RangedEnemy7,
     RangedEnemy8,
+    Projectile,
     Skull,
     Explostion1,
     Explostion2,

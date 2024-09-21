@@ -135,6 +135,13 @@ impl TextureManager {
             "enemy/ranged/enemy8.png",
         );
 
+        Self::load_texture_with_filter(
+            &mut textures,
+            Texture::Projectile,
+            "projectile.png",
+            FilterMode::Nearest,
+        );
+
         Self::load_texture(&mut textures, Texture::Explostion1, "explosion/1.png");
         Self::load_texture(&mut textures, Texture::Explostion2, "explosion/2.png");
         Self::load_texture(&mut textures, Texture::Explostion3, "explosion/3.png");

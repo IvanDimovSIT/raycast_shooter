@@ -3,8 +3,7 @@ use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use crate::{
     constants::{
-        ENEMY_MAX_CHASE_DISTANCE, MELEE_ENEMY_DAMAGE, MOVE_SPEED, RANGED_ENEMY_SHOOT_RANGE,
-        RANGED_ENEMY_SHOT_SPEED,
+        ENEMY_MAX_CHASE_DISTANCE, MELEE_ENEMY_DAMAGE, MOVE_SPEED, RANGED_ENEMY_SHOT_SPEED,
     },
     math::{check_circles_collide, find_intersection, line_intersects_circle},
     model::{
@@ -89,7 +88,7 @@ fn move_enemy_for_type(player: &Player, enemy: Enemy, walls: &[Wall], delta: f32
     match &enemy.enemy_type {
         EnemyType::Melee => move_enemy(player, enemy, walls, speed, delta),
         EnemyType::Ranged => {
-            if enemy.entity.position.distance(player.entity.position) < RANGED_ENEMY_SHOOT_RANGE {
+            if !enemy_can_attack_player(&enemy, player, walls) {
                 move_enemy(player, enemy, walls, speed, delta)
             } else {
                 enemy

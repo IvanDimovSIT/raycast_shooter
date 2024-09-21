@@ -109,7 +109,7 @@ fn handle_create_projectile(game_objects: &mut GameObjects, position: Vec2, dire
         },
         direction,
         damage: RANGED_ENEMY_DAMAGE,
-        texture: Texture::Debug,
+        texture: Texture::Projectile,
     });
 }
 

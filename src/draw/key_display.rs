@@ -39,7 +39,7 @@ impl Drawable for KeyDisplay {
 }
 
 pub fn draw_key_display(game_objects: &GameObjects) -> Box<dyn Drawable> {
-    let text = if game_objects.keys.len() == 0 {
+    let text = if game_objects.keys.is_empty() {
         KEYS_UI_FIND_EXIT_TEXT.to_string()
     } else {
         format!(

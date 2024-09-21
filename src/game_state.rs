@@ -6,7 +6,9 @@ use macroquad::{
 };
 
 use crate::{
-    controller::{handle_input, is_game_over, is_game_won, next_game_step, reset_state},
+    controller::{
+        handle_events, handle_input, is_game_over, is_game_won, next_game_step, reset_state,
+    },
     draw::draw_game,
     input::get_input,
     level_loader::load_level,
@@ -49,7 +51,9 @@ async fn normal_run(mut context: Box<GameContext>) -> (GameState, bool) {
         context.game_objects.player_info,
     ) = handle_input(&context.game_objects, &input, delta);
 
-    next_game_step(&mut context.game_objects, delta);
+    let events;
+    (context.game_objects, events) = next_game_step(context.game_objects, delta);
+    handle_events(&mut context.game_objects, &events);
 
     let to_draw = draw_game(&context.game_objects, &time_from_start);
 

@@ -27,7 +27,7 @@ fn move_enemy_to_sides(
 ) -> Enemy {
     let move_to = hit_wall_directions
         .iter()
-        .map(|dir| enemy.entity.position + *dir)
+        .flat_map(|dir| vec![enemy.entity.position + *dir, enemy.entity.position - *dir])
         .filter(|new_pos| {
             get_enemy_intersecting_walls(
                 &Entity {
@@ -54,11 +54,12 @@ fn move_enemy_to_sides(
     }
 }
 
-fn move_enemy(player: &Player, enemy: Enemy, walls: &[Wall], speed: f32, delta: f32) -> Enemy {
+fn move_enemy(player: &Player, enemy: Enemy, walls: &[Wall], delta: f32) -> Enemy {
     let vector_towards_player = player.entity.position - enemy.entity.position;
     if vector_towards_player.length() > ENEMY_MAX_CHASE_DISTANCE {
         return enemy.clone();
     };
+    let speed = enemy.enemy_type.get_movement_speed();
 
     let move_vector = vector_towards_player.normalize_or_zero() * speed * delta;
     let new_position = enemy.entity.position + move_vector;
@@ -84,12 +85,11 @@ fn move_enemy(player: &Player, enemy: Enemy, walls: &[Wall], speed: f32, delta: 
 }
 
 fn move_enemy_for_type(player: &Player, enemy: Enemy, walls: &[Wall], delta: f32) -> Enemy {
-    let speed = enemy.enemy_type.get_movement_speed();
     match &enemy.enemy_type {
-        EnemyType::Melee => move_enemy(player, enemy, walls, speed, delta),
+        EnemyType::Melee => move_enemy(player, enemy, walls, delta),
         EnemyType::Ranged => {
             if !enemy_can_attack_player(&enemy, player, walls) {
-                move_enemy(player, enemy, walls, speed, delta)
+                move_enemy(player, enemy, walls, delta)
             } else {
                 enemy
             }

@@ -22,8 +22,8 @@ impl Sprite2D for KeyObject {
         calculate_vertical_offset(
             KEY_ANIMATION_SPEED_MOVEMENT,
             self.get_size(),
-            0.3,
-            0.05,
+            KEY_HEIGHT_OFFSET,
+            KEY_HEIGHT_ANIMATION_AMPLITUDE,
             time_ellapsed,
         )
     }

@@ -38,6 +38,8 @@ pub const KEY_SIZE: f32 = 0.5;
 pub const KEY_ANIMATION_SPEED_MOVEMENT: u128 = 3000;
 pub const KEY_ANIMATION_SPEED_TEXTURES: u128 = 800;
 pub const KEY_DRAW_SIZE_MOD: f32 = 0.5;
+pub const KEY_HEIGHT_OFFSET: f32 = 0.5;
+pub const KEY_HEIGHT_ANIMATION_AMPLITUDE: f32 = 0.03;
 
 pub const GUN_FIRE_ANIMATION_SPEED: u128 = 80;
 pub const GUN_POSITION: Vec2 = vec2(0.6, 0.6);

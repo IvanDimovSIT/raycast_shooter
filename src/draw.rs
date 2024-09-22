@@ -2,25 +2,21 @@ use std::{f32::consts::TAU, iter::once, time::Duration};
 
 use bullets_display::draw_bullets_display;
 use gun::draw_gun;
+use health_display::draw_health_display;
 use key_display::draw_key_display;
-use macroquad::{
-    color::Color,
-    math::{vec2, Rect, Vec2},
-    texture::{self, draw_texture_ex, DrawTextureParams},
-};
-use rayon::iter::{ParallelBridge, ParallelIterator};
+use macroquad::math::{vec2, Vec2};
 use sprite_2d::{draw_sprites, Sprite2D};
 use wall::draw_walls;
 
 use crate::{
-    constants::{FOV, HORIZONTAL_WALL_SEGEMENTS, MIN_BRIGHTNESS, VIEW_DISTANCE, WALL_RESOLUTION},
-    math::find_intersection,
-    model::{Entity, GameObjects, Player, Texture, Wall},
+    constants::{MIN_BRIGHTNESS, VIEW_DISTANCE},
+    model::{Entity, GameObjects, Player, Texture},
     texture_manager::TextureManager,
 };
 
 pub mod bullets_display;
 pub mod gun;
+pub mod health_display;
 pub mod key_display;
 pub mod sprite_2d;
 pub mod wall;
@@ -100,6 +96,7 @@ pub fn draw_game(game_objects: &GameObjects, time_from_start: &Duration) -> Vec<
         )))
         .chain(once(draw_key_display(game_objects)))
         .chain(once(draw_bullets_display(&game_objects.player_info)))
+        .chain(once(draw_health_display(&game_objects.player_info)))
         .collect()
 }
 

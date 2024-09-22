@@ -8,7 +8,7 @@ use projectile::Projectile;
 use serde::Deserialize;
 use uuid::Uuid;
 
-use crate::constants::MAX_BULLETS;
+use crate::constants::{MAX_BULLETS, PLAYER_MAX_HEALTH};
 
 pub mod decoration;
 pub mod enemy;
@@ -168,7 +168,7 @@ impl Default for PlayerInfo {
         Self {
             shooting_status: ShootingStatus::NotShooting,
             picked_up_keys: 0,
-            health: 100.0,
+            health: PLAYER_MAX_HEALTH,
             time_since_last_shot: 0.0,
             bullets: MAX_BULLETS,
         }

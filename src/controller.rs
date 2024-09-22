@@ -143,7 +143,7 @@ pub fn next_game_step(game_objects: GameObjects, delta: f32) -> (GameObjects, Ve
         delta,
     );
 
-    let (new_player_info, can_shoot) = update_shoot(game_objects.player_info, delta);
+    let (player_info_shoot, can_shoot) = update_shoot(game_objects.player_info, delta);
 
     let (shot_enemies, kill_enemies_events) = if can_shoot {
         shoot_enemies(&game_objects.player, moved_enemies, &game_objects.walls)
@@ -166,6 +166,11 @@ pub fn next_game_step(game_objects: GameObjects, delta: f32) -> (GameObjects, Ve
         &game_objects.walls,
         delta,
     );
+
+    let new_player_info = PlayerInfo {
+        health: regenerate_health(player_info_shoot.health, delta),
+        ..player_info_shoot
+    };
 
     let events: Vec<_> = check_pickup_key(&game_objects.player, &game_objects.keys)
         .into_iter()

@@ -1,5 +1,18 @@
-use super::*;
-use crate::{math::rotate_point, model::Texture};
+use macroquad::{
+    color::Color,
+    math::{vec2, Rect, Vec2},
+    texture::{draw_texture_ex, DrawTextureParams},
+};
+use rayon::iter::{ParallelBridge, ParallelIterator};
+
+use crate::{
+    constants::{FOV, HORIZONTAL_WALL_SEGEMENTS, WALL_RESOLUTION},
+    math::{find_intersection, rotate_point},
+    model::{Texture, Wall},
+    texture_manager::TextureManager,
+};
+
+use super::{calculate_brightness, Camera, Drawable};
 
 struct WallDrawable {
     distance: f32,
@@ -101,7 +114,7 @@ fn draw_wall(
         texture_2d.height(),
     );
 
-    let params = texture::DrawTextureParams {
+    let params = DrawTextureParams {
         dest_size: Some(vec2(width * screen_size.0, height * screen_size.1)),
         source: Some(source),
         rotation: 0.0,

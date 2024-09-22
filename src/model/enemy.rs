@@ -2,6 +2,7 @@ use std::time::Duration;
 
 use crate::{
     constants::{
+        ENEMY_BASE_HEIGHT_OFFSET, ENEMY_HEIGHT_AMPLITUDE, ENEMY_HEIGHT_CHANGE_ANIMATION_SPEED,
         MELEE_ENEMY_ATTACK_DELAY, MELEE_ENEMY_ATTACK_RANGE, MELEE_ENEMY_MOVE_SPEED,
         RANGED_ENEMY_ANIMATION_SPEED, RANGED_ENEMY_ATTACK_DELAY, RANGED_ENEMY_MOVE_SPEED,
         RANGED_ENEMY_SHOOT_RANGE,
@@ -25,7 +26,7 @@ pub enum EnemyType {
     Ranged,
 }
 impl EnemyType {
-    pub fn to_enemy(&self, position: Vec2) -> Enemy {
+    pub fn to_enemy(self, position: Vec2) -> Enemy {
         let id = Uuid::new_v4();
         let entity = Entity {
             position,
@@ -38,14 +39,14 @@ impl EnemyType {
                 entity,
                 hp: ENEMY_HP,
                 attack_delay: 0.0,
-                enemy_type: *self,
+                enemy_type: self,
             },
             EnemyType::Ranged => Enemy {
                 id,
                 entity,
                 hp: ENEMY_HP,
                 attack_delay: RANGED_ENEMY_ATTACK_DELAY,
-                enemy_type: *self,
+                enemy_type: self,
             },
         }
     }
@@ -100,7 +101,13 @@ impl Sprite2D for Enemy {
     }
 
     fn get_vertical_offset(&self, time_ellapsed: &Duration) -> f32 {
-        calculate_vertical_offset(300, self.get_size(), 0.2, 0.02, time_ellapsed)
+        calculate_vertical_offset(
+            ENEMY_HEIGHT_CHANGE_ANIMATION_SPEED,
+            ENEMY_HEIGHT_AMPLITUDE,
+            ENEMY_BASE_HEIGHT_OFFSET,
+            ENEMY_HEIGHT_AMPLITUDE,
+            time_ellapsed,
+        )
     }
 
     fn get_size(&self) -> f32 {

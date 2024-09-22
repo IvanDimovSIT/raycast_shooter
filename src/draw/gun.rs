@@ -1,4 +1,6 @@
 use macroquad::color::WHITE;
+use macroquad::prelude::draw_texture_ex;
+use macroquad::prelude::DrawTextureParams;
 
 use crate::{
     constants::{GUN_FIRE_ANIMATION_SPEED, GUN_POSITION, GUN_ROTATION, GUN_SIZE},

@@ -1,3 +1,7 @@
+use crate::constants::FOV;
+use macroquad::prelude::draw_texture_ex;
+use macroquad::prelude::Color;
+use macroquad::prelude::DrawTextureParams;
 use std::time::Duration;
 
 use super::*;

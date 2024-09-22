@@ -2,9 +2,9 @@ use macroquad::math::{vec2, Vec2};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
 use crate::{
-    constants::MOVE_SPEED,
+    constants::{MOVE_SPEED, PLAYER_MAX_HEALTH, PLAYER_REGENERATION},
     math::{check_circles_collide, line_intersects_circle, rotate_point},
-    model::{key_object::KeyObject, Entity, GameEvent, GameObjects, Player, Wall},
+    model::{key_object::KeyObject, Entity, GameEvent, GameObjects, Player, PlayerInfo, Wall},
 };
 
 pub fn move_player_entity(player_entity: Entity, movement: Vec2, walls: &[Wall]) -> Entity {
@@ -71,6 +71,10 @@ pub fn is_player_at_exit(game_objects: &GameObjects) -> bool {
             game_objects.player.entity.size,
         )
     })
+}
+
+pub fn regenerate_health(player_health: f32, delta: f32) -> f32 {
+    (player_health + delta * PLAYER_REGENERATION).min(PLAYER_MAX_HEALTH)
 }
 
 #[cfg(test)]

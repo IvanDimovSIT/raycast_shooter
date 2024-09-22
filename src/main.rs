@@ -21,7 +21,6 @@ async fn main() {
 
     loop {
         focus_manager.update();
-
         let should_exit;
         (game_state, should_exit) = run(game_state).await;
 

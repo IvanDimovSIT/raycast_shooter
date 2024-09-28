@@ -12,7 +12,7 @@ pub const FOCUS_KEY: KeyCode = KeyCode::Escape;
 pub const LEVEL_PATH: &str = "resources/level.json";
 pub const TEXTURE_PATH: &str = "resources/textures/";
 
-pub const HORIZONTAL_WALL_SEGEMENTS: u32 = 200;
+pub const HORIZONTAL_WALL_SEGEMENTS: u32 = 300;
 pub const FOV: f32 = PI / 4.0;
 pub const VIEW_DISTANCE: f32 = 1000.0;
 pub const WALL_RESOLUTION: f32 = 10000.0;
@@ -22,7 +22,7 @@ pub const PLAYER_REGENERATION: f32 = 2.0;
 pub const PLAYER_SIZE: f32 = 0.2;
 pub const KEYS_TURN_SPEED: f32 = 1.3;
 pub const MOUSE_TURN_SPEED: f32 = 50.0;
-pub const MOVE_SPEED: f32 = 1.9;
+pub const MOVE_SPEED: f32 = 2.7;
 
 pub const FLOOR_COLOR: Color = color_u8!(55, 55, 75, 255);
 pub const CEILING_COLOR: Color = color_u8!(60, 40, 40, 255);
@@ -54,18 +54,18 @@ pub const ENEMY_HP: f32 = 100.0;
 pub const ENEMY_MAX_CHASE_DISTANCE: f32 = 40.0;
 
 pub const MELEE_ENEMY_ANIMATION_SPEED: u128 = 100;
-pub const MELEE_ENEMY_MOVE_SPEED: f32 = 1.9;
+pub const MELEE_ENEMY_MOVE_SPEED: f32 = 2.4;
 pub const MELEE_ENEMY_ATTACK_RANGE: f32 = 0.1;
 pub const MELEE_ENEMY_ATTACK_DELAY: f32 = 1.0;
 pub const MELEE_ENEMY_DAMAGE: f32 = 80.0;
 
 pub const RANGED_ENEMY_ANIMATION_SPEED: u128 = 100;
 pub const RANGED_ENEMY_SHOOT_RANGE: f32 = 8.0;
-pub const RANGED_ENEMY_MOVE_SPEED: f32 = 1.7;
-pub const RANGED_ENEMY_ATTACK_DELAY: f32 = 1.5;
+pub const RANGED_ENEMY_MOVE_SPEED: f32 = 1.9;
+pub const RANGED_ENEMY_ATTACK_DELAY: f32 = 0.8;
 pub const RANGED_ENEMY_DAMAGE: f32 = 40.0;
 pub const RANGED_ENEMY_SHOT_SIZE: f32 = 0.1;
-pub const RANGED_ENEMY_SHOT_SPEED: f32 = 3.4;
+pub const RANGED_ENEMY_SHOT_SPEED: f32 = 6.0;
 
 pub const RELOAD_SPEED: f32 = 3.0;
 pub const SHOOT_SPEED: f32 = 0.1;

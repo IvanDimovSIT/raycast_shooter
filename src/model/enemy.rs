@@ -8,10 +8,10 @@ use crate::{
         RANGED_ENEMY_SHOOT_RANGE,
     },
     model::Animation,
+    service::id_generator::generate_id,
 };
 use macroquad::math::{vec2, Vec2};
 use serde::Deserialize;
-use uuid::Uuid;
 
 use crate::{
     constants::{ENEMY_HP, ENEMY_SIZE, MELEE_ENEMY_ANIMATION_SPEED},
@@ -27,7 +27,7 @@ pub enum EnemyType {
 }
 impl EnemyType {
     pub fn to_enemy(self, position: Vec2) -> Enemy {
-        let id = Uuid::new_v4();
+        let id = generate_id();
         let entity = Entity {
             position,
             size: ENEMY_SIZE,
@@ -89,7 +89,7 @@ impl EnemyType {
 
 #[derive(Debug, Clone)]
 pub struct Enemy {
-    pub id: Uuid,
+    pub id: u64,
     pub entity: Entity,
     pub hp: f32,
     pub attack_delay: f32,

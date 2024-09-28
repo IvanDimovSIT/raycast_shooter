@@ -1,7 +1,6 @@
 use std::mem::take;
 
 use macroquad::math::Vec2;
-use uuid::Uuid;
 
 use crate::{
     constants::{RANGED_ENEMY_DAMAGE, RANGED_ENEMY_SHOT_SIZE},
@@ -68,8 +67,8 @@ pub fn handle_input(
     )
 }
 
-fn handle_pickup_key(game_objects: &mut GameObjects, key_id: &Uuid) {
-    game_objects.keys.retain(|key| key.id != *key_id);
+fn handle_pickup_key(game_objects: &mut GameObjects, key_id: u64) {
+    game_objects.keys.retain(|key| key.id != key_id);
     game_objects.player_info = PlayerInfo {
         picked_up_keys: game_objects.player_info.picked_up_keys + 1,
         ..game_objects.player_info
@@ -116,7 +115,7 @@ fn handle_create_projectile(game_objects: &mut GameObjects, position: Vec2, dire
 pub fn handle_events(game_objects: &mut GameObjects, events: &[GameEvent]) {
     for e in events {
         match e {
-            GameEvent::PickUpKey(key_id) => handle_pickup_key(game_objects, key_id),
+            GameEvent::PickUpKey(key_id) => handle_pickup_key(game_objects, *key_id),
             GameEvent::EnemyKilled { position } => handle_enemy_killed(game_objects, *position),
             GameEvent::LocationShot { position } => handle_location_shot(game_objects, *position),
             GameEvent::PlayerTakeDamage(damage) => handle_player_take_damage(game_objects, *damage),

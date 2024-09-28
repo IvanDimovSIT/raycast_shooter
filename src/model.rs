@@ -6,7 +6,6 @@ use key_object::KeyObject;
 use macroquad::math::Vec2;
 use projectile::Projectile;
 use serde::Deserialize;
-use uuid::Uuid;
 
 use crate::constants::{MAX_BULLETS, PLAYER_MAX_HEALTH};
 
@@ -141,7 +140,7 @@ pub struct Wall {
 
 #[derive(Debug, Clone, Copy)]
 pub enum GameEvent {
-    PickUpKey(Uuid),
+    PickUpKey(u64),
     EnemyKilled { position: Vec2 },
     LocationShot { position: Vec2 },
     PlayerTakeDamage(f32),

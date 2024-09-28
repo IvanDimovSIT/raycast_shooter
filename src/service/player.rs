@@ -4,7 +4,7 @@ use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use crate::{
     constants::{MOVE_SPEED, PLAYER_MAX_HEALTH, PLAYER_REGENERATION},
     math::{check_circles_collide, line_intersects_circle, rotate_point},
-    model::{key_object::KeyObject, Entity, GameEvent, GameObjects, Player, PlayerInfo, Wall},
+    model::{key_object::KeyObject, Entity, GameEvent, GameObjects, Player, Wall},
 };
 
 pub fn move_player_entity(player_entity: Entity, movement: Vec2, walls: &[Wall]) -> Entity {

@@ -152,6 +152,13 @@ impl TextureManager {
         Self::load_texture(&mut textures, Texture::Explostion8, "explosion/8.png");
         Self::load_texture(&mut textures, Texture::Explostion9, "explosion/9.png");
 
+        Self::load_texture_with_filter(
+            &mut textures,
+            Texture::TextFindTheKeys,
+            "text/find_exit.png",
+            FilterMode::Nearest,
+        );
+
         Self { textures }
     }
 

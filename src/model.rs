@@ -56,6 +56,7 @@ pub enum Texture {
     Explostion7,
     Explostion8,
     Explostion9,
+    TextFindTheKeys,
 }
 impl Default for Texture {
     fn default() -> Self {

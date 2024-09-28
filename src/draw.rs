@@ -1,6 +1,7 @@
 use std::{f32::consts::TAU, iter::once, time::Duration};
 
 use bullets_display::draw_bullets_display;
+use exit_text_sprite::create_exit_text;
 use gun::draw_gun;
 use health_display::draw_health_display;
 use key_display::draw_key_display;
@@ -15,6 +16,7 @@ use crate::{
 };
 
 pub mod bullets_display;
+pub mod exit_text_sprite;
 pub mod gun;
 pub mod health_display;
 pub mod key_display;
@@ -76,6 +78,7 @@ pub fn draw_game(game_objects: &GameObjects, time_from_start: &Duration) -> Vec<
     let camera = Camera::for_player(&game_objects.player);
     let walls_to_draw = draw_walls(&camera, &game_objects.walls);
 
+    let exit_text_sprite = create_exit_text(game_objects);
     let sprites: Vec<&dyn Sprite2D> = game_objects
         .keys
         .iter()
@@ -83,6 +86,7 @@ pub fn draw_game(game_objects: &GameObjects, time_from_start: &Duration) -> Vec<
         .chain(game_objects.enemies.iter().map(|x| x as &dyn Sprite2D))
         .chain(game_objects.decorations.iter().map(|x| x as &dyn Sprite2D))
         .chain(game_objects.projectiles.iter().map(|x| x as &dyn Sprite2D))
+        .chain(exit_text_sprite.iter().map(|x| x.as_ref()))
         .collect();
 
     let sprites_to_draw = draw_sprites(&camera, time_from_start, &sprites);

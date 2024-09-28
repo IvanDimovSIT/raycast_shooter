@@ -112,3 +112,6 @@ pub const HEALTH_DISPLAY_BACKGROUND_COLOR: Color = Color::new(0.1, 0.1, 0.1, 1.0
 pub const HEALTH_DISPLAY_COLOR: Color = Color::new(0.2, 0.9, 0.2, 1.0);
 
 pub const PROJECTILE_OFFSET: f32 = 0.0;
+
+pub const EXIT_TEXT_HEIGHT_OFFSET: f32 = -0.2;
+pub const EXIT_TEXT_SIZE: f32 = 1.0;

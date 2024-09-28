@@ -80,9 +80,8 @@ pub fn regenerate_health(player_health: f32, delta: f32) -> f32 {
 #[cfg(test)]
 mod tests {
     use macroquad::math::vec2;
-    use uuid::Uuid;
 
-    use crate::model::Texture;
+    use crate::{model::Texture, service::id_generator::generate_id};
 
     use super::*;
 
@@ -119,7 +118,7 @@ mod tests {
         };
 
         let key = KeyObject {
-            id: Uuid::new_v4(),
+            id: generate_id(),
             entity: Entity {
                 position: vec2(0.0, 0.5),
                 size: 1.0,

@@ -45,6 +45,14 @@ pub enum Texture {
     RangedEnemy6,
     RangedEnemy7,
     RangedEnemy8,
+    MeleeSlowEnemy1,
+    MeleeSlowEnemy2,
+    MeleeSlowEnemy3,
+    MeleeSlowEnemy4,
+    MeleeSlowEnemy5,
+    MeleeSlowEnemy6,
+    MeleeSlowEnemy7,
+    MeleeSlowEnemy8,
     Projectile,
     Skull,
     Explostion1,
@@ -68,6 +76,7 @@ impl Default for Texture {
 pub enum Animation {
     Enemy,
     RangedEnemy,
+    MeleeSlowEnemy,
     Key,
     Gun,
     Explosion,
@@ -116,6 +125,16 @@ impl Animation {
                 Texture::RangedEnemy7,
                 Texture::RangedEnemy8,
             ],
+            Animation::MeleeSlowEnemy => vec![
+                Texture::MeleeSlowEnemy1,
+                Texture::MeleeSlowEnemy2,
+                Texture::MeleeSlowEnemy3,
+                Texture::MeleeSlowEnemy4,
+                Texture::MeleeSlowEnemy5,
+                Texture::MeleeSlowEnemy6,
+                Texture::MeleeSlowEnemy7,
+                Texture::MeleeSlowEnemy8,
+            ],
         }
     }
 }
@@ -142,10 +161,18 @@ pub struct Wall {
 #[derive(Debug, Clone, Copy)]
 pub enum GameEvent {
     PickUpKey,
-    EnemyKilled { position: Vec2 },
-    LocationShot { position: Vec2 },
+    EnemyKilled {
+        position: Vec2,
+    },
+    LocationShot {
+        position: Vec2,
+    },
     PlayerTakeDamage(f32),
-    CreateProjectile { position: Vec2, direction: Vec2 },
+    CreateProjectile {
+        position: Vec2,
+        direction: Vec2,
+        damage: f32,
+    },
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

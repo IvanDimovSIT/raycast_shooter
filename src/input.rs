@@ -54,7 +54,7 @@ fn get_mouse_input() -> Vec<Operation> {
         } else {
             None
         }))
-        .filter_map(|op| op)
+        .flatten()
         .collect()
 }
 

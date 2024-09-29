@@ -142,6 +142,52 @@ impl TextureManager {
             FilterMode::Nearest,
         );
 
+        Self::load_texture(
+            &mut textures,
+            Texture::MeleeSlowEnemy1,
+            "enemy/meleeSlow/enemy1.png",
+        );
+        Self::load_texture(
+            &mut textures,
+            Texture::MeleeSlowEnemy2,
+            "enemy/meleeSlow/enemy2.png",
+        );
+        Self::load_texture(
+            &mut textures,
+            Texture::MeleeSlowEnemy3,
+            "enemy/meleeSlow/enemy3.png",
+        );
+
+        Self::load_texture(
+            &mut textures,
+            Texture::MeleeSlowEnemy4,
+            "enemy/meleeSlow/enemy4.png",
+        );
+
+        Self::load_texture(
+            &mut textures,
+            Texture::MeleeSlowEnemy5,
+            "enemy/meleeSlow/enemy5.png",
+        );
+
+        Self::load_texture(
+            &mut textures,
+            Texture::MeleeSlowEnemy6,
+            "enemy/meleeSlow/enemy6.png",
+        );
+
+        Self::load_texture(
+            &mut textures,
+            Texture::MeleeSlowEnemy7,
+            "enemy/meleeSlow/enemy7.png",
+        );
+
+        Self::load_texture(
+            &mut textures,
+            Texture::MeleeSlowEnemy8,
+            "enemy/meleeSlow/enemy8.png",
+        );
+
         Self::load_texture(&mut textures, Texture::Explostion1, "explosion/1.png");
         Self::load_texture(&mut textures, Texture::Explostion2, "explosion/2.png");
         Self::load_texture(&mut textures, Texture::Explostion3, "explosion/3.png");

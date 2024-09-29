@@ -3,9 +3,11 @@ use std::time::Duration;
 use crate::{
     constants::{
         ENEMY_BASE_HEIGHT_OFFSET, ENEMY_HEIGHT_AMPLITUDE, ENEMY_HEIGHT_CHANGE_ANIMATION_SPEED,
-        MELEE_ENEMY_ATTACK_DELAY, MELEE_ENEMY_ATTACK_RANGE, MELEE_ENEMY_MOVE_SPEED,
-        RANGED_ENEMY_ANIMATION_SPEED, RANGED_ENEMY_ATTACK_DELAY, RANGED_ENEMY_MOVE_SPEED,
-        RANGED_ENEMY_SHOOT_RANGE,
+        MELEE_ENEMY_ATTACK_DELAY, MELEE_ENEMY_ATTACK_RANGE, MELEE_ENEMY_DAMAGE,
+        MELEE_ENEMY_MOVE_SPEED, MELEE_SLOW_ENEMY_ANIMATION_SPEED, MELEE_SLOW_ENEMY_ATTACK_DELAY,
+        MELEE_SLOW_ENEMY_ATTACK_RANGE, MELEE_SLOW_ENEMY_DAMAGE, MELEE_SLOW_ENEMY_HEALTH,
+        MELEE_SLOW_ENEMY_MOVE_SPEED, RANGED_ENEMY_ANIMATION_SPEED, RANGED_ENEMY_ATTACK_DELAY,
+        RANGED_ENEMY_DAMAGE, RANGED_ENEMY_MOVE_SPEED, RANGED_ENEMY_SHOOT_RANGE,
     },
     model::Animation,
     service::id_generator::generate_id,
@@ -23,6 +25,7 @@ use super::{Entity, Texture};
 #[derive(Debug, Clone, Copy, Deserialize)]
 pub enum EnemyType {
     Melee,
+    MeleeSlow,
     Ranged,
 }
 impl EnemyType {
@@ -48,6 +51,13 @@ impl EnemyType {
                 attack_delay: RANGED_ENEMY_ATTACK_DELAY,
                 enemy_type: self,
             },
+            EnemyType::MeleeSlow => Enemy {
+                id,
+                entity,
+                hp: MELEE_SLOW_ENEMY_HEALTH,
+                attack_delay: 0.0,
+                enemy_type: self,
+            },
         }
     }
 
@@ -55,6 +65,7 @@ impl EnemyType {
         match self {
             EnemyType::Melee => MELEE_ENEMY_MOVE_SPEED,
             EnemyType::Ranged => RANGED_ENEMY_MOVE_SPEED,
+            EnemyType::MeleeSlow => MELEE_SLOW_ENEMY_MOVE_SPEED,
         }
     }
 
@@ -62,6 +73,15 @@ impl EnemyType {
         match self {
             EnemyType::Melee => MELEE_ENEMY_ATTACK_RANGE,
             EnemyType::Ranged => RANGED_ENEMY_SHOOT_RANGE,
+            EnemyType::MeleeSlow => MELEE_SLOW_ENEMY_ATTACK_RANGE,
+        }
+    }
+
+    pub fn get_attack_damage(&self) -> f32 {
+        match self {
+            EnemyType::Melee => MELEE_ENEMY_DAMAGE,
+            EnemyType::MeleeSlow => MELEE_SLOW_ENEMY_DAMAGE,
+            EnemyType::Ranged => RANGED_ENEMY_DAMAGE,
         }
     }
 
@@ -69,6 +89,7 @@ impl EnemyType {
         match self {
             EnemyType::Melee => MELEE_ENEMY_ATTACK_DELAY,
             EnemyType::Ranged => RANGED_ENEMY_ATTACK_DELAY,
+            EnemyType::MeleeSlow => MELEE_SLOW_ENEMY_ATTACK_DELAY,
         }
     }
 
@@ -76,6 +97,7 @@ impl EnemyType {
         match self {
             EnemyType::Melee => Animation::Enemy.get_textures(),
             EnemyType::Ranged => Animation::RangedEnemy.get_textures(),
+            EnemyType::MeleeSlow => Animation::MeleeSlowEnemy.get_textures(),
         }
     }
 
@@ -83,6 +105,7 @@ impl EnemyType {
         match self {
             EnemyType::Melee => MELEE_ENEMY_ANIMATION_SPEED,
             EnemyType::Ranged => RANGED_ENEMY_ANIMATION_SPEED,
+            EnemyType::MeleeSlow => MELEE_SLOW_ENEMY_ANIMATION_SPEED,
         }
     }
 }

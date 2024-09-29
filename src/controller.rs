@@ -3,7 +3,7 @@ use std::mem::take;
 use macroquad::math::Vec2;
 
 use crate::{
-    constants::{RANGED_ENEMY_DAMAGE, RANGED_ENEMY_SHOT_SIZE},
+    constants::RANGED_ENEMY_SHOT_SIZE,
     input::Operation,
     math::find_perpendicular_vector,
     model::{
@@ -101,14 +101,19 @@ fn handle_player_take_damage(game_objects: &mut GameObjects, damage: f32) {
     println!("Player took damage({damage})");
 }
 
-fn handle_create_projectile(game_objects: &mut GameObjects, position: Vec2, direction: Vec2) {
+fn handle_create_projectile(
+    game_objects: &mut GameObjects,
+    position: Vec2,
+    direction: Vec2,
+    damage: f32,
+) {
     game_objects.projectiles.push(Projectile {
         entity: Entity {
             position,
             size: RANGED_ENEMY_SHOT_SIZE,
         },
         direction,
-        damage: RANGED_ENEMY_DAMAGE,
+        damage,
         texture: Texture::Projectile,
     });
 }
@@ -123,7 +128,8 @@ pub fn handle_events(game_objects: &mut GameObjects, events: &[GameEvent]) {
             GameEvent::CreateProjectile {
                 position,
                 direction,
-            } => handle_create_projectile(game_objects, *position, *direction),
+                damage,
+            } => handle_create_projectile(game_objects, *position, *direction, *damage),
         }
     }
 }

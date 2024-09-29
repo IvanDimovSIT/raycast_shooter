@@ -2,9 +2,7 @@ use macroquad::math::Vec2;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use crate::{
-    constants::{
-        ENEMY_MAX_CHASE_DISTANCE, MELEE_ENEMY_DAMAGE, MOVE_SPEED, RANGED_ENEMY_SHOT_SPEED,
-    },
+    constants::{ENEMY_MAX_CHASE_DISTANCE, MOVE_SPEED, RANGED_ENEMY_SHOT_SPEED},
     math::{check_circles_collide, find_intersection, line_intersects_circle},
     model::{
         enemy::{Enemy, EnemyType},
@@ -86,7 +84,7 @@ fn move_enemy(player: &Player, enemy: Enemy, walls: &[Wall], delta: f32) -> Enem
 
 fn move_enemy_for_type(player: &Player, enemy: Enemy, walls: &[Wall], delta: f32) -> Enemy {
     match &enemy.enemy_type {
-        EnemyType::Melee => move_enemy(player, enemy, walls, delta),
+        EnemyType::Melee | EnemyType::MeleeSlow => move_enemy(player, enemy, walls, delta),
         EnemyType::Ranged => {
             if !enemy_can_attack_player(&enemy, player, walls) {
                 move_enemy(player, enemy, walls, delta)
@@ -120,7 +118,9 @@ fn melee_enemy_attack_player(enemy: Enemy) -> (Enemy, Vec<GameEvent>) {
             attack_delay: enemy.enemy_type.get_attack_speed(),
             ..enemy
         },
-        vec![GameEvent::PlayerTakeDamage(MELEE_ENEMY_DAMAGE)],
+        vec![GameEvent::PlayerTakeDamage(
+            enemy.enemy_type.get_attack_damage(),
+        )],
     )
 }
 
@@ -129,6 +129,7 @@ fn ranged_enemy_attack_player(enemy: Enemy, player: &Player) -> (Enemy, Vec<Game
         position: enemy.entity.position,
         direction: (player.entity.position - enemy.entity.position).normalize_or_zero()
             * RANGED_ENEMY_SHOT_SPEED,
+        damage: enemy.enemy_type.get_attack_damage(),
     };
 
     (
@@ -156,7 +157,7 @@ fn enemy_attack_player(
         return (updated_enemy, vec![]);
     }
     match enemy.enemy_type {
-        EnemyType::Melee => melee_enemy_attack_player(updated_enemy),
+        EnemyType::Melee | EnemyType::MeleeSlow => melee_enemy_attack_player(updated_enemy),
         EnemyType::Ranged => ranged_enemy_attack_player(updated_enemy, player),
     }
 }

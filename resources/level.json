@@ -43,7 +43,7 @@
         },
         {
             "position": [-3.0, -8.0],
-            "enemy_type": "Melee"    
+            "enemy_type": "MeleeSlow"    
         }
     ],
     "keys": [

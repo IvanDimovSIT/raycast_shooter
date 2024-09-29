@@ -141,7 +141,7 @@ pub struct Wall {
 
 #[derive(Debug, Clone, Copy)]
 pub enum GameEvent {
-    PickUpKey(u64),
+    PickUpKey,
     EnemyKilled { position: Vec2 },
     LocationShot { position: Vec2 },
     PlayerTakeDamage(f32),

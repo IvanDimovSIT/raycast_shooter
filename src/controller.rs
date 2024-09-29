@@ -10,7 +10,9 @@ use crate::{
         decoration::Decoration, projectile::Projectile, Entity, GameEvent, GameObjects, Player,
         PlayerInfo, Texture,
     },
-    service::{enemy::*, player::*, projectile::update_projctiles, shoot::*},
+    service::{
+        enemy::*, key::check_pickup_key, player::*, projectile::update_projctiles, shoot::*,
+    },
 };
 
 fn handle_left(player: Player, angle: f32, delta: f32) -> Player {
@@ -67,13 +69,12 @@ pub fn handle_input(
     )
 }
 
-fn handle_pickup_key(game_objects: &mut GameObjects, key_id: u64) {
-    game_objects.keys.retain(|key| key.id != key_id);
+fn handle_pickup_key(game_objects: &mut GameObjects) {
     game_objects.player_info = PlayerInfo {
         picked_up_keys: game_objects.player_info.picked_up_keys + 1,
         ..game_objects.player_info
     };
-    println!("Picked up key:{}", key_id);
+    println!("Picked up key");
 }
 
 fn handle_enemy_killed(game_objects: &mut GameObjects, position: Vec2) {
@@ -115,7 +116,7 @@ fn handle_create_projectile(game_objects: &mut GameObjects, position: Vec2, dire
 pub fn handle_events(game_objects: &mut GameObjects, events: &[GameEvent]) {
     for e in events {
         match e {
-            GameEvent::PickUpKey(key_id) => handle_pickup_key(game_objects, *key_id),
+            GameEvent::PickUpKey => handle_pickup_key(game_objects),
             GameEvent::EnemyKilled { position } => handle_enemy_killed(game_objects, *position),
             GameEvent::LocationShot { position } => handle_location_shot(game_objects, *position),
             GameEvent::PlayerTakeDamage(damage) => handle_player_take_damage(game_objects, *damage),
@@ -171,7 +172,8 @@ pub fn next_game_step(game_objects: GameObjects, delta: f32) -> (GameObjects, Ve
         ..player_info_shoot
     };
 
-    let events: Vec<_> = check_pickup_key(&game_objects.player, &game_objects.keys)
+    let (new_keys, key_events) = check_pickup_key(&game_objects.player, game_objects.keys);
+    let events: Vec<_> = key_events
         .into_iter()
         .chain(kill_enemies_events)
         .chain(attack_events)
@@ -183,7 +185,7 @@ pub fn next_game_step(game_objects: GameObjects, delta: f32) -> (GameObjects, Ve
         player_info: new_player_info,
         walls: game_objects.walls,
         enemies: attacked_enemies,
-        keys: game_objects.keys,
+        keys: new_keys,
         exit_triggers: game_objects.exit_triggers,
         decorations: updated_decorations,
         projectiles,

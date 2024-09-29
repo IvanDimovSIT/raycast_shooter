@@ -4,7 +4,7 @@ use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use crate::{
     constants::{MOVE_SPEED, PLAYER_MAX_HEALTH, PLAYER_REGENERATION},
     math::{check_circles_collide, line_intersects_circle, rotate_point},
-    model::{key_object::KeyObject, Entity, GameEvent, GameObjects, Player, Wall},
+    model::{Entity, GameObjects, Player, Wall},
 };
 
 pub fn move_player_entity(player_entity: Entity, movement: Vec2, walls: &[Wall]) -> Entity {
@@ -40,23 +40,6 @@ pub fn move_player(
     }
 }
 
-pub fn check_pickup_key(player: &Player, keys: &[KeyObject]) -> Vec<GameEvent> {
-    keys.iter()
-        .filter_map(|key| {
-            if check_circles_collide(
-                key.entity.position,
-                key.entity.size,
-                player.entity.position,
-                player.entity.size,
-            ) {
-                Some(GameEvent::PickUpKey(key.id))
-            } else {
-                None
-            }
-        })
-        .collect()
-}
-
 pub fn turn_player(player: Player, thetha: f32) -> Player {
     let look = rotate_point(player.look, vec2(0.0, 0.0), thetha);
     Player { look, ..player }
@@ -81,7 +64,7 @@ pub fn regenerate_health(player_health: f32, delta: f32) -> f32 {
 mod tests {
     use macroquad::math::vec2;
 
-    use crate::{model::Texture, service::id_generator::generate_id};
+    use crate::model::Texture;
 
     use super::*;
 
@@ -105,40 +88,5 @@ mod tests {
         let moved2 = move_player_entity(entity, movement2, &walls);
 
         assert!(moved2.position.y > entity.position.y);
-    }
-
-    #[test]
-    fn test_check_pickup_key() {
-        let player = Player {
-            entity: Entity {
-                position: vec2(0.0, 0.0),
-                size: 1.0,
-            },
-            look: vec2(0.0, 0.0),
-        };
-
-        let key = KeyObject {
-            id: generate_id(),
-            entity: Entity {
-                position: vec2(0.0, 0.5),
-                size: 1.0,
-            },
-        };
-
-        let keys = vec![key];
-
-        let events = check_pickup_key(&player, &keys);
-        assert_eq!(events.len(), 1);
-
-        let player_far = Player {
-            entity: Entity {
-                position: vec2(10.0, 10.0),
-                size: 1.0,
-            },
-            look: vec2(0.0, 0.0),
-        };
-
-        let events_far = check_pickup_key(&player_far, &keys);
-        assert_eq!(events_far.len(), 0);
     }
 }

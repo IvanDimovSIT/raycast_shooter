@@ -15,6 +15,7 @@ use crate::{
 use super::{calculate_brightness, Camera, Drawable};
 
 struct WallDrawable {
+    height: f32,
     distance: f32,
     brightness: f32,
     x: usize,
@@ -31,7 +32,7 @@ impl Drawable for WallDrawable {
             screen_size,
             texture_manager,
             self.x,
-            self.distance,
+            self.height,
             self.brightness,
             self.texture,
             self.relative_position,
@@ -93,18 +94,17 @@ fn draw_wall(
     screen_size: (f32, f32),
     texture_manager: &TextureManager,
     x: usize,
-    distance: f32,
+    height: f32,
     brightness: f32,
     texture: Texture,
     relative_position: f32,
 ) {
-    let height = 1.0 / distance;
-    let width = 1.0 / HORIZONTAL_WALL_SEGEMENTS as f32;
-    let center_x = x as f32 / HORIZONTAL_WALL_SEGEMENTS as f32 + width / 2.0;
+    const WALL_WIDTH: f32 = 1.0 / HORIZONTAL_WALL_SEGEMENTS as f32;
+    let center_x = x as f32 / HORIZONTAL_WALL_SEGEMENTS as f32 + WALL_WIDTH / 2.0;
     let center_y = 0.5;
 
     let texture_2d = texture_manager.get_texture(texture);
-    let x = center_x - width / 2.0;
+    let x = center_x - WALL_WIDTH / 2.0;
     let y = center_y - height / 2.0;
 
     let source = Rect::new(
@@ -115,7 +115,7 @@ fn draw_wall(
     );
 
     let params = DrawTextureParams {
-        dest_size: Some(vec2(width * screen_size.0, height * screen_size.1)),
+        dest_size: Some(vec2(WALL_WIDTH * screen_size.0, height * screen_size.1)),
         source: Some(source),
         rotation: 0.0,
         flip_x: false,
@@ -143,9 +143,11 @@ pub fn draw_walls(camera: &Camera, walls: &[Wall]) -> Vec<Box<dyn Drawable>> {
             let brightness = calculate_brightness(distance);
             let texture = hit.texture;
             let relative_position = hit.relative_position;
+            let height = 1.0 / distance;
 
             let drawable = WallDrawable {
                 distance,
+                height,
                 brightness,
                 x,
                 texture,

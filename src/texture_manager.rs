@@ -8,7 +8,7 @@ const TEXTURE_PATHS: [(Texture, &str); 48] = [
     (Texture::Stone, "stone.png"),
     (Texture::Metal, "metal.png"),
     (Texture::Key1, "key/key1.png"),
-    (Texture::Key2, "key/key1.png"),
+    (Texture::Key2, "key/key2.png"),
     (Texture::Gun1, "gun/FAMAS_00.png"),
     (Texture::Gun2, "gun/FAMAS_03.png"),
     (Texture::Gun3, "gun/FAMAS_04.png"),

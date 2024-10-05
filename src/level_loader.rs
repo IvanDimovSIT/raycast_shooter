@@ -79,7 +79,6 @@ impl Into<GameObjects> for Level {
                     position: array_to_vec(*key),
                     size: KEY_SIZE,
                 },
-                ..Default::default()
             })
             .collect();
 

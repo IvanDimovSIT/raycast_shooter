@@ -6,7 +6,6 @@ use macroquad::input::{
 };
 use std::cmp::Eq;
 use std::cmp::PartialEq;
-use std::iter::once;
 
 use crate::constants::KEYS_TURN_SPEED;
 use crate::constants::MOUSE_TURN_SPEED;
@@ -38,14 +37,13 @@ fn get_unique_input(input: HashSet<Operation>) -> Vec<Operation> {
 }
 
 fn get_mouse_input() -> Vec<Operation> {
-    (vec![])
-        .into_iter()
-        .chain(once(if is_mouse_button_down(MouseButton::Left) {
+    vec![
+        if is_mouse_button_down(MouseButton::Left) {
             Some(Operation::Shoot)
         } else {
             None
-        }))
-        .chain(once(if mouse_delta_position().x < -f32::EPSILON {
+        },
+        if mouse_delta_position().x < -f32::EPSILON {
             Some(Operation::Right(
                 -mouse_delta_position().x * MOUSE_TURN_SPEED,
             ))
@@ -53,9 +51,11 @@ fn get_mouse_input() -> Vec<Operation> {
             Some(Operation::Left(mouse_delta_position().x * MOUSE_TURN_SPEED))
         } else {
             None
-        }))
-        .flatten()
-        .collect()
+        },
+    ]
+    .into_iter()
+    .flatten()
+    .collect()
 }
 
 pub fn get_input() -> Vec<Operation> {

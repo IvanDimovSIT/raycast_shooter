@@ -200,10 +200,8 @@ pub fn next_game_step(game_objects: GameObjects, delta: f32) -> (GameObjects, Ve
     (new_game_objects, events)
 }
 
-pub fn reset_state(mut game_objects: GameObjects) -> GameObjects {
-    game_objects.player_info = stop_shooting(game_objects.player_info);
-
-    game_objects
+pub fn reset_state(game_objects: &mut GameObjects) {
+    game_objects.player_info = stop_shooting(game_objects.player_info.clone());
 }
 
 pub fn is_game_over(game_objects: &GameObjects) -> bool {

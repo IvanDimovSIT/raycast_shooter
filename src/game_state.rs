@@ -64,10 +64,9 @@ async fn normal_run(mut context: Box<GameContext>) -> (GameState, bool) {
     let delta = get_frame_time();
     let time_from_start = context.start_time.elapsed();
 
-    context.game_objects = reset_state(context.game_objects);
+    reset_state(&mut context.game_objects);
 
     let input = get_input();
-
     (
         context.game_objects.player,
         context.game_objects.player_info,

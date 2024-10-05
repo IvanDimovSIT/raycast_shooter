@@ -4,6 +4,57 @@ use macroquad::texture::{FilterMode, Texture2D};
 
 use crate::{constants::TEXTURE_PATH, model::Texture};
 
+const TEXTURE_PATHS: [(Texture, &str); 48] = [
+    (Texture::Stone, "stone.png"),
+    (Texture::Metal, "metal.png"),
+    (Texture::Key1, "key/key1.png"),
+    (Texture::Key2, "key/key1.png"),
+    (Texture::Gun1, "gun/FAMAS_00.png"),
+    (Texture::Gun2, "gun/FAMAS_03.png"),
+    (Texture::Gun3, "gun/FAMAS_04.png"),
+    (Texture::Gun4, "gun/FAMAS_05.png"),
+    (Texture::Gun5, "gun/FAMAS_06.png"),
+    (Texture::Gun6, "gun/FAMAS_07.png"),
+    (Texture::Gun7, "gun/FAMAS_08.png"),
+    (Texture::Gun8, "gun/FAMAS_09.png"),
+    (Texture::Enemy1, "enemy/melee/enemy1.png"),
+    (Texture::Enemy2, "enemy/melee/enemy2.png"),
+    (Texture::Enemy3, "enemy/melee/enemy3.png"),
+    (Texture::Enemy4, "enemy/melee/enemy4.png"),
+    (Texture::Enemy5, "enemy/melee/enemy5.png"),
+    (Texture::Enemy6, "enemy/melee/enemy6.png"),
+    (Texture::Enemy7, "enemy/melee/enemy7.png"),
+    (Texture::Enemy8, "enemy/melee/enemy8.png"),
+    (Texture::RangedEnemy1, "enemy/ranged/enemy1.png"),
+    (Texture::RangedEnemy2, "enemy/ranged/enemy2.png"),
+    (Texture::RangedEnemy3, "enemy/ranged/enemy3.png"),
+    (Texture::RangedEnemy4, "enemy/ranged/enemy4.png"),
+    (Texture::RangedEnemy5, "enemy/ranged/enemy5.png"),
+    (Texture::RangedEnemy6, "enemy/ranged/enemy6.png"),
+    (Texture::RangedEnemy7, "enemy/ranged/enemy7.png"),
+    (Texture::RangedEnemy8, "enemy/ranged/enemy8.png"),
+    (Texture::MeleeSlowEnemy1, "enemy/meleeSlow/enemy1.png"),
+    (Texture::MeleeSlowEnemy2, "enemy/meleeSlow/enemy2.png"),
+    (Texture::MeleeSlowEnemy3, "enemy/meleeSlow/enemy3.png"),
+    (Texture::MeleeSlowEnemy4, "enemy/meleeSlow/enemy4.png"),
+    (Texture::MeleeSlowEnemy5, "enemy/meleeSlow/enemy5.png"),
+    (Texture::MeleeSlowEnemy6, "enemy/meleeSlow/enemy6.png"),
+    (Texture::MeleeSlowEnemy7, "enemy/meleeSlow/enemy7.png"),
+    (Texture::MeleeSlowEnemy8, "enemy/meleeSlow/enemy8.png"),
+    (Texture::Explostion1, "explosion/1.png"),
+    (Texture::Explostion2, "explosion/2.png"),
+    (Texture::Explostion3, "explosion/3.png"),
+    (Texture::Explostion4, "explosion/4.png"),
+    (Texture::Explostion5, "explosion/5.png"),
+    (Texture::Explostion6, "explosion/6.png"),
+    (Texture::Explostion7, "explosion/7.png"),
+    (Texture::Explostion8, "explosion/8.png"),
+    (Texture::Explostion9, "explosion/9.png"),
+    (Texture::Skull, "skull.png"),
+    (Texture::Projectile, "projectile.png"),
+    (Texture::TextFindTheKeys, "text/find_exit.png"),
+];
+
 pub struct TextureManager {
     textures: HashMap<Texture, Texture2D>,
 }
@@ -43,167 +94,20 @@ impl TextureManager {
         textures.insert(texture, texture_2d);
     }
 
-    fn load_texture(textures: &mut HashMap<Texture, Texture2D>, texture: Texture, path: &str) {
-        Self::load_texture_with_filter(textures, texture, path, FilterMode::Nearest);
+    fn load_multiple_textures(
+        textures: &mut HashMap<Texture, Texture2D>,
+        filter_mode: FilterMode,
+        paths: &[(Texture, &str)],
+    ) {
+        for (texture, path) in paths {
+            Self::load_texture_with_filter(textures, *texture, path, filter_mode);
+        }
     }
 
     pub fn load() -> Self {
         let mut textures = HashMap::new();
-
         textures.insert(Texture::Debug, Self::create_default_texture());
-        Self::load_texture_with_filter(
-            &mut textures,
-            Texture::Stone,
-            "stone.png",
-            FilterMode::Linear,
-        );
-
-        Self::load_texture_with_filter(
-            &mut textures,
-            Texture::Metal,
-            "metal.png",
-            FilterMode::Linear,
-        );
-
-        Self::load_texture(&mut textures, Texture::Key1, "key/key1.png");
-        Self::load_texture(&mut textures, Texture::Key2, "key/key2.png");
-        Self::load_texture(&mut textures, Texture::Skull, "skull.png");
-
-        Self::load_texture(&mut textures, Texture::Gun1, "gun/FAMAS_00.png");
-        Self::load_texture(&mut textures, Texture::Gun2, "gun/FAMAS_03.png");
-        Self::load_texture(&mut textures, Texture::Gun3, "gun/FAMAS_04.png");
-        Self::load_texture(&mut textures, Texture::Gun4, "gun/FAMAS_05.png");
-        Self::load_texture(&mut textures, Texture::Gun5, "gun/FAMAS_06.png");
-        Self::load_texture(&mut textures, Texture::Gun6, "gun/FAMAS_07.png");
-        Self::load_texture(&mut textures, Texture::Gun7, "gun/FAMAS_08.png");
-        Self::load_texture(&mut textures, Texture::Gun8, "gun/FAMAS_09.png");
-
-        Self::load_texture(&mut textures, Texture::Enemy1, "enemy/melee/enemy1.png");
-        Self::load_texture(&mut textures, Texture::Enemy2, "enemy/melee/enemy2.png");
-        Self::load_texture(&mut textures, Texture::Enemy3, "enemy/melee/enemy3.png");
-        Self::load_texture(&mut textures, Texture::Enemy4, "enemy/melee/enemy4.png");
-        Self::load_texture(&mut textures, Texture::Enemy5, "enemy/melee/enemy5.png");
-        Self::load_texture(&mut textures, Texture::Enemy6, "enemy/melee/enemy6.png");
-        Self::load_texture(&mut textures, Texture::Enemy7, "enemy/melee/enemy7.png");
-        Self::load_texture(&mut textures, Texture::Enemy8, "enemy/melee/enemy8.png");
-
-        Self::load_texture(
-            &mut textures,
-            Texture::RangedEnemy1,
-            "enemy/ranged/enemy1.png",
-        );
-
-        Self::load_texture(
-            &mut textures,
-            Texture::RangedEnemy2,
-            "enemy/ranged/enemy2.png",
-        );
-
-        Self::load_texture(
-            &mut textures,
-            Texture::RangedEnemy3,
-            "enemy/ranged/enemy3.png",
-        );
-
-        Self::load_texture(
-            &mut textures,
-            Texture::RangedEnemy4,
-            "enemy/ranged/enemy4.png",
-        );
-
-        Self::load_texture(
-            &mut textures,
-            Texture::RangedEnemy5,
-            "enemy/ranged/enemy5.png",
-        );
-
-        Self::load_texture(
-            &mut textures,
-            Texture::RangedEnemy6,
-            "enemy/ranged/enemy6.png",
-        );
-
-        Self::load_texture(
-            &mut textures,
-            Texture::RangedEnemy7,
-            "enemy/ranged/enemy7.png",
-        );
-
-        Self::load_texture(
-            &mut textures,
-            Texture::RangedEnemy8,
-            "enemy/ranged/enemy8.png",
-        );
-
-        Self::load_texture_with_filter(
-            &mut textures,
-            Texture::Projectile,
-            "projectile.png",
-            FilterMode::Nearest,
-        );
-
-        Self::load_texture(
-            &mut textures,
-            Texture::MeleeSlowEnemy1,
-            "enemy/meleeSlow/enemy1.png",
-        );
-        Self::load_texture(
-            &mut textures,
-            Texture::MeleeSlowEnemy2,
-            "enemy/meleeSlow/enemy2.png",
-        );
-        Self::load_texture(
-            &mut textures,
-            Texture::MeleeSlowEnemy3,
-            "enemy/meleeSlow/enemy3.png",
-        );
-
-        Self::load_texture(
-            &mut textures,
-            Texture::MeleeSlowEnemy4,
-            "enemy/meleeSlow/enemy4.png",
-        );
-
-        Self::load_texture(
-            &mut textures,
-            Texture::MeleeSlowEnemy5,
-            "enemy/meleeSlow/enemy5.png",
-        );
-
-        Self::load_texture(
-            &mut textures,
-            Texture::MeleeSlowEnemy6,
-            "enemy/meleeSlow/enemy6.png",
-        );
-
-        Self::load_texture(
-            &mut textures,
-            Texture::MeleeSlowEnemy7,
-            "enemy/meleeSlow/enemy7.png",
-        );
-
-        Self::load_texture(
-            &mut textures,
-            Texture::MeleeSlowEnemy8,
-            "enemy/meleeSlow/enemy8.png",
-        );
-
-        Self::load_texture(&mut textures, Texture::Explostion1, "explosion/1.png");
-        Self::load_texture(&mut textures, Texture::Explostion2, "explosion/2.png");
-        Self::load_texture(&mut textures, Texture::Explostion3, "explosion/3.png");
-        Self::load_texture(&mut textures, Texture::Explostion4, "explosion/4.png");
-        Self::load_texture(&mut textures, Texture::Explostion5, "explosion/5.png");
-        Self::load_texture(&mut textures, Texture::Explostion6, "explosion/6.png");
-        Self::load_texture(&mut textures, Texture::Explostion7, "explosion/7.png");
-        Self::load_texture(&mut textures, Texture::Explostion8, "explosion/8.png");
-        Self::load_texture(&mut textures, Texture::Explostion9, "explosion/9.png");
-
-        Self::load_texture_with_filter(
-            &mut textures,
-            Texture::TextFindTheKeys,
-            "text/find_exit.png",
-            FilterMode::Nearest,
-        );
+        Self::load_multiple_textures(&mut textures, FilterMode::Nearest, &TEXTURE_PATHS);
 
         Self { textures }
     }

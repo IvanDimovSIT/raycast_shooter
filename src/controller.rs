@@ -8,11 +8,12 @@ use crate::{
     math::find_perpendicular_vector,
     model::{
         decoration::Decoration, projectile::Projectile, Entity, GameEvent, GameObjects, Player,
-        PlayerInfo, Texture,
+        PlayerInfo, SoundId, Texture,
     },
     service::{
         enemy::*, key::check_pickup_key, player::*, projectile::update_projctiles, shoot::*,
     },
+    sound_manager::SoundManager,
 };
 
 fn handle_left(player: Player, angle: f32, delta: f32) -> Player {
@@ -69,11 +70,12 @@ pub fn handle_input(
     )
 }
 
-fn handle_pickup_key(game_objects: &mut GameObjects) {
+fn handle_pickup_key(sound_manager: &SoundManager, game_objects: &mut GameObjects) {
     game_objects.player_info = PlayerInfo {
         picked_up_keys: game_objects.player_info.picked_up_keys + 1,
         ..game_objects.player_info
     };
+    sound_manager.play(SoundId::PickUpKey);
     println!("Picked up key");
 }
 
@@ -86,7 +88,11 @@ fn handle_enemy_killed(game_objects: &mut GameObjects, position: Vec2) {
     println!("Enemy killed at:{}", position);
 }
 
-fn handle_location_shot(game_objects: &mut GameObjects, position: Vec2) {
+fn handle_location_shot(
+    sound_manager: &SoundManager,
+    game_objects: &mut GameObjects,
+    position: Vec2,
+) {
     game_objects.decorations = take(&mut game_objects.decorations)
         .into_iter()
         .chain(std::iter::once(create_shot_animation_decoration(
@@ -94,10 +100,17 @@ fn handle_location_shot(game_objects: &mut GameObjects, position: Vec2) {
             position,
         )))
         .collect();
+
+    sound_manager.play(SoundId::ShotHit);
 }
 
-fn handle_player_take_damage(game_objects: &mut GameObjects, damage: f32) {
+fn handle_player_take_damage(
+    sound_manager: &SoundManager,
+    game_objects: &mut GameObjects,
+    damage: f32,
+) {
     game_objects.player_info.health -= damage;
+    sound_manager.play(SoundId::PlayerTakeDamage);
     println!("Player took damage({damage})");
 }
 
@@ -118,13 +131,21 @@ fn handle_create_projectile(
     });
 }
 
-pub fn handle_events(game_objects: &mut GameObjects, events: &[GameEvent]) {
+pub fn handle_events(
+    sound_manager: &SoundManager,
+    game_objects: &mut GameObjects,
+    events: &[GameEvent],
+) {
     for e in events {
         match e {
-            GameEvent::PickUpKey => handle_pickup_key(game_objects),
+            GameEvent::PickUpKey => handle_pickup_key(sound_manager, game_objects),
             GameEvent::EnemyKilled { position } => handle_enemy_killed(game_objects, *position),
-            GameEvent::LocationShot { position } => handle_location_shot(game_objects, *position),
-            GameEvent::PlayerTakeDamage(damage) => handle_player_take_damage(game_objects, *damage),
+            GameEvent::LocationShot { position } => {
+                handle_location_shot(sound_manager, game_objects, *position)
+            }
+            GameEvent::PlayerTakeDamage(damage) => {
+                handle_player_take_damage(sound_manager, game_objects, *damage)
+            }
             GameEvent::CreateProjectile {
                 position,
                 direction,
@@ -198,6 +219,17 @@ pub fn next_game_step(game_objects: GameObjects, delta: f32) -> (GameObjects, Ve
     };
 
     (new_game_objects, events)
+}
+
+pub fn play_sounds(sound_manager: &mut SoundManager, game_objects: &GameObjects) {
+    if matches!(
+        game_objects.player_info.shooting_status,
+        crate::model::ShootingStatus::Shooting
+    ) {
+        sound_manager.start_looped(SoundId::Shooting);
+    } else {
+        sound_manager.stop_looped(SoundId::Shooting);
+    }
 }
 
 pub fn reset_state(game_objects: &mut GameObjects) {

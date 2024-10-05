@@ -12,11 +12,12 @@ mod math;
 mod model;
 mod renderer;
 mod service;
+mod sound_manager;
 mod texture_manager;
 
 #[macroquad::main("Game")]
 async fn main() {
-    let mut game_state = GameState::Running(Box::new(GameContext::load()));
+    let mut game_state = GameState::Running(Box::new(GameContext::load().await));
     let mut focus_manager = FocusManager::new();
 
     loop {

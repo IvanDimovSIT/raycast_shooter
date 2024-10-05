@@ -139,6 +139,16 @@ impl Animation {
     }
 }
 
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
+pub enum SoundId {
+    PickUpKey,
+    PlayerTakeDamage,
+    ShotHit,
+    Shooting,
+    Lose,
+    Escape,
+}
+
 #[derive(Debug, Clone, Copy)]
 pub struct Entity {
     pub position: Vec2,

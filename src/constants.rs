@@ -11,6 +11,7 @@ pub const FOCUS_KEY: KeyCode = KeyCode::Escape;
 
 pub const LEVEL_PATH: &str = "resources/levels/";
 pub const TEXTURE_PATH: &str = "resources/textures/";
+pub const SOUND_PATH: &str = "resources/sounds/";
 
 pub const START_LEVEL: u32 = 1;
 

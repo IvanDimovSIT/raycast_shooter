@@ -2,14 +2,16 @@ use crate::{
     constants::{
         CEILING_COLOR, DEBUG_DRAW_DELAY_MS, DEBUG_INITAL_DRAW_DELAY_MS, ENTER_DEBUG_MODE_KEY,
         EXIT_DEBUG_MODE_KEY, FLOOR_COLOR, GAME_OVER_TEXT, GAME_OVER_TEXT_SIZE, GAME_WON_TEXT,
-        GAME_WON_TEXT_SIZE, GAME_WON_TIME_TEXT_SIZE, TRY_AGAIN_TEXT, TRY_AGAIN_TEXT_SIZE,
-        TRY_AGAIN_WON_TEXT, TRY_AGAIN_WON_TEXT_SIZE,
+        GAME_WON_TEXT_SIZE, GAME_WON_TIME_TEXT_SIZE, LEVEL_WON_NEXT_LEVEL_TEXT,
+        LEVEL_WON_NEXT_LEVEL_TEXT_SIZE, LEVEL_WON_TEXT, LEVEL_WON_TEXT_SIZE,
+        LEVEL_WON_TIME_TEXT_SIZE, TRY_AGAIN_TEXT, TRY_AGAIN_TEXT_SIZE, TRY_AGAIN_WON_TEXT,
+        TRY_AGAIN_WON_TEXT_SIZE,
     },
     draw::Drawable,
     texture_manager::TextureManager,
 };
 use macroquad::{
-    color::{BLACK, ORANGE, RED, WHITE},
+    color::{BLACK, DARKBLUE, ORANGE, RED, WHITE},
     input::{is_key_pressed, is_key_released},
     miniquad::window::screen_size,
     shapes::draw_rectangle,
@@ -153,6 +155,42 @@ pub async fn render_game_won(time: Duration) {
         x3,
         0.85 * screen.1,
         TRY_AGAIN_WON_TEXT_SIZE * screen.0,
+        WHITE,
+    );
+
+    next_frame().await;
+}
+
+pub async fn render_level_won(time: Duration) {
+    let screen = screen_size();
+    clear_background(DARKBLUE);
+
+    let time_text = format!("Time: {}", time_to_text(time));
+
+    let x1 = (0.5 - LEVEL_WON_TEXT.len() as f32 * LEVEL_WON_TEXT_SIZE * 0.25) * screen.0;
+    let x2 = (0.5 - time_text.len() as f32 * LEVEL_WON_TIME_TEXT_SIZE * 0.25) * screen.0;
+    let x3 = (0.5 - LEVEL_WON_NEXT_LEVEL_TEXT.len() as f32 * LEVEL_WON_NEXT_LEVEL_TEXT_SIZE * 0.25)
+        * screen.0;
+
+    draw_text(
+        LEVEL_WON_TEXT,
+        x1,
+        0.4 * screen.1,
+        LEVEL_WON_TEXT_SIZE * screen.0,
+        WHITE,
+    );
+    draw_text(
+        &time_text,
+        x2,
+        0.6 * screen.1,
+        LEVEL_WON_TIME_TEXT_SIZE * screen.0,
+        WHITE,
+    );
+    draw_text(
+        LEVEL_WON_NEXT_LEVEL_TEXT,
+        x3,
+        0.85 * screen.1,
+        LEVEL_WON_NEXT_LEVEL_TEXT_SIZE * screen.0,
         WHITE,
     );
 

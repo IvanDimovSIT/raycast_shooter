@@ -9,8 +9,10 @@ use macroquad::{
 
 pub const FOCUS_KEY: KeyCode = KeyCode::Escape;
 
-pub const LEVEL_PATH: &str = "resources/level.json";
+pub const LEVEL_PATH: &str = "resources/levels/";
 pub const TEXTURE_PATH: &str = "resources/textures/";
+
+pub const START_LEVEL: u32 = 1;
 
 pub const HORIZONTAL_WALL_SEGEMENTS: u32 = 300;
 pub const FOV: f32 = PI / 4.0;
@@ -92,11 +94,17 @@ pub const GAME_OVER_TEXT_SIZE: f32 = 0.15;
 pub const TRY_AGAIN_TEXT: &str = "Try again (Y/N)?";
 pub const TRY_AGAIN_TEXT_SIZE: f32 = 0.07;
 
-pub const GAME_WON_TEXT: &str = "Escaped!";
-pub const GAME_WON_TEXT_SIZE: f32 = 0.15;
+pub const GAME_WON_TEXT: &str = "You win!";
+pub const GAME_WON_TEXT_SIZE: f32 = 0.18;
 pub const GAME_WON_TIME_TEXT_SIZE: f32 = 0.10;
 pub const TRY_AGAIN_WON_TEXT: &str = "Play again (Y/N)?";
 pub const TRY_AGAIN_WON_TEXT_SIZE: f32 = 0.07;
+
+pub const LEVEL_WON_TEXT: &str = "Escaped!";
+pub const LEVEL_WON_TEXT_SIZE: f32 = 0.15;
+pub const LEVEL_WON_TIME_TEXT_SIZE: f32 = 0.10;
+pub const LEVEL_WON_NEXT_LEVEL_TEXT: &str = "Play next level (Y/N)?";
+pub const LEVEL_WON_NEXT_LEVEL_TEXT_SIZE: f32 = 0.07;
 
 pub const KEYS_UI_BOX_COLOR: Color = Color::new(0.1, 0.1, 0.1, 0.5);
 pub const KEYS_UI_TEXT_COLOR: Color = Color::new(1.0, 1.0, 1.0, 0.7);

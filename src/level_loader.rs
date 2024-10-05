@@ -1,4 +1,4 @@
-use std::fs::read;
+use std::{error::Error, fs::read};
 
 use macroquad::math::{vec2, Vec2};
 use serde::Deserialize;
@@ -117,11 +117,14 @@ fn array_to_vec(arr: [f32; 2]) -> Vec2 {
     vec2(arr[0], arr[1])
 }
 
-pub fn load_level() -> GameObjects {
-    let data =
-        read(LEVEL_PATH).unwrap_or_else(|_| panic!("Failed to find level file '{}'", LEVEL_PATH));
+pub fn load_level(level_number: u32) -> Result<GameObjects, Box<dyn Error>> {
+    let level_path = format!("{LEVEL_PATH}level{level_number}.json");
+
+    println!("Loading level: {}", level_path);
+
+    let data = read(&level_path)?;
 
     let level: Level = from_slice(&data).expect("Failed to deserialize level data");
 
-    level.into()
+    Ok(level.into())
 }

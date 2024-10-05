@@ -1,0 +1,28 @@
+{
+    "walls": [
+        {
+            "start": [0.0, 0.0],
+            "end": [0.0, 8.0],
+            "texture": "Stone"
+        },
+        {
+            "start": [0.0, 8.0],
+            "end": [10.0, 8.0],
+            "texture": "Metal"
+        }
+    ],
+    "player": {
+        "position": [2.0, 2.0],
+        "look": [0.0, -1.0]
+    },
+    "enemies": [ ],
+    "keys": [
+        [-3.0, 2.0]
+    ],
+    "exit_triggers": [
+        {
+            "position": [0.0, 0.0],
+            "size": 5.0
+        }
+    ]
+}

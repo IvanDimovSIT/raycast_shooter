@@ -68,8 +68,8 @@ impl SoundManager {
     }
 
     pub fn stop_all(&mut self) {
-        for sound in &self.looped_sounds {
-            stop_sound(&self.sounds[sound]);
+        for sound in self.sounds.values() {
+            stop_sound(sound);
         }
         self.looped_sounds.clear();
     }

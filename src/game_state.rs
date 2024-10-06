@@ -40,10 +40,17 @@ impl GameContext {
 }
 
 pub enum GameState {
-    Running(Box<GameContext>),
-    LevelWon((Box<GameContext>, Duration)),
+    Running {
+        context: Box<GameContext>,
+    },
+    LevelWon {
+        context: Box<GameContext>,
+        time_to_complete: Duration,
+    },
     GameOver,
-    GameWon(Duration),
+    GameWon {
+        time_to_complete: Duration,
+    },
 }
 
 fn level_complete(context: Box<GameContext>) -> GameState {
@@ -51,16 +58,18 @@ fn level_complete(context: Box<GameContext>) -> GameState {
     let duration = Instant::now().duration_since(context.start_time);
     if level_exists(next_level) {
         let game_objects = load_level(next_level).expect("Error loading level");
-        GameState::LevelWon((
-            Box::new(GameContext {
+        GameState::LevelWon {
+            context: Box::new(GameContext {
                 game_objects,
                 level: next_level,
                 ..*context
             }),
-            duration,
-        ))
+            time_to_complete: duration,
+        }
     } else {
-        GameState::GameWon(duration)
+        GameState::GameWon {
+            time_to_complete: duration,
+        }
     }
 }
 
@@ -94,7 +103,7 @@ async fn normal_run(mut context: Box<GameContext>) -> (GameState, bool) {
         context.sound_manager.play(SoundId::Escape);
         level_complete(context)
     } else {
-        GameState::Running(context)
+        GameState::Running { context }
     };
 
     (state, false)
@@ -106,7 +115,9 @@ async fn game_over_run() -> (GameState, bool) {
         (GameState::GameOver, true)
     } else if is_key_released(KeyCode::Y) {
         (
-            GameState::Running(Box::new(GameContext::load().await)),
+            GameState::Running {
+                context: Box::new(GameContext::load().await),
+            },
             false,
         )
     } else {
@@ -114,42 +125,61 @@ async fn game_over_run() -> (GameState, bool) {
     }
 }
 
-async fn game_won_run(time: Duration) -> (GameState, bool) {
-    render_game_won(time).await;
+async fn game_won_run(time_to_complete: Duration) -> (GameState, bool) {
+    render_game_won(time_to_complete).await;
     if is_key_released(KeyCode::N) {
-        (GameState::GameWon(time), true)
+        (GameState::GameWon { time_to_complete }, true)
     } else if is_key_released(KeyCode::Y) {
         (
-            GameState::Running(Box::new(GameContext::load().await)),
+            GameState::Running {
+                context: Box::new(GameContext::load().await),
+            },
             false,
         )
     } else {
-        (GameState::GameWon(time), false)
+        (GameState::GameWon { time_to_complete }, false)
     }
 }
 
-async fn level_won_run(context: Box<GameContext>, time: Duration) -> (GameState, bool) {
-    render_level_won(time).await;
+async fn level_won_run(context: Box<GameContext>, time_to_complete: Duration) -> (GameState, bool) {
+    render_level_won(time_to_complete).await;
     if is_key_released(KeyCode::N) {
-        (GameState::LevelWon((context, time)), true)
+        (
+            GameState::LevelWon {
+                context,
+                time_to_complete,
+            },
+            true,
+        )
     } else if is_key_released(KeyCode::Y) {
         (
-            GameState::Running(Box::new(GameContext {
-                start_time: Instant::now(),
-                ..*context
-            })),
+            GameState::Running {
+                context: Box::new(GameContext {
+                    start_time: Instant::now(),
+                    ..*context
+                }),
+            },
             false,
         )
     } else {
-        (GameState::LevelWon((context, time)), false)
+        (
+            GameState::LevelWon {
+                context,
+                time_to_complete,
+            },
+            false,
+        )
     }
 }
 
 pub async fn run(state: GameState) -> (GameState, bool) {
     match state {
-        GameState::Running(context) => normal_run(context).await,
+        GameState::Running { context } => normal_run(context).await,
         GameState::GameOver => game_over_run().await,
-        GameState::GameWon(time) => game_won_run(time).await,
-        GameState::LevelWon((context, time)) => level_won_run(context, time).await,
+        GameState::GameWon { time_to_complete } => game_won_run(time_to_complete).await,
+        GameState::LevelWon {
+            context,
+            time_to_complete,
+        } => level_won_run(context, time_to_complete).await,
     }
 }

@@ -17,7 +17,9 @@ mod texture_manager;
 
 #[macroquad::main("Game")]
 async fn main() {
-    let mut game_state = GameState::Running(Box::new(GameContext::load().await));
+    let mut game_state = GameState::Running {
+        context: Box::new(GameContext::load().await),
+    };
     let mut focus_manager = FocusManager::new();
 
     loop {

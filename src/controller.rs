@@ -4,16 +4,16 @@ use macroquad::math::Vec2;
 
 use crate::{
     constants::RANGED_ENEMY_SHOT_SIZE,
+    file_loaders::sound_manager::SoundManager,
     input::Operation,
     math::find_perpendicular_vector,
     model::{
         decoration::Decoration, projectile::Projectile, Entity, GameEvent, GameObjects, Player,
-        PlayerInfo, SoundId, Texture,
+        PlayerInfo, SoundId, TextureId,
     },
     service::{
         enemy::*, key::check_pickup_key, player::*, projectile::update_projctiles, shoot::*,
     },
-    sound_manager::SoundManager,
 };
 
 fn handle_left(player: Player, angle: f32, delta: f32) -> Player {
@@ -127,7 +127,7 @@ fn handle_create_projectile(
         },
         direction,
         damage,
-        texture: Texture::Projectile,
+        texture: TextureId::Projectile,
     });
 }
 

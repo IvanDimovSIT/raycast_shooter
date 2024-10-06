@@ -10,7 +10,7 @@ use crate::{
     model::{
         decoration::{Decoration, DecorationGraphics},
         enemy::Enemy,
-        Animation, Entity, GameEvent, Player, PlayerInfo, ShootingStatus, Texture, Wall,
+        Animation, Entity, GameEvent, Player, PlayerInfo, ShootingStatus, TextureId, Wall,
     },
 };
 
@@ -226,7 +226,7 @@ pub fn create_corpse(location: Vec2) -> Decoration {
             position: location,
             size: CORPSE_SIZE,
         },
-        graphics: DecorationGraphics::Texture(Texture::Skull),
+        graphics: DecorationGraphics::Texture(TextureId::Skull),
         life: None,
         offset: CORPSE_OFFSET,
     }

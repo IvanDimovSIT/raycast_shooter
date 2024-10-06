@@ -11,8 +11,8 @@ use wall::draw_walls;
 
 use crate::{
     constants::{MIN_BRIGHTNESS, VIEW_DISTANCE},
-    model::{Entity, GameObjects, Player, Texture},
-    texture_manager::TextureManager,
+    file_loaders::texture_manager::TextureManager,
+    model::{Entity, GameObjects, Player, TextureId},
 };
 
 pub mod bullets_display;
@@ -50,10 +50,10 @@ fn calculate_brightness(distance: f32) -> f32 {
 }
 
 pub fn select_animation_texture(
-    textures: &[Texture],
+    textures: &[TextureId],
     speed: u128,
     time_from_start: &Duration,
-) -> Texture {
+) -> TextureId {
     textures[(time_from_start.as_millis() / speed) as usize % textures.len()]
 }
 
@@ -135,25 +135,25 @@ mod tests {
 
     #[test]
     fn test_select_animation_texture() {
-        let textures = vec![Texture::Debug, Texture::Stone, Texture::Metal];
+        let textures = vec![TextureId::Debug, TextureId::Stone, TextureId::Metal];
 
         let speed = 100;
 
         let time_from_start1 = Duration::from_millis(0);
         let selected_texture1 = select_animation_texture(&textures, speed, &time_from_start1);
-        assert_eq!(selected_texture1, Texture::Debug);
+        assert_eq!(selected_texture1, TextureId::Debug);
 
         let time_from_start2 = Duration::from_millis(250);
         let selected_texture2 = select_animation_texture(&textures, speed, &time_from_start2);
-        assert_eq!(selected_texture2, Texture::Metal);
+        assert_eq!(selected_texture2, TextureId::Metal);
 
         let time_from_start3 = Duration::from_millis(50);
         let selected_texture3 = select_animation_texture(&textures, speed, &time_from_start3);
-        assert_eq!(selected_texture3, Texture::Debug);
+        assert_eq!(selected_texture3, TextureId::Debug);
 
         let time_from_start4 = Duration::from_millis(350);
         let selected_texture4 = select_animation_texture(&textures, speed, &time_from_start4);
-        assert_eq!(selected_texture4, Texture::Debug);
+        assert_eq!(selected_texture4, TextureId::Debug);
     }
 
     #[test]

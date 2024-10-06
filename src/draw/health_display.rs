@@ -5,6 +5,7 @@ use crate::{
         HEALTH_DISPLAY_BACKGROUND_COLOR, HEALTH_DISPLAY_BORDER_SIZE, HEALTH_DISPLAY_COLOR,
         HEALTH_DISPLAY_HEIGHT, HEALTH_DISPLAY_POSITION, HEALTH_DISPLAY_WIDTH, PLAYER_MAX_HEALTH,
     },
+    file_loaders::texture_manager::TextureManager,
     model::PlayerInfo,
 };
 
@@ -18,11 +19,7 @@ impl Drawable for HealthDisplay {
         -1.0
     }
 
-    fn draw(
-        &self,
-        screen_size: (f32, f32),
-        _texture_manager: &crate::texture_manager::TextureManager,
-    ) {
+    fn draw(&self, screen_size: (f32, f32), _texture_manager: &TextureManager) {
         let bg_x = (HEALTH_DISPLAY_POSITION.x - HEALTH_DISPLAY_BORDER_SIZE) * screen_size.0;
         let bg_y = (HEALTH_DISPLAY_POSITION.y - HEALTH_DISPLAY_BORDER_SIZE) * screen_size.1;
         let bg_width = (HEALTH_DISPLAY_BORDER_SIZE * 2.0 + HEALTH_DISPLAY_WIDTH) * screen_size.0;

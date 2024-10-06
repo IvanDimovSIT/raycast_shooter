@@ -82,7 +82,7 @@ pub fn update_projctiles(
 mod tests {
     use macroquad::math::vec2;
 
-    use crate::model::Texture;
+    use crate::model::TextureId;
 
     use super::*;
 
@@ -107,7 +107,7 @@ mod tests {
             },
             direction: vec2(0.0, 5.0),
             damage: 10.0,
-            texture: Texture::default(),
+            texture: TextureId::default(),
         };
 
         let (new_projectile, events) = update_projectile(&projectile, &player, &walls, delta);
@@ -139,7 +139,7 @@ mod tests {
             },
             direction: vec2(1.0, 0.0),
             damage: 1.0,
-            texture: Texture::default(),
+            texture: TextureId::default(),
         };
 
         let (new_projectile, events) = update_projectile(&projectile, &player, &walls, delta);
@@ -160,7 +160,7 @@ mod tests {
         };
 
         let walls = vec![Wall {
-            texture: Texture::default(),
+            texture: TextureId::default(),
             start: vec2(-10.0, 5.0),
             end: vec2(10.0, 5.0),
         }];
@@ -174,7 +174,7 @@ mod tests {
             },
             direction: vec2(0.0, 10.0),
             damage: 1.0,
-            texture: Texture::default(),
+            texture: TextureId::default(),
         };
 
         let (new_projectile, events) = update_projectile(&projectile, &player, &walls, delta);

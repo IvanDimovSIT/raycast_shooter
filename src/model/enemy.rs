@@ -20,7 +20,7 @@ use crate::{
     draw::{calculate_vertical_offset, select_animation_texture, sprite_2d::Sprite2D},
 };
 
-use super::{Entity, Texture};
+use super::{Entity, TextureId};
 
 #[derive(Debug, Clone, Copy, Deserialize)]
 pub enum EnemyType {
@@ -93,7 +93,7 @@ impl EnemyType {
         }
     }
 
-    pub fn get_animation(&self) -> Vec<Texture> {
+    pub fn get_animation(&self) -> Vec<TextureId> {
         match self {
             EnemyType::Melee => Animation::Enemy.get_textures(),
             EnemyType::Ranged => Animation::RangedEnemy.get_textures(),
@@ -137,7 +137,7 @@ impl Sprite2D for Enemy {
         self.entity.size
     }
 
-    fn get_texture(&self, time_ellapsed: &Duration) -> Texture {
+    fn get_texture(&self, time_ellapsed: &Duration) -> TextureId {
         select_animation_texture(
             &self.enemy_type.get_animation(),
             self.enemy_type.get_animation_speed(),

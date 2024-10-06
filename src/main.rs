@@ -1,25 +1,21 @@
 use focus_manager::FocusManager;
-use game_state::{run, GameContext, GameState};
+use game_state::{run, GameState};
 
 mod constants;
 mod controller;
 mod draw;
+mod file_loaders;
 mod focus_manager;
 mod game_state;
 mod input;
-mod level_loader;
 mod math;
 mod model;
 mod renderer;
 mod service;
-mod sound_manager;
-mod texture_manager;
 
 #[macroquad::main("Game")]
 async fn main() {
-    let mut game_state = GameState::Running {
-        context: Box::new(GameContext::load().await),
-    };
+    let mut game_state = GameState::initialise().await;
     let mut focus_manager = FocusManager::new();
 
     loop {

@@ -15,7 +15,7 @@ pub mod key_object;
 pub mod projectile;
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Deserialize)]
-pub enum Texture {
+pub enum TextureId {
     Debug,
     Stone,
     Metal,
@@ -66,7 +66,7 @@ pub enum Texture {
     Explostion9,
     TextFindTheKeys,
 }
-impl Default for Texture {
+impl Default for TextureId {
     fn default() -> Self {
         Self::Debug
     }
@@ -82,58 +82,58 @@ pub enum Animation {
     Explosion,
 }
 impl Animation {
-    pub fn get_textures(&self) -> Vec<Texture> {
+    pub fn get_textures(&self) -> Vec<TextureId> {
         match self {
             Animation::Enemy => vec![
-                Texture::Enemy1,
-                Texture::Enemy2,
-                Texture::Enemy3,
-                Texture::Enemy4,
-                Texture::Enemy5,
-                Texture::Enemy6,
-                Texture::Enemy7,
-                Texture::Enemy8,
+                TextureId::Enemy1,
+                TextureId::Enemy2,
+                TextureId::Enemy3,
+                TextureId::Enemy4,
+                TextureId::Enemy5,
+                TextureId::Enemy6,
+                TextureId::Enemy7,
+                TextureId::Enemy8,
             ],
-            Animation::Key => vec![Texture::Key1, Texture::Key2],
+            Animation::Key => vec![TextureId::Key1, TextureId::Key2],
             Animation::Gun => vec![
-                Texture::Gun1,
-                Texture::Gun2,
-                Texture::Gun3,
-                Texture::Gun4,
-                Texture::Gun5,
-                Texture::Gun6,
-                Texture::Gun7,
-                Texture::Gun8,
+                TextureId::Gun1,
+                TextureId::Gun2,
+                TextureId::Gun3,
+                TextureId::Gun4,
+                TextureId::Gun5,
+                TextureId::Gun6,
+                TextureId::Gun7,
+                TextureId::Gun8,
             ],
             Animation::Explosion => vec![
-                Texture::Explostion2,
-                Texture::Explostion3,
-                Texture::Explostion4,
-                Texture::Explostion5,
-                Texture::Explostion6,
-                Texture::Explostion7,
-                Texture::Explostion8,
-                Texture::Explostion9,
+                TextureId::Explostion2,
+                TextureId::Explostion3,
+                TextureId::Explostion4,
+                TextureId::Explostion5,
+                TextureId::Explostion6,
+                TextureId::Explostion7,
+                TextureId::Explostion8,
+                TextureId::Explostion9,
             ],
             Animation::RangedEnemy => vec![
-                Texture::RangedEnemy1,
-                Texture::RangedEnemy2,
-                Texture::RangedEnemy3,
-                Texture::RangedEnemy4,
-                Texture::RangedEnemy5,
-                Texture::RangedEnemy6,
-                Texture::RangedEnemy7,
-                Texture::RangedEnemy8,
+                TextureId::RangedEnemy1,
+                TextureId::RangedEnemy2,
+                TextureId::RangedEnemy3,
+                TextureId::RangedEnemy4,
+                TextureId::RangedEnemy5,
+                TextureId::RangedEnemy6,
+                TextureId::RangedEnemy7,
+                TextureId::RangedEnemy8,
             ],
             Animation::MeleeSlowEnemy => vec![
-                Texture::MeleeSlowEnemy1,
-                Texture::MeleeSlowEnemy2,
-                Texture::MeleeSlowEnemy3,
-                Texture::MeleeSlowEnemy4,
-                Texture::MeleeSlowEnemy5,
-                Texture::MeleeSlowEnemy6,
-                Texture::MeleeSlowEnemy7,
-                Texture::MeleeSlowEnemy8,
+                TextureId::MeleeSlowEnemy1,
+                TextureId::MeleeSlowEnemy2,
+                TextureId::MeleeSlowEnemy3,
+                TextureId::MeleeSlowEnemy4,
+                TextureId::MeleeSlowEnemy5,
+                TextureId::MeleeSlowEnemy6,
+                TextureId::MeleeSlowEnemy7,
+                TextureId::MeleeSlowEnemy8,
             ],
         }
     }
@@ -163,7 +163,7 @@ pub struct Player {
 
 #[derive(Debug, Clone)]
 pub struct Wall {
-    pub texture: Texture,
+    pub texture: TextureId,
     pub start: Vec2,
     pub end: Vec2,
 }

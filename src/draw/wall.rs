@@ -7,9 +7,9 @@ use rayon::iter::{ParallelBridge, ParallelIterator};
 
 use crate::{
     constants::{FOV, HORIZONTAL_WALL_SEGEMENTS, WALL_RESOLUTION},
+    file_loaders::texture_manager::TextureManager,
     math::{find_intersection, rotate_point},
-    model::{Texture, Wall},
-    texture_manager::TextureManager,
+    model::{TextureId, Wall},
 };
 
 use super::{calculate_brightness, Camera, Drawable};
@@ -19,7 +19,7 @@ struct WallDrawable {
     distance: f32,
     brightness: f32,
     x: usize,
-    texture: Texture,
+    texture: TextureId,
     relative_position: f32,
 }
 impl Drawable for WallDrawable {
@@ -50,7 +50,7 @@ impl Drawable for WallDrawable {
 #[derive(Debug)]
 struct RayHit {
     distance_to_ray: f32,
-    texture: Texture,
+    texture: TextureId,
     relative_position: f32, // 0.0 start of wall, 1.0 end of wall
 }
 
@@ -96,7 +96,7 @@ fn draw_wall(
     x: usize,
     height: f32,
     brightness: f32,
-    texture: Texture,
+    texture: TextureId,
     relative_position: f32,
 ) {
     const WALL_WIDTH: f32 = 1.0 / HORIZONTAL_WALL_SEGEMENTS as f32;

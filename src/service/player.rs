@@ -64,7 +64,7 @@ pub fn regenerate_health(player_health: f32, delta: f32) -> f32 {
 mod tests {
     use macroquad::math::vec2;
 
-    use crate::model::Texture;
+    use crate::model::TextureId;
 
     use super::*;
 
@@ -76,7 +76,7 @@ mod tests {
         };
         let movement1 = vec2(0.0, 1.0);
         let walls = vec![Wall {
-            texture: Texture::Debug,
+            texture: TextureId::Debug,
             start: vec2(-10.0, 1.5),
             end: vec2(10.0, 1.5),
         }];

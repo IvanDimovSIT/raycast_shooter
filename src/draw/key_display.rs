@@ -5,8 +5,8 @@ use crate::{
         KEYS_UI_BOX_COLOR, KEYS_UI_BOX_WIDTH_TO_HEIGHT, KEYS_UI_FIND_EXIT_TEXT, KEYS_UI_POSITION,
         KEYS_UI_SIZE, KEYS_UI_TEXT_COLOR,
     },
+    file_loaders::texture_manager::TextureManager,
     model::GameObjects,
-    texture_manager::TextureManager,
 };
 
 use super::Drawable;

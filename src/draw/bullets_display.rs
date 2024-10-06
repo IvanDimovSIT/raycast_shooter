@@ -5,8 +5,8 @@ use crate::{
         BULLETS_UI_BOX_COLOR, BULLETS_UI_BOX_WIDTH_TO_HEIGHT, BULLETS_UI_POSITION, BULLETS_UI_SIZE,
         BULLETS_UI_TEXT_COLOR, MAX_BULLETS,
     },
+    file_loaders::texture_manager::TextureManager,
     model::{PlayerInfo, ShootingStatus},
-    texture_manager::TextureManager,
 };
 
 use super::Drawable;

@@ -5,7 +5,7 @@ use macroquad::math::Vec2;
 use super::{Animation, Entity};
 use crate::{
     draw::{calculate_vertical_offset, select_animation_texture, sprite_2d::Sprite2D},
-    model::Texture,
+    model::TextureId,
 };
 
 #[derive(Debug, Clone)]
@@ -14,7 +14,7 @@ pub enum DecorationGraphics {
         animation: Animation,
         animation_speed: u128,
     },
-    Texture(Texture),
+    Texture(TextureId),
 }
 
 #[derive(Debug, Clone)]
@@ -37,7 +37,7 @@ impl Sprite2D for Decoration {
         self.entity.size
     }
 
-    fn get_texture(&self, time_ellapsed: &Duration) -> Texture {
+    fn get_texture(&self, time_ellapsed: &Duration) -> TextureId {
         match self.graphics {
             DecorationGraphics::Animation {
                 animation,
@@ -46,7 +46,7 @@ impl Sprite2D for Decoration {
                 let textures = animation.get_textures();
 
                 match textures.len() {
-                    0 => Texture::default(),
+                    0 => TextureId::default(),
                     1 => textures[0],
                     _ => select_animation_texture(&textures, animation_speed, time_ellapsed),
                 }

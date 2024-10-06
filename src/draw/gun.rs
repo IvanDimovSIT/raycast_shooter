@@ -10,7 +10,7 @@ use crate::{
 use super::*;
 
 struct GunDrawable {
-    texture: Texture,
+    texture: TextureId,
 }
 impl Drawable for GunDrawable {
     fn get_z_index(&self) -> f32 {

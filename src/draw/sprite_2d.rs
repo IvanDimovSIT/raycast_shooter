@@ -8,7 +8,7 @@ use super::*;
 use rayon::prelude::*;
 
 struct Sprite2dDrawable {
-    texture: Texture,
+    texture: TextureId,
     x: f32,
     z_index: f32,
     brightness: f32,
@@ -65,7 +65,7 @@ pub trait Sprite2D: Send + Sync {
     fn get_position(&self) -> Vec2;
     fn get_vertical_offset(&self, time_ellapsed: &Duration) -> f32;
     fn get_size(&self) -> f32;
-    fn get_texture(&self, time_ellapsed: &Duration) -> Texture;
+    fn get_texture(&self, time_ellapsed: &Duration) -> TextureId;
 }
 
 pub struct DebugSprite2D {
@@ -84,8 +84,8 @@ impl Sprite2D for DebugSprite2D {
         0.1
     }
 
-    fn get_texture(&self, _time_ellapsed: &Duration) -> Texture {
-        Texture::Debug
+    fn get_texture(&self, _time_ellapsed: &Duration) -> TextureId {
+        TextureId::Debug
     }
 }
 

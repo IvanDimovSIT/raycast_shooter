@@ -8,7 +8,7 @@ use crate::{
         TRY_AGAIN_WON_TEXT_SIZE,
     },
     draw::Drawable,
-    texture_manager::TextureManager,
+    file_loaders::texture_manager::TextureManager,
 };
 use macroquad::{
     color::{BLACK, DARKBLUE, ORANGE, RED, WHITE},

@@ -4,14 +4,14 @@ use macroquad::math::Vec2;
 
 use crate::{constants::PROJECTILE_OFFSET, draw::sprite_2d::Sprite2D};
 
-use super::{Entity, Texture};
+use super::{Entity, TextureId};
 
 #[derive(Debug, Clone)]
 pub struct Projectile {
     pub entity: Entity,
     pub direction: Vec2,
     pub damage: f32,
-    pub texture: Texture,
+    pub texture: TextureId,
 }
 impl Sprite2D for Projectile {
     fn get_position(&self) -> Vec2 {
@@ -26,7 +26,7 @@ impl Sprite2D for Projectile {
         self.entity.size
     }
 
-    fn get_texture(&self, _time_ellapsed: &Duration) -> Texture {
+    fn get_texture(&self, _time_ellapsed: &Duration) -> TextureId {
         self.texture
     }
 }

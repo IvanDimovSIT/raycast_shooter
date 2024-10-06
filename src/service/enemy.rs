@@ -194,7 +194,7 @@ mod tests {
 
     use crate::{
         constants::{ENEMY_SIZE, PLAYER_SIZE},
-        model::Texture,
+        model::TextureId,
     };
 
     use super::*;
@@ -219,7 +219,7 @@ mod tests {
         };
 
         let walls = vec![Wall {
-            texture: Texture::Debug,
+            texture: TextureId::Debug,
             start: vec2(-5.0, 0.0),
             end: vec2(5.0, 0.0),
         }];

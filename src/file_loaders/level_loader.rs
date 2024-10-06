@@ -6,7 +6,7 @@ use serde_json::from_slice;
 
 use crate::{
     constants::{KEY_SIZE, LEVEL_PATH, PLAYER_SIZE},
-    model::{enemy::EnemyType, key_object::KeyObject, Entity, GameObjects, PlayerInfo, Texture},
+    model::{enemy::EnemyType, key_object::KeyObject, Entity, GameObjects, PlayerInfo, TextureId},
 };
 
 #[derive(Deserialize)]
@@ -14,7 +14,7 @@ struct Wall {
     start: [f32; 2],
     end: [f32; 2],
     #[serde(default)]
-    texture: Texture,
+    texture: TextureId,
 }
 
 #[derive(Deserialize)]

@@ -29,7 +29,7 @@ impl Sprite2D for KeyObject {
         self.entity.size * KEY_DRAW_SIZE_MOD
     }
 
-    fn get_texture(&self, time_ellapsed: &Duration) -> Texture {
+    fn get_texture(&self, time_ellapsed: &Duration) -> TextureId {
         select_animation_texture(
             &Animation::Key.get_textures(),
             KEY_ANIMATION_SPEED_TEXTURES,

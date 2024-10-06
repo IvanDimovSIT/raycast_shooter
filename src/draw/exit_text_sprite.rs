@@ -5,7 +5,7 @@ use macroquad::math::Vec2;
 use crate::{
     constants::{EXIT_TEXT_HEIGHT_OFFSET, EXIT_TEXT_SIZE},
     math::check_circles_collide,
-    model::{Entity, GameObjects, Texture},
+    model::{Entity, GameObjects, TextureId},
 };
 
 use super::sprite_2d::Sprite2D;
@@ -26,8 +26,8 @@ impl Sprite2D for ExitTextSprite {
         self.entity.size
     }
 
-    fn get_texture(&self, _time_ellapsed: &Duration) -> Texture {
-        Texture::TextFindTheKeys
+    fn get_texture(&self, _time_ellapsed: &Duration) -> TextureId {
+        TextureId::TextFindTheKeys
     }
 }
 
@@ -36,12 +36,13 @@ pub fn create_exit_text(game_objects: &GameObjects) -> Option<Box<dyn Sprite2D>>
         .exit_triggers
         .iter()
         .filter(|exit| {
-            check_circles_collide(
-                game_objects.player.entity.position,
-                game_objects.player.entity.size,
-                exit.position,
-                exit.size,
-            )
+            !game_objects.keys.is_empty()
+                && check_circles_collide(
+                    game_objects.player.entity.position,
+                    game_objects.player.entity.size,
+                    exit.position,
+                    exit.size,
+                )
         })
         .min_by(|a, b| {
             a.position

@@ -61,6 +61,7 @@ pub enum GameState {
         resource_manager: ResourceManager,
     },
     GameOver {
+        context: Box<GameContext>,
         resource_manager: ResourceManager,
     },
     GameWon {
@@ -130,7 +131,10 @@ async fn normal_run(
     let state = if is_game_over(&context.game_objects) {
         resource_manager.sound_manager.stop_all();
         resource_manager.sound_manager.play(SoundId::Lose);
-        GameState::GameOver { resource_manager }
+        GameState::GameOver {
+            context,
+            resource_manager,
+        }
     } else if is_game_won(&context.game_objects) {
         resource_manager.sound_manager.stop_all();
         resource_manager.sound_manager.play(SoundId::Escape);
@@ -145,20 +149,51 @@ async fn normal_run(
     (state, false)
 }
 
-async fn game_over_run(resource_manager: ResourceManager) -> (GameState, bool) {
+async fn game_over_run(
+    context: Box<GameContext>,
+    resource_manager: ResourceManager,
+) -> (GameState, bool) {
     render_game_over().await;
     if is_key_released(KeyCode::N) {
-        (GameState::GameOver { resource_manager }, true)
+        (
+            GameState::GameOver {
+                context,
+                resource_manager,
+            },
+            true,
+        )
     } else if is_key_released(KeyCode::Y) {
+        let game_objects = load_level(context.level);
+        if game_objects.is_err() {
+            println!("Error reloading level {}", context.level);
+            return (
+                GameState::GameOver {
+                    context,
+                    resource_manager,
+                },
+                false,
+            );
+        }
+
         (
             GameState::Running {
-                context: Box::new(GameContext::load()),
+                context: Box::new(GameContext {
+                    game_objects: game_objects.unwrap(),
+                    start_time: Instant::now(),
+                    level: context.level,
+                }),
                 resource_manager,
             },
             false,
         )
     } else {
-        (GameState::GameOver { resource_manager }, false)
+        (
+            GameState::GameOver {
+                context,
+                resource_manager,
+            },
+            false,
+        )
     }
 }
 
@@ -238,7 +273,10 @@ pub async fn run(state: GameState) -> (GameState, bool) {
             context,
             resource_manager,
         } => normal_run(context, resource_manager).await,
-        GameState::GameOver { resource_manager } => game_over_run(resource_manager).await,
+        GameState::GameOver {
+            context,
+            resource_manager,
+        } => game_over_run(context, resource_manager).await,
         GameState::GameWon {
             time_to_complete,
             resource_manager,

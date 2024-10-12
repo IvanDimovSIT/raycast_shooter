@@ -99,12 +99,14 @@ pub const TRY_AGAIN_TEXT_SIZE: f32 = 0.07;
 pub const GAME_WON_TEXT: &str = "You win!";
 pub const GAME_WON_TEXT_SIZE: f32 = 0.18;
 pub const GAME_WON_TIME_TEXT_SIZE: f32 = 0.08;
+pub const GAME_WON_TIME_TEXT_X_OFFSET: f32 = 0.55;
 pub const TRY_AGAIN_WON_TEXT: &str = "Play again (Y/N)?";
 pub const TRY_AGAIN_WON_TEXT_SIZE: f32 = 0.07;
 
 pub const LEVEL_WON_TEXT: &str = "Escaped!";
 pub const LEVEL_WON_TEXT_SIZE: f32 = 0.15;
 pub const LEVEL_WON_TIME_TEXT_SIZE: f32 = 0.08;
+pub const LEVEL_WON_TIME_TEXT_X_OFFSET: f32 = 0.55;
 pub const LEVEL_WON_NEXT_LEVEL_TEXT: &str = "Play next level (Y/N)?";
 pub const LEVEL_WON_NEXT_LEVEL_TEXT_SIZE: f32 = 0.07;
 

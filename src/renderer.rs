@@ -2,10 +2,10 @@ use crate::{
     constants::{
         CEILING_COLOR, DEBUG_DRAW_DELAY_MS, DEBUG_INITAL_DRAW_DELAY_MS, ENTER_DEBUG_MODE_KEY,
         EXIT_DEBUG_MODE_KEY, FLOOR_COLOR, GAME_OVER_TEXT, GAME_OVER_TEXT_SIZE, GAME_WON_TEXT,
-        GAME_WON_TEXT_SIZE, GAME_WON_TIME_TEXT_SIZE, LEVEL_WON_NEXT_LEVEL_TEXT,
-        LEVEL_WON_NEXT_LEVEL_TEXT_SIZE, LEVEL_WON_TEXT, LEVEL_WON_TEXT_SIZE,
-        LEVEL_WON_TIME_TEXT_SIZE, TRY_AGAIN_TEXT, TRY_AGAIN_TEXT_SIZE, TRY_AGAIN_WON_TEXT,
-        TRY_AGAIN_WON_TEXT_SIZE,
+        GAME_WON_TEXT_SIZE, GAME_WON_TIME_TEXT_SIZE, GAME_WON_TIME_TEXT_X_OFFSET,
+        LEVEL_WON_NEXT_LEVEL_TEXT, LEVEL_WON_NEXT_LEVEL_TEXT_SIZE, LEVEL_WON_TEXT,
+        LEVEL_WON_TEXT_SIZE, LEVEL_WON_TIME_TEXT_SIZE, LEVEL_WON_TIME_TEXT_X_OFFSET,
+        TRY_AGAIN_TEXT, TRY_AGAIN_TEXT_SIZE, TRY_AGAIN_WON_TEXT, TRY_AGAIN_WON_TEXT_SIZE,
     },
     draw::Drawable,
     file_loaders::texture_manager::TextureManager,
@@ -137,7 +137,9 @@ pub async fn render_game_won(time: Duration, best_time: Duration) {
     );
 
     let x1 = (0.5 - GAME_WON_TEXT.len() as f32 * GAME_WON_TEXT_SIZE * 0.25) * screen.0;
-    let x2 = (0.5 - time_text.len() as f32 * GAME_WON_TIME_TEXT_SIZE * 0.25) * screen.0;
+    let x2 = (GAME_WON_TIME_TEXT_X_OFFSET
+        - time_text.len() as f32 * GAME_WON_TIME_TEXT_SIZE * 0.25)
+        * screen.0;
     let x3 = (0.5 - TRY_AGAIN_WON_TEXT.len() as f32 * TRY_AGAIN_WON_TEXT_SIZE * 0.25) * screen.0;
 
     draw_text(
@@ -176,7 +178,9 @@ pub async fn render_level_won(time: Duration, best_time: Duration) {
     );
 
     let x1 = (0.5 - LEVEL_WON_TEXT.len() as f32 * LEVEL_WON_TEXT_SIZE * 0.25) * screen.0;
-    let x2 = (0.5 - time_text.len() as f32 * LEVEL_WON_TIME_TEXT_SIZE * 0.25) * screen.0;
+    let x2 = (LEVEL_WON_TIME_TEXT_X_OFFSET
+        - time_text.len() as f32 * LEVEL_WON_TIME_TEXT_SIZE * 0.25)
+        * screen.0;
     let x3 = (0.5 - LEVEL_WON_NEXT_LEVEL_TEXT.len() as f32 * LEVEL_WON_NEXT_LEVEL_TEXT_SIZE * 0.25)
         * screen.0;
 

@@ -126,11 +126,15 @@ fn time_to_text(time: Duration) -> String {
     format!("{:02}:{:02}", minutes, secs)
 }
 
-pub async fn render_game_won(time: Duration) {
+pub async fn render_game_won(time: Duration, best_time: Duration) {
     let screen = screen_size();
     clear_background(ORANGE);
 
-    let time_text = format!("Time: {}", time_to_text(time));
+    let time_text = format!(
+        "Time: {} (Best:{})",
+        time_to_text(time),
+        time_to_text(best_time)
+    );
 
     let x1 = (0.5 - GAME_WON_TEXT.len() as f32 * GAME_WON_TEXT_SIZE * 0.25) * screen.0;
     let x2 = (0.5 - time_text.len() as f32 * GAME_WON_TIME_TEXT_SIZE * 0.25) * screen.0;
@@ -161,11 +165,15 @@ pub async fn render_game_won(time: Duration) {
     next_frame().await;
 }
 
-pub async fn render_level_won(time: Duration) {
+pub async fn render_level_won(time: Duration, best_time: Duration) {
     let screen = screen_size();
     clear_background(DARKBLUE);
 
-    let time_text = format!("Time: {}", time_to_text(time));
+    let time_text = format!(
+        "Time: {} (Best:{})",
+        time_to_text(time),
+        time_to_text(best_time)
+    );
 
     let x1 = (0.5 - LEVEL_WON_TEXT.len() as f32 * LEVEL_WON_TEXT_SIZE * 0.25) * screen.0;
     let x2 = (0.5 - time_text.len() as f32 * LEVEL_WON_TIME_TEXT_SIZE * 0.25) * screen.0;

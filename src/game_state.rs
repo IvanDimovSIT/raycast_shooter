@@ -13,6 +13,7 @@ use crate::{
     },
     draw::draw_game,
     file_loaders::{
+        completion_time_loader::{load_best_for_level, save_best_for_level},
         level_loader::{level_exists, load_level},
         sound_manager::SoundManager,
         texture_manager::TextureManager,
@@ -58,6 +59,7 @@ pub enum GameState {
     LevelWon {
         context: Box<GameContext>,
         time_to_complete: Duration,
+        best_time_to_complete: Duration,
         resource_manager: ResourceManager,
     },
     GameOver {
@@ -66,6 +68,7 @@ pub enum GameState {
     },
     GameWon {
         time_to_complete: Duration,
+        best_time_to_complete: Duration,
         resource_manager: ResourceManager,
     },
 }
@@ -81,8 +84,10 @@ impl GameState {
 fn level_complete(context: Box<GameContext>, resource_manager: ResourceManager) -> GameState {
     let next_level = context.level + 1;
     let duration = Instant::now().duration_since(context.start_time);
+    save_best_for_level(context.level, &duration);
     if level_exists(next_level) {
         let game_objects = load_level(next_level).expect("Error loading level");
+
         GameState::LevelWon {
             context: Box::new(GameContext {
                 game_objects,
@@ -91,11 +96,13 @@ fn level_complete(context: Box<GameContext>, resource_manager: ResourceManager) 
             }),
             time_to_complete: duration,
             resource_manager,
+            best_time_to_complete: load_best_for_level(context.level),
         }
     } else {
         GameState::GameWon {
             time_to_complete: duration,
             resource_manager,
+            best_time_to_complete: load_best_for_level(context.level),
         }
     }
 }
@@ -199,13 +206,15 @@ async fn game_over_run(
 
 async fn game_won_run(
     time_to_complete: Duration,
+    best_time_to_complete: Duration,
     resource_manager: ResourceManager,
 ) -> (GameState, bool) {
-    render_game_won(time_to_complete).await;
+    render_game_won(time_to_complete, best_time_to_complete).await;
     if is_key_released(KeyCode::N) {
         (
             GameState::GameWon {
                 time_to_complete,
+                best_time_to_complete,
                 resource_manager,
             },
             true,
@@ -222,6 +231,7 @@ async fn game_won_run(
         (
             GameState::GameWon {
                 time_to_complete,
+                best_time_to_complete,
                 resource_manager,
             },
             false,
@@ -232,14 +242,16 @@ async fn game_won_run(
 async fn level_won_run(
     context: Box<GameContext>,
     time_to_complete: Duration,
+    best_time_to_complete: Duration,
     resource_manager: ResourceManager,
 ) -> (GameState, bool) {
-    render_level_won(time_to_complete).await;
+    render_level_won(time_to_complete, best_time_to_complete).await;
     if is_key_released(KeyCode::N) {
         (
             GameState::LevelWon {
                 context,
                 time_to_complete,
+                best_time_to_complete,
                 resource_manager,
             },
             true,
@@ -260,6 +272,7 @@ async fn level_won_run(
             GameState::LevelWon {
                 context,
                 time_to_complete,
+                best_time_to_complete,
                 resource_manager,
             },
             false,
@@ -279,12 +292,22 @@ pub async fn run(state: GameState) -> (GameState, bool) {
         } => game_over_run(context, resource_manager).await,
         GameState::GameWon {
             time_to_complete,
+            best_time_to_complete,
             resource_manager,
-        } => game_won_run(time_to_complete, resource_manager).await,
+        } => game_won_run(time_to_complete, best_time_to_complete, resource_manager).await,
         GameState::LevelWon {
             context,
             time_to_complete,
+            best_time_to_complete,
             resource_manager,
-        } => level_won_run(context, time_to_complete, resource_manager).await,
+        } => {
+            level_won_run(
+                context,
+                time_to_complete,
+                best_time_to_complete,
+                resource_manager,
+            )
+            .await
+        }
     }
 }

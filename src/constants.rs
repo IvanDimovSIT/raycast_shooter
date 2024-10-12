@@ -12,6 +12,7 @@ pub const FOCUS_KEY: KeyCode = KeyCode::Escape;
 pub const LEVEL_PATH: &str = "resources/levels/";
 pub const TEXTURE_PATH: &str = "resources/textures/";
 pub const SOUND_PATH: &str = "resources/sounds/";
+pub const COMPLETION_TIMES_PATH: &str = "best.json";
 
 pub const START_LEVEL: u32 = 1;
 
@@ -97,13 +98,13 @@ pub const TRY_AGAIN_TEXT_SIZE: f32 = 0.07;
 
 pub const GAME_WON_TEXT: &str = "You win!";
 pub const GAME_WON_TEXT_SIZE: f32 = 0.18;
-pub const GAME_WON_TIME_TEXT_SIZE: f32 = 0.10;
+pub const GAME_WON_TIME_TEXT_SIZE: f32 = 0.08;
 pub const TRY_AGAIN_WON_TEXT: &str = "Play again (Y/N)?";
 pub const TRY_AGAIN_WON_TEXT_SIZE: f32 = 0.07;
 
 pub const LEVEL_WON_TEXT: &str = "Escaped!";
 pub const LEVEL_WON_TEXT_SIZE: f32 = 0.15;
-pub const LEVEL_WON_TIME_TEXT_SIZE: f32 = 0.10;
+pub const LEVEL_WON_TIME_TEXT_SIZE: f32 = 0.08;
 pub const LEVEL_WON_NEXT_LEVEL_TEXT: &str = "Play next level (Y/N)?";
 pub const LEVEL_WON_NEXT_LEVEL_TEXT_SIZE: f32 = 0.07;
 

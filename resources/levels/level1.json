@@ -1,28 +1,163 @@
 {
-    "walls": [
-        {
-            "start": [0.0, 0.0],
-            "end": [0.0, 8.0],
-            "texture": "Stone"
-        },
-        {
-            "start": [0.0, 8.0],
-            "end": [10.0, 8.0],
-            "texture": "Metal"
-        }
-    ],
-    "player": {
-        "position": [2.0, 2.0],
-        "look": [0.0, -1.0]
+  "walls": [
+    {
+      "start": [
+        17.5,
+        20.0
+      ],
+      "end": [
+        20.0,
+        20.0
+      ],
+      "texture": "Stone"
     },
-    "enemies": [ ],
-    "keys": [
-        [-3.0, 2.0]
+    {
+      "start": [
+        20.0,
+        20.0
+      ],
+      "end": [
+        20.0,
+        12.0
+      ],
+      "texture": "Stone"
+    },
+    {
+      "start": [
+        17.5,
+        20.0
+      ],
+      "end": [
+        17.5,
+        14.5
+      ],
+      "texture": "Stone"
+    },
+    {
+      "start": [
+        20.0,
+        12.0
+      ],
+      "end": [
+        13.5,
+        12.0
+      ],
+      "texture": "Stone"
+    },
+    {
+      "start": [
+        17.5,
+        14.5
+      ],
+      "end": [
+        15.0,
+        14.5
+      ],
+      "texture": "Stone"
+    },
+    {
+      "start": [
+        15.0,
+        14.5
+      ],
+      "end": [
+        11.0,
+        17.5
+      ],
+      "texture": "Stone"
+    },
+    {
+      "start": [
+        13.5,
+        12.0
+      ],
+      "end": [
+        7.0,
+        17.5
+      ],
+      "texture": "Stone"
+    },
+    {
+      "start": [
+        7.0,
+        17.5
+      ],
+      "end": [
+        7.0,
+        20.5
+      ],
+      "texture": "Stone"
+    },
+    {
+      "start": [
+        11.0,
+        17.5
+      ],
+      "end": [
+        11.0,
+        20.0
+      ],
+      "texture": "Stone"
+    },
+    {
+      "start": [
+        11.0,
+        20.0
+      ],
+      "end": [
+        6.5,
+        23.5
+      ],
+      "texture": "Stone"
+    },
+    {
+      "start": [
+        7.0,
+        20.5
+      ],
+      "end": [
+        5.0,
+        22.0
+      ],
+      "texture": "Stone"
+    }
+  ],
+  "player": {
+    "position": [
+      18.75,
+      18.75
     ],
-    "exit_triggers": [
-        {
-            "position": [0.0, 0.0],
-            "size": 5.0
-        }
+    "look": [
+      0.0,
+      1.0
     ]
+  },
+  "enemies": [
+    {
+      "position": [
+        9.0,
+        18.5
+      ],
+      "enemy_type": "Melee"
+    }
+  ],
+  "keys": [
+    [
+      18.5,
+      14.5
+    ],
+    [
+      14.5,
+      13.0
+    ]
+  ],
+  "exit_triggers": [
+    {
+      "position": [
+        6.0,
+        22.5
+      ],
+      "size": 2.5
+    }
+  ]
 }

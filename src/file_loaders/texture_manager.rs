@@ -4,9 +4,10 @@ use macroquad::texture::{FilterMode, Texture2D};
 
 use crate::{constants::TEXTURE_PATH, model::TextureId};
 
-const TEXTURE_PATHS: [(TextureId, &str); 48] = [
+const TEXTURE_PATHS: [(TextureId, &str); 49] = [
     (TextureId::Stone, "stone.png"),
     (TextureId::Metal, "metal.png"),
+    (TextureId::Door, "door.png"),
     (TextureId::Key1, "key/key1.png"),
     (TextureId::Key2, "key/key2.png"),
     (TextureId::Gun1, "gun/FAMAS_00.png"),

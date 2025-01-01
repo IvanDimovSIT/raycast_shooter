@@ -19,6 +19,7 @@ pub enum TextureId {
     Debug,
     Stone,
     Metal,
+    Door,
     Key1,
     Key2,
     Gun1,
